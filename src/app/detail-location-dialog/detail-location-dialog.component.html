@@ -1,0 +1,86 @@
+<h1 mat-dialog-title>Location Details </h1>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-3">
+      <h6>Name</h6>
+    </div>
+    <div class="col-lg-9 text-right">
+      <span>{{data.location.name}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <h6>Locality</h6>
+    </div>
+    <div class="col-lg-9 text-right">
+      <span>{{data.city.name}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <h6>Address</h6>
+    </div>
+    <div class="col-lg-9 text-right">
+      <span>{{data.location.address}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <h6>Email</h6>
+    </div>
+    <div class="col-lg-9 text-right">
+      <span>{{data.location.email}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <h6>Telephone</h6>
+    </div>
+    <div class="col-lg-9 text-right">
+      <span>{{data.location.phone}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <h6>Manager Name</h6>
+    </div>
+    <div class="col-lg-9 text-right">
+      <span>{{data.location.entityRapresentative}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4">
+      <h6>Manager Job Title</h6>
+    </div>
+    <div class="col-lg-8 text-right">
+      <span>{{data.location.jobTitle}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4">
+      <h6>Manager Mobile</h6>
+    </div>
+    <div class="col-lg-8 text-right">
+      <span>{{data.location.mobileEntityRapresentative}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4">
+      <h6>Time In</h6>
+    </div>
+    <div class="col-lg-8 text-right">
+      <span>{{data.timeIn}}</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4">
+      <h6>Time Out</h6>
+    </div>
+    <div class="col-lg-8 text-right">
+      <span>{{data.timeOut}}</span>
+    </div>
+  </div>
+</div>
+ <mat-dialog-actions>
+  <button mat-button (click)="onCancel()" class="btn confirm-button">Chiudi</button>
+</mat-dialog-actions>

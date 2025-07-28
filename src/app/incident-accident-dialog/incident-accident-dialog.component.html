@@ -1,0 +1,124 @@
+<mat-dialog-content class="scrollable-content">
+  <h1 mat-dialog-title>Complier details </h1>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3">
+        <h6>Name and lastname</h6>
+      </div>
+      <div class="col-lg-9 text-right">
+        <span>{{data.workerIncidentAccidentReport.compilerName}} </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3">
+        <h6>Role</h6>
+      </div>
+      <div class="col-lg-9 text-right">
+        <span>{{data.workerIncidentAccidentReport.compilerRole}} </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3">
+        <h6>Id card number</h6>
+      </div>
+      <div class="col-lg-9 text-right">
+        <span>{{data.workerIncidentAccidentReport.compilerIdCardNumber}} </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3">
+        <h6>Email</h6>
+      </div>
+      <div class="col-lg-9 text-right">
+        <span>{{data.workerIncidentAccidentReport.emailCompiler}} </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3">
+        <h6>Mobile</h6>
+      </div>
+      <div class="col-lg-9 text-right">
+        <span>{{data.workerIncidentAccidentReport.mobileCompiler}} </span>
+      </div>
+    </div>
+  </div>
+  <h1 mat-dialog-title>Worker and incident details </h1>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3">
+        <h6>Worker</h6>
+      </div>
+      <div class="col-lg-9 text-right">
+        <span>{{data.worker.name}} {{data.worker.lastName}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3">
+        <h6>Location</h6>
+      </div>
+      <div class="col-lg-9 text-right">
+        <span>{{data.location.name}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3">
+        <h6>Address</h6>
+      </div>
+      <div class="col-lg-9 text-right">
+        <span>{{data.location.address}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <h6>Date and hour of incident</h6>
+      </div>
+      <div class="col-lg-8 text-right">
+        <span>{{data.workerIncidentAccidentReport.date | customDateFormat}} - {{data.workerIncidentAccidentReport.hour}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3">
+        <h6>Place of incident</h6>
+      </div>
+      <div class="col-lg-9 text-right">
+        <span>{{data.workerIncidentAccidentReport.place}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h6 class="bg-top">Description of incident</h6>
+        <span class="boxed">{{data.workerIncidentAccidentReport.description}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h6 class="bg-top">Cause of incident</h6>
+        <span class="boxed">{{data.workerIncidentAccidentReport.cause}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h6 class="bg-top">Observation of incident</h6>
+        <span class="boxed">{{data.workerIncidentAccidentReport.observations}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h6>Uploaded files</h6>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12" *ngFor="let item of data.workerIncidentAccidentReport.uploadFiles">
+        <span> 
+          <a (click)="downloadFile(item)" 
+            style="cursor: pointer; margin-bottom: 10px; float: left; width: 100%; font-weight: 500;">
+              <i class="ri-file-download-fill down-file"></i> {{ item.name }}
+          </a>
+        </span>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()" class="btn confirm-button">Chiudi</button>
+</mat-dialog-actions>

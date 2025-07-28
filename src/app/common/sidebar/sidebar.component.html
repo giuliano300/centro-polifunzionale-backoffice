@@ -1,0 +1,60 @@
+<div
+    class="sidebar-area bg-white transition sidebar-shadow"
+    [ngClass]="{'active': isToggled}"
+>
+    <div class="logo">
+        <a routerLink="/" class="d-flex align-items-center">
+            <img src="images/logo-icon.png" alt="logo-icon" width="33px">
+            <span>
+               Amministrazione
+            </span>
+        </a>
+    </div>
+    <div
+        class="burger-menu transition cursor-pointer"
+        [ngClass]="{'active': isToggled}"
+        (click)="toggle()"
+    >
+        <span class="top-bar transition bg-dark d-block"></span>
+        <span class="middle-bar transition bg-dark d-block"></span>
+        <span class="bottom-bar transition bg-dark d-block"></span>
+    </div>
+    <ng-scrollbar visibility="hover">
+        <div class="sidebar-inner">
+            <div class="sidebar-menu">
+                <mat-accordion>
+                    <span class="sub-title text-body">
+                        MAIN
+                    </span>
+                    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = true">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <i-feather name="home"></i-feather>
+                                <span class="title">
+                                    Spazi
+                                </span>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <ul class="sidebar-sub-menu">
+                            <li class="sidemenu-item">
+                                <a routerLink="/spaces" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Vedi tutti
+                                </a>
+                            </li>
+                            <li class="sidemenu-item">
+                                <a routerLink="/spaces/add" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Aggiungi
+                                </a>
+                            </li>
+                        </ul>
+                    </mat-expansion-panel>
+
+                    <a class="sidebar-menu-link" (click)="logout()" href="#">
+                        <i-feather name="Lock"></i-feather>
+                        <span class="title">Logout</span>
+                    </a>
+                </mat-accordion>
+            </div>
+        </div>
+    </ng-scrollbar>
+</div>

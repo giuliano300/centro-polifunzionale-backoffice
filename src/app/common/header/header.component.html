@@ -1,0 +1,17 @@
+<div
+    class="header-area bg-white box-shadow transition"
+    [ngClass]="{'active': isToggled}"
+>
+    <div class="d-md-flex align-items-center justify-content-between">
+        <div class="header-left-side d-flex align-items-center">
+            <div
+                class="burger-menu position-relative transition lh-1"
+                [ngClass]="{'active': isToggled}"
+                (click)="toggle()"
+            >
+                <i-feather name="align-left"></i-feather>
+            </div>
+        </div>
+        <div class="primary-color">{{area}}</div>
+    </div>
+</div>

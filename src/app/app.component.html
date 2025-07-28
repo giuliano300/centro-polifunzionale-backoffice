@@ -1,0 +1,20 @@
+<div
+    [ngClass]="{'blank-page': router.url === '/authentication'}"
+    [class.dark-theme]="toggleService.isDark()"
+>
+
+    <!-- Sidebar -->
+    <app-sidebar />
+
+    <!-- Main Content -->
+    <div
+        class="main-content transition d-flex flex-column"
+        [ngClass]="{'active': isToggled}"
+    >
+        <app-header />
+        <router-outlet />
+        <div class="flex-grow-1"></div>
+        <app-footer />
+    </div>
+
+</div>
