@@ -4,6 +4,7 @@ import { SignInComponent } from './authentication/sign-in/sign-in.component';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { AuthGuard } from './authGuard/AuthGuard';
 import { SpacesComponent } from './pages/spaces/spaces.component';
+import { BookingsComponent } from './pages/spaces/bookings/bookings.component';
 
 export const routes: Routes = [
     { path: '', redirectTo : '/authentication', pathMatch: 'full' },
@@ -18,7 +19,8 @@ export const routes: Routes = [
         path: '',
         canActivate: [AuthGuard],
         children: [
-            { path: 'spaces', component: SpacesComponent }
+            { path: 'spaces', component: SpacesComponent },
+            { path: 'space/bookings/:id', component: BookingsComponent }
         ]
     },
     { path: '**', component: NotFoundComponent},

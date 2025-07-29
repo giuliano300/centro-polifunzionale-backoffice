@@ -1,6 +1,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li aria-current="page" class="breadcrumb-item active">Spazi</li>
+        <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Spazi </li>
+        <li aria-current="page" class="breadcrumb-item active">Prenotazioni {{spaceName}}</li>
     </ol>
 </nav>
 <mat-card
@@ -12,78 +13,78 @@
                 <table mat-table [dataSource]="dataSource">
 
                     <!-- Name Column -->
-                    <ng-container matColumnDef="name">
+                    <ng-container matColumnDef="date">
                         <th mat-header-cell *matHeaderCellDef class="pl-0">
-                            Spazio
+                            Data
                         </th>
                         <td mat-cell *matCellDef="let element" class="pl-0">
                             <div class="position-relative">
                                 <h6 class="mt-0 mb-0">
-                                    {{element.name}}
+                                    {{element.booking.date  | customDateFormat}}
                                 </h6>
                             </div>
                         </td>
                     </ng-container>
-                    <ng-container matColumnDef="description">
+                    <ng-container matColumnDef="startTime">
                         <th mat-header-cell *matHeaderCellDef class="pl-0">
-                            Descrizione
+                            Inizio
                         </th>
                         <td mat-cell *matCellDef="let element" class="pl-0">
                             <div class="position-relative">
                                 <h6 class="mt-0 mb-0">
-                                    {{element.description}}
+                                    {{element.booking.startTime}}
                                 </h6>
                             </div>
                         </td>
                     </ng-container>
-                    <ng-container matColumnDef="hourlyRate">
+                    <ng-container matColumnDef="endTime">
                         <th mat-header-cell *matHeaderCellDef class="pl-0">
-                            Costo orario
+                            Fine
                         </th>
                         <td mat-cell *matCellDef="let element" class="pl-0">
                             <div class="position-relative">
                                 <h6 class="mt-0 mb-0">
-                                    {{element.hourlyRate}}
-                                </h6>
-                            </div>
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="isAvailable">
-                        <th mat-header-cell *matHeaderCellDef class="pl-0">
-                            Disponibile
-                        </th>
-                        <td mat-cell *matCellDef="let element" class="pl-0">
-                            <div class="position-relative">
-                                <h6 class="mt-0 mb-0">
-                                    {{element.isAvailable ? 'SI' : 'NO'}}
+                                    {{element.booking.endTime}}
                                 </h6>
                             </div>
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="viewDetails">
+                    <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">
+                            Status
+                        </th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">
+                                    {{element.booking.status}}
+                                </h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="amount">
                         <th mat-header-cell *matHeaderCellDef class="text-center pr-0">
-                            Prenotazioni
+                            Costo
                         </th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
-                                <button type="button" mat-button class="p-0 min-w-auto lh-1 h-auto" (click)="BookingItem(element)">
-                                    <i class="{{element.action.viewDetails}}"></i>
-                                </button>
+                                <h6 class="mt-0 mb-0">
+                                   {{ element.payments?.[0]?.amount || '' }}
+                                </h6>
                             </div>
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="edit">
+                    <ng-container matColumnDef="paymentStatus">
                         <th mat-header-cell *matHeaderCellDef class="text-center pr-0">
-                            Modifica
+                            Stato pagamento
                         </th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
-                                <button type="button" mat-button class="p-0 min-w-auto lh-1 h-auto" (click)="UpdateItem(element)">
-                                    <i class="{{element.action.edit}}"></i>
-                                </button>
+                                <h6 class="mt-0 mb-0">
+                                   {{ element.payments?.[0]?.status || 'N/A' }}
+                                </h6>
                             </div>
                         </td>
                     </ng-container>
@@ -94,7 +95,7 @@
                         </th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
-                                <button type="button" mat-button class="p-0 min-w-auto lh-1 h-auto" (click)="DeleteItem(element)">
+                                <button type="button" mat-button class="p-0 min-w-auto lh-1 h-auto">
                                     <i class="{{element.action.delete}}"></i>
                                 </button>
                             </div>
@@ -106,10 +107,9 @@
 
                     <tr class="mat-row" *matNoDataRow>
                         <td class="mat-cell text-center no-data" [attr.colspan]="displayedColumns.length">
-                            Nessuno spazio inserito
+                            Nessuna prenotazione per questo spazio
                         </td>
                     </tr>
-
                 </table>
             </div>
             <mat-paginator [pageSizeOptions]="[20, 50, 100]"></mat-paginator>

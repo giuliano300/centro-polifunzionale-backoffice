@@ -170,6 +170,14 @@ input {
     font-weight: 400;
 }
 
+.pointer{
+    cursor: pointer;
+
+    &:hover{
+        opacity: 0.8;
+    }
+}
+
 /* Max width 767px */
 @media only screen and (max-width : 767px) {
 

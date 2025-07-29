@@ -83,4 +83,8 @@ export class SpacesComponent {
       this.router.navigate(["/spaces/add/" + item._id]);
     }
 
+    BookingItem(item:Spaces){
+      this.router.navigate(["/space/bookings/" + item._id]);
+    }
+
   }

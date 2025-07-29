@@ -21,6 +21,10 @@ export class SpacesService {
       return this.http.get<Spaces[]>(this.apiUrl, { headers });
     }
 
+    getSpace(id: string): Observable<Spaces>{
+      return this.http.get<Spaces>(this.apiUrl + "/" + id);
+    }
+
     delete(id: string):Observable<boolean>{
       const token = localStorage.getItem('authToken'); 
         const headers = new HttpHeaders({
