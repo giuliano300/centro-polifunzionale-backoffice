@@ -9,15 +9,30 @@ import { BookingWithPayments } from '../interfaces/BookingWithPayments';
 })
 export class BookingService {
 
-    private apiUrl = API_URL + "bookings";
-    
-    constructor(private http: HttpClient) {}
+  private apiUrl = API_URL + "bookings";
+  
+  constructor(private http: HttpClient) {}
 
-    getBookings(id: string): Observable<BookingWithPayments[]>{
-      const token = localStorage.getItem('authToken'); 
-        const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
-        });      
-      return this.http.get<BookingWithPayments[]>(this.apiUrl + "?spaceId=" + id, { headers });
-    }  
+  getBookings(id: string, year?: string, month?: string): Observable<BookingWithPayments[]>{
+    const token = localStorage.getItem('authToken'); 
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });      
+
+    let url = this.apiUrl + "?spaceId=" + id;
+
+    if (year && month) {
+      // Crea date UTC con orario inizio e fine
+      const startDate = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, 1, 0, 0, 0));
+      const endDate = new Date(Date.UTC(parseInt(year), parseInt(month), 1, 0, 0, 0)); // primo giorno mese successivo
+
+      const inizioMese = startDate.toISOString();  // es: 2025-07-01T00:00:00.000Z
+      const fineMese = endDate.toISOString();      // es: 2025-08-01T00:00:00.000Z
+
+      url += `&start=${inizioMese}&end=${fineMese}`;
+    }
+
+    return this.http.get<BookingWithPayments[]>(url, { headers });    
+  }  
+
 }

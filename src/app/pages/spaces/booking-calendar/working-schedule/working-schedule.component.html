@@ -1,0 +1,77 @@
+<mat-card class="trinta-card working-schedule-card mb-25 bg-white border-none d-block">
+    <mat-card-header>
+        <mat-card-title>
+            <h5 class="mt-0 mb-0">
+                Prenotazioni
+            </h5>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+    <mat-calendar [(selected)]="selected" 
+        (monthSelected)="onMonthSelected($event)" 
+        (yearSelected)="onYearSelected($event)" [startAt]="selected">
+    </mat-calendar>        
+        <ul class="events-list p-0 m-0 list-unstyled">
+            <li class="d-sm-flex align-items-center justify-content-between">
+                <div class="content d-flex align-items-center">
+                    <div class="number d-flex align-items-center justify-content-center text-center bg-primary text-white fw-semibold rounded-circle flex-shrink-0">
+                        1
+                    </div>
+                    <div class="title flex-grow-1">
+                        <h6>
+                            Meeting with Developers
+                        </h6>
+                        <span class="d-block time text-body">
+                            7:30 AM - 10:00 AM
+                        </span>
+                    </div>
+                </div>
+            </li>
+            <li class="d-sm-flex align-items-center justify-content-between">
+                <div class="content d-flex align-items-center">
+                    <div class="number d-flex align-items-center justify-content-center text-center bg-primary text-white fw-semibold rounded-circle flex-shrink-0">
+                        2
+                    </div>
+                    <div class="title flex-grow-1">
+                        <h6>
+                            Develop A Marketing Strategy
+                        </h6>
+                        <span class="d-block time text-body">
+                            10:30 AM - 12:00 PM
+                        </span>
+                    </div>
+                </div>
+            </li>
+            <li class="d-sm-flex align-items-center justify-content-between">
+                <div class="content d-flex align-items-center">
+                    <div class="number d-flex align-items-center justify-content-center text-center bg-primary text-white fw-semibold rounded-circle flex-shrink-0">
+                        3
+                    </div>
+                    <div class="title flex-grow-1">
+                        <h6>
+                            Prepare For App Deployment
+                        </h6>
+                        <span class="d-block time text-body">
+                            2:30 AM - 6:20 PM
+                        </span>
+                    </div>
+                </div>
+            </li>
+            <li class="d-sm-flex align-items-center justify-content-between">
+                <div class="content d-flex align-items-center">
+                    <div class="number d-flex align-items-center justify-content-center text-center bg-primary text-white fw-semibold rounded-circle flex-shrink-0">
+                        4
+                    </div>
+                    <div class="title flex-grow-1">
+                        <h6>
+                            Reusable Components Function
+                        </h6>
+                        <span class="d-block time text-body">
+                            10:30 AM - 12:00 PM
+                        </span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </mat-card-content>
+</mat-card>

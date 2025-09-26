@@ -5,6 +5,7 @@ import { AuthenticationComponent } from './authentication/authentication.compone
 import { AuthGuard } from './authGuard/AuthGuard';
 import { SpacesComponent } from './pages/spaces/spaces.component';
 import { BookingsComponent } from './pages/spaces/bookings/bookings.component';
+import { CalendarComponent } from './pages/spaces/booking-calendar/calendar.component';
 
 export const routes: Routes = [
     { path: '', redirectTo : '/authentication', pathMatch: 'full' },
@@ -20,7 +21,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
             { path: 'spaces', component: SpacesComponent },
-            { path: 'space/bookings/:id', component: BookingsComponent }
+            { path: 'space/bookings/:id', component: BookingsComponent },
+            { path: 'space/bookings-calendar/:id/:month/:year', component: CalendarComponent }
         ]
     },
     { path: '**', component: NotFoundComponent},

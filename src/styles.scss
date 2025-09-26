@@ -178,6 +178,44 @@ input {
     }
 }
 
+.flex{
+    display: flex;
+     justify-content: space-between;
+}
+
+.flex-end{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.flex-start{
+    display: flex;
+    justify-content: flex-start;
+}
+
+
+
+.filter-button {
+    width: 100%;
+    height: auto;
+    min-width: auto;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    padding: 12px 25px;
+    color: var(--whiteColor) !important;
+    background-color: var(--primaryColor);
+    font-size: 14px;
+    font-weight: 400;
+    font-family: var(--headingFontFamily);
+    border: none;
+    cursor: pointer;
+
+    &:hover{
+        opacity: 0.9;
+    }
+}
+
 /* Max width 767px */
 @media only screen and (max-width : 767px) {
 

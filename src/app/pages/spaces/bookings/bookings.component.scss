@@ -314,3 +314,22 @@
 
 /* Min width 1600px */
 @media only screen and (min-width: 1600px) {}
+
+.filters{
+    padding: 30px 25px 10px;
+    
+    .mat-mdc-button {
+        width: 100%;
+        height: auto;
+        display: block;
+        min-width: auto;
+        margin-top: 0;
+        border-radius: 6px;
+        padding: 18px 25px;
+        color: var(--whiteColor) !important;
+        background-color: var(--primaryColor);
+        font-size: 14px;
+        font-weight: 400;
+        font-family: var(--headingFontFamily);
+    }
+}

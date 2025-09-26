@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { CustomDateFormatPipe } from "../custom-date-format.pipe";
+import { CustomDateFormatPipe } from "../services/custom-date-format.pipe";
 import { NgFor } from '@angular/common';
 
 @Component({

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DetailLocationDialogComponent } from './detail-location-dialog.component';
+import { EventDetailDialogComponent } from './event-detail-dialog.component';
 
 describe('ConfirmDialogComponent', () => {
-  let component: DetailLocationDialogComponent;
-  let fixture: ComponentFixture<DetailLocationDialogComponent>;
+  let component: EventDetailDialogComponent;
+  let fixture: ComponentFixture<EventDetailDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DetailLocationDialogComponent]
+      imports: [EventDetailDialogComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DetailLocationDialogComponent);
+    fixture = TestBed.createComponent(EventDetailDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

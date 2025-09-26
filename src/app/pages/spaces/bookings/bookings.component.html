@@ -1,9 +1,52 @@
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Spazi </li>
-        <li aria-current="page" class="breadcrumb-item active">Prenotazioni {{spaceName}}</li>
-    </ol>
+    <div class="flex">
+        <ol class="breadcrumb">
+            <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Spazi </li>
+            <li aria-current="page" class="breadcrumb-item active">Prenotazioni {{spaceName}}</li>
+        </ol>
+        <div class="flex-end">
+            <button class="filter-button" (click)="gotoCalendar()">Formato calendario</button>
+        </div>
+    </div>
 </nav>
+<mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
+    <mat-card-content>
+        <form [formGroup]="form">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <mat-form-field>
+                            <i-feather name="Calendar"></i-feather>
+                            <mat-label>Seleziona mese</mat-label>
+                            <mat-select formControlName="month">
+                                <mat-option *ngFor="let option of months" [value]="option.id">
+                                {{ option.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>                        
+                    </div>
+                    <div class="col-lg-3">
+                        <mat-form-field>
+                            <i-feather name="Calendar"></i-feather>
+                            <mat-label>Seleziona anno</mat-label>
+                            <mat-select formControlName="year">
+                                <mat-option *ngFor="let option of years" [value]="option">
+                                {{ option }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>                        
+                    </div>
+                    <div class="col-lg-2">
+                         <button mat-button type="submit" [disabled]="form.invalid" (click)="onSubmit()">
+                            Filtra
+                        </button>               
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
+
 <mat-card
     class="trinta-card to-do-list-card mb-25 bg-white border-none d-block"
 >
@@ -11,6 +54,20 @@
         <div class="to-do-list-table">
             <div class="table-responsive">
                 <table mat-table [dataSource]="dataSource">
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">
+                            Utente
+                        </th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">
+                                    {{element.booking.user.name}}
+                                </h6>
+                            </div>
+                        </td>
+                    </ng-container>
 
                     <!-- Name Column -->
                     <ng-container matColumnDef="date">

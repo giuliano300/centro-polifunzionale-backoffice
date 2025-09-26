@@ -8,7 +8,7 @@ import { FeathericonsModule } from '../../icons/feathericons/feathericons.module
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NgIf } from '@angular/common';
 import { Login } from '../../interfaces/Login';
-import { UtilsService } from '../../utils.service';
+import { UtilsService } from '../../services/utils.service';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../services/auth.service';
 import { UsersService } from '../../services/User.service';
@@ -59,9 +59,9 @@ export class SignInComponent {
                 {
                     this.user! = this.authService.decodeToken(data)!;
                     localStorage.setItem('isLogin', "true");
-                    localStorage.setItem('loginName', this.user!.username!);
+                    localStorage.setItem('loginName', this.user!.name!);
                     this.authService.setIsLogin(true);
-                    this.authService.setLoginName(this.user!.username!);
+                    this.authService.setLoginName(this.user!.name!);
                     localStorage.setItem('authToken', data.access_token);
                     localStorage.setItem('user', JSON.stringify(this.user!));
                     this.router.navigate(['/spaces']);

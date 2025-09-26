@@ -1,0 +1,22 @@
+<nav aria-label="breadcrumb">
+    <div class="flex">
+        <ol class="breadcrumb">
+            <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Spazi </li>
+            <li aria-current="page" class="breadcrumb-item active">Prenotazioni {{spaceName}}</li>
+        </ol>
+        <div class="flex-end">
+            <button class="filter-button" (click)="gotoBooking()">Formato lista</button>
+        </div>
+    </div>
+</nav><div class="row">
+    <div class="col-xxxl-8">
+        <mat-card class="trinta-card full-calendar-card mb-25 bg-white border-none d-block">
+            <mat-card-content>
+                <full-calendar [options]="calendarOptions"></full-calendar>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="col-xxxl-4 col-lg-5 col-md-12">
+        <app-working-schedule [month] = "month" [year] = "year"  [day] = "day" />
+    </div>
+</div>

@@ -36,23 +36,23 @@ export class UtilsService {
     }
 
    GetMonth(): any[] {
-    let m =  
-    [
-      { id: 1, name: "January" },
-      { id: 2, name: "February" },
-      { id: 3, name: "March" },
-      { id: 4, name: "April" },
-      { id: 5, name: "May" },
-      { id: 6, name: "June" },
-      { id: 7, name: "July" },
-      { id: 8, name: "August" },
-      { id: 9, name: "September" },
-      { id: 10, name: "October" },
-      { id: 11, name: "November" },
-      { id: 12, name: "December" }
-    ]
+      let m =  
+      [
+        { id: 1, name: "Gennaio" },
+        { id: 2, name: "Febbraio" },
+        { id: 3, name: "Marzo" },
+        { id: 4, name: "Aprile" },
+        { id: 5, name: "Maggio" },
+        { id: 6, name: "Giugno" },
+        { id: 7, name: "Luglio" },
+        { id: 8, name: "Agosto" },
+        { id: 9, name: "Settembre" },
+        { id: 10, name: "Ottobre" },
+        { id: 11, name: "Novembre" },
+        { id: 12, name: "Dicembre" }
+      ]
 
-    return m;
-};
+      return m;
+  };
 
 }
