@@ -1,0 +1,163 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li aria-current="page" class="breadcrumb-item active">
+            {{ selectedCourseName ? 'Iscritti - ' + selectedCourseName : 'Iscritti corsi' }}
+        </li>
+    </ol>
+</nav>
+
+<mat-card *ngIf="courseDetails" class="course-summary-card trinta-card mb-25 bg-white border-none d-block">
+    <mat-card-content>
+        <div class="summary-head">
+            <div>
+                <span>Corso</span>
+                <h3>{{courseDetails.title}}</h3>
+            </div>
+            <div class="summary-actions">
+                <span class="status-badge" [ngClass]="courseDetails.isPublished ? 'status-confirmed' : 'status-cancelled'">
+                    {{courseDetails.isPublished ? 'Aperto' : 'Chiuso'}}
+                </span>
+                <button type="button" mat-flat-button color="primary" (click)="addSubscriber()">
+                    Aggiungi iscritto
+                </button>
+            </div>
+        </div>
+        <p class="summary-description">{{courseDetails.description || 'Nessuna descrizione inserita'}}</p>
+        <div class="summary-grid">
+            <div>
+                <span>Data</span>
+                <strong>{{getSummaryDate()}}</strong>
+            </div>
+            <div>
+                <span>Orario</span>
+                <strong>{{courseDetails.startTime}} - {{courseDetails.endTime}}</strong>
+            </div>
+            <div>
+                <span>Sala</span>
+                <strong>{{getSummaryBooking()?.space?.name || '-'}}</strong>
+            </div>
+            <div>
+                <span>Gestore</span>
+                <strong>{{getSummaryBooking()?.user?.name || '-'}}</strong>
+            </div>
+            <div>
+                <span>Posti</span>
+                <strong>{{courseDetails.capacity}}</strong>
+            </div>
+            <div>
+                <span>Accesso</span>
+                <strong>{{getEnrollmentLabel()}}</strong>
+            </div>
+            <div>
+                <span>Prezzo</span>
+                <strong>{{formatAmount(courseDetails.price)}}</strong>
+            </div>
+            <div>
+                <span>Prenotazione spazio</span>
+                <strong>{{getSummaryBooking()?.name || '-'}}</strong>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="trinta-card to-do-list-card mb-25 bg-white border-none d-block">
+    <mat-card-content>
+        <div class="to-do-list-table">
+            <div class="table-responsive">
+                <table mat-table [dataSource]="dataSource">
+                    <ng-container matColumnDef="user">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Iscritto</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">{{getUser(element)?.name || '-'}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="email">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Email</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">{{getUser(element)?.email || '-'}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="space">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Spazio</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">{{getBooking(element)?.space?.name || '-'}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="date">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Data corso</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">{{getCourseDate(element)}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Iscrizione</th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <span class="status-badge" [ngClass]="'status-' + element.status">
+                                {{getStatusLabel(element.status)}}
+                            </span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="amount">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Importo</th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <div class="action">
+                                <h6 class="mt-0 mb-0">{{formatAmount(element.amount)}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="paymentStatus">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Pagamento</th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <span class="status-badge" [ngClass]="'payment-' + element.paymentStatus">
+                                {{getPaymentStatusLabel(element.paymentStatus)}}
+                            </span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="createdAt">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Iscritto il</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">{{getCreatedAt(element)}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="delete">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Elimina</th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <div class="action">
+                                <button type="button" mat-button (click)="deleteSubscriber(element)">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell text-center no-data" [attr.colspan]="displayedColumns.length">
+                            Nessun iscritto trovato
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <mat-paginator [pageSizeOptions]="[20, 50, 100]"></mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>

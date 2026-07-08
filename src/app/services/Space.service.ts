@@ -25,6 +25,22 @@ export class SpacesService {
       return this.http.get<Spaces>(this.apiUrl + "/" + id);
     }
 
+    create(space: Partial<Spaces>): Observable<Spaces>{
+      const token = localStorage.getItem('authToken');
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+      return this.http.post<Spaces>(this.apiUrl, space, { headers });
+    }
+
+    update(id: string, space: Partial<Spaces>): Observable<Spaces>{
+      const token = localStorage.getItem('authToken');
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+      return this.http.put<Spaces>(this.apiUrl + "/" + id, space, { headers });
+    }
+
     delete(id: string):Observable<boolean>{
       const token = localStorage.getItem('authToken'); 
         const headers = new HttpHeaders({

@@ -303,3 +303,14 @@ a.recovery{
     cursor: pointer;
     color: var(--primaryColor);
 }
+
+.login-error {
+    padding: 12px 14px;
+    border: 1px solid #f5c2c7;
+    border-radius: 6px;
+    background: #fdecec;
+    color: #b42318;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.35;
+}

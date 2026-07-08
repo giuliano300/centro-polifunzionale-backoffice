@@ -1,0 +1,106 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <button type="button" mat-button (click)="cancel()">Spazi</button>
+    </li>
+    <li aria-current="page" class="breadcrumb-item active">
+      {{ id ? 'Modifica spazio' : 'Aggiungi spazio' }}
+    </li>
+  </ol>
+</nav>
+
+<mat-card class="trinta-card mb-25 bg-white border-none d-block">
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-form">
+      <section class="form-section">
+        <h3>Dati spazio</h3>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name" autocomplete="off">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo affitto</mat-label>
+            <mat-select formControlName="rentalUnit">
+              <mat-option value="whole_room">Stanza intera</mat-option>
+              <mat-option value="workstation">Postazione di lavoro</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descrizione</mat-label>
+          <textarea matInput formControlName="description" rows="4"></textarea>
+        </mat-form-field>
+      </section>
+
+      <section class="form-section">
+        <h3>Acquisto e disponibilita</h3>
+        <div class="form-grid three">
+          <mat-form-field appearance="outline">
+            <mat-label>Modalita acquisto</mat-label>
+            <mat-select formControlName="rentalModes" multiple>
+              <mat-option value="time">A tempo</mat-option>
+              <mat-option value="full_day">Tutta la giornata</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="hasTimeRental">
+            <mat-label>Frazione minuti</mat-label>
+            <input matInput type="number" formControlName="timeSlotMinutes" min="15" step="15">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="form.value.rentalUnit === 'workstation'">
+            <mat-label>Numero postazioni</mat-label>
+            <input matInput type="number" formControlName="workstationCount" min="1">
+          </mat-form-field>
+        </div>
+
+        <div class="form-grid three">
+          <mat-form-field appearance="outline" *ngIf="hasTimeRental">
+            <mat-label>Costo frazione</mat-label>
+            <input matInput type="number" formControlName="hourlyRate" min="0">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="hasFullDayRental">
+            <mat-label>Costo giornata</mat-label>
+            <input matInput type="number" formControlName="dailyRate" min="0">
+          </mat-form-field>
+
+          <div class="availability-toggle">
+            <mat-checkbox formControlName="isAvailable">Disponibile</mat-checkbox>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h3>Orari settimanali</h3>
+        <div class="schedule-grid" formArrayName="openingHours">
+          <div class="schedule-row header">
+            <span>Giorno</span>
+            <span>Aperto</span>
+            <span>Apertura</span>
+            <span>Chiusura</span>
+          </div>
+
+          <div class="schedule-row" *ngFor="let slot of openingHours.controls; let i = index" [formGroupName]="i">
+            <strong>{{days[i].label}}</strong>
+            <mat-checkbox formControlName="isOpen"></mat-checkbox>
+            <input class="time-input" type="time" formControlName="openTime">
+            <input class="time-input" type="time" formControlName="closeTime">
+          </div>
+        </div>
+      </section>
+
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+      <div class="actions">
+        <button type="button" mat-button (click)="cancel()">Annulla</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="isSaving || isLoading">
+          {{ isSaving ? 'Salvataggio...' : 'Salva' }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

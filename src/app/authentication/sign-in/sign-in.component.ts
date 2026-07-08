@@ -23,6 +23,7 @@ import { JwtPayloads } from '../../interfaces/JwtPayloads';
 })
 export class SignInComponent {
     isError: boolean = false;
+    errorMessage: string = 'Username o password errati.';
     user: JwtPayloads | null = null;
     options: any [] = [];
 
@@ -37,6 +38,9 @@ export class SignInComponent {
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(4)]]
         });
+        this.authForm.valueChanges.subscribe(() => {
+            this.isError = false;
+        });
         this.options = [{id: 1, name: "Entity"}, {id: 2, name: "Location"}];
     }
 
@@ -46,25 +50,32 @@ export class SignInComponent {
     // Form
     authForm: FormGroup;
     onSubmit() {
+        this.isError = false;
+
         if (this.authForm.valid) {
             let login:Login = {
                 "email": this.authForm.value["email"],
                 "password" : this.authForm.value["password"]
             };
             
-            this.userService.login(login).subscribe((data: any) => {
-                if(data == null)
+            this.userService.login(login).subscribe({
+                next: (data: any) => {
+                    if(data == null)
+                        this.isError = true;
+                    else
+                    {
+                        this.user! = this.authService.decodeToken(data)!;
+                        localStorage.setItem('isLogin', "true");
+                        localStorage.setItem('loginName', this.user!.name!);
+                        this.authService.setIsLogin(true);
+                        this.authService.setLoginName(this.user!.name!);
+                        localStorage.setItem('authToken', data.access_token);
+                        localStorage.setItem('user', JSON.stringify(this.user!));
+                        this.router.navigate(['/spaces']);
+                    }
+                },
+                error: () => {
                     this.isError = true;
-                else
-                {
-                    this.user! = this.authService.decodeToken(data)!;
-                    localStorage.setItem('isLogin', "true");
-                    localStorage.setItem('loginName', this.user!.name!);
-                    this.authService.setIsLogin(true);
-                    this.authService.setLoginName(this.user!.name!);
-                    localStorage.setItem('authToken', data.access_token);
-                    localStorage.setItem('user', JSON.stringify(this.user!));
-                    this.router.navigate(['/spaces']);
                 }
             });
                         

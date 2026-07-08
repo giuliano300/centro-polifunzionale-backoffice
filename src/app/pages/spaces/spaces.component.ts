@@ -20,7 +20,7 @@ import { Router } from '@angular/router';
 export class SpacesComponent {
  spaces: Spaces[] = [];
 
- displayedColumns: string[] = ['name', 'description', 'hourlyRate', 'isAvailable','viewDetails', 'edit', 'delete'];
+ displayedColumns: string[] = ['name', 'rentalUnit', 'rentalModes', 'rates', 'schedule', 'isAvailable','viewDetails', 'edit', 'delete'];
 
  dataSource = new MatTableDataSource<Spaces>(this.spaces);
 
@@ -85,6 +85,42 @@ export class SpacesComponent {
 
     BookingItem(item:Spaces){
       this.router.navigate(["/space/bookings/" + item._id]);
+    }
+
+    getRentalUnitLabel(item: Spaces): string {
+      return item.rentalUnit === 'workstation' ? 'Postazioni' : 'Stanza intera';
+    }
+
+    getRentalModesLabel(item: Spaces): string {
+      const labels: Record<string, string> = {
+        time: 'A tempo',
+        full_day: 'Giornata'
+      };
+
+      return (item.rentalModes || ['time']).map((mode) => labels[mode] || mode).join(', ');
+    }
+
+    getRatesLabel(item: Spaces): string {
+      const rates: string[] = [];
+      if ((item.rentalModes || ['time']).includes('time')) {
+        rates.push(`${item.hourlyRate || 0}/frazione`);
+      }
+      const daily = item.dailyRate ? `${item.dailyRate}/giorno` : null;
+      if ((item.rentalModes || []).includes('full_day') && daily) {
+        rates.push(daily);
+      }
+      return rates.length ? rates.join(' - ') : '-';
+    }
+
+    getScheduleLabel(item: Spaces): string {
+      const openSlots = (item.openingHours || []).filter((slot) => slot.isOpen);
+      if (!openSlots.length) {
+        return 'Sempre chiuso';
+      }
+
+      const first = openSlots[0];
+      const sameHours = openSlots.every((slot) => slot.openTime === first.openTime && slot.closeTime === first.closeTime);
+      return sameHours ? `${first.openTime} - ${first.closeTime}` : 'Orari variabili';
     }
 
   }

@@ -13,6 +13,15 @@ export class BookingService {
   
   constructor(private http: HttpClient) {}
 
+  getAllBookings(): Observable<BookingWithPayments[]>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<BookingWithPayments[]>(this.apiUrl, { headers });
+  }
+
   getBookings(id: string, year?: string, month?: string): Observable<BookingWithPayments[]>{
     const token = localStorage.getItem('authToken'); 
       const headers = new HttpHeaders({
@@ -34,5 +43,14 @@ export class BookingService {
 
     return this.http.get<BookingWithPayments[]>(url, { headers });    
   }  
+
+  delete(id: string): Observable<{ deleted: boolean }>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.delete<{ deleted: boolean }>(this.apiUrl + "/" + id, { headers });
+  }
 
 }

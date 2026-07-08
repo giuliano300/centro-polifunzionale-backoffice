@@ -1,0 +1,82 @@
+<div class="course-dialog">
+  <div class="dialog-header">
+    <div>
+      <span class="eyebrow">{{ isEditMode ? 'Modifica corso' : 'Nuovo corso' }}</span>
+      <h1 mat-dialog-title>{{ isEditMode ? 'Modifica corso' : 'Organizza corso' }}</h1>
+    </div>
+    <span class="publish-pill" [class.closed]="!form.value.isPublished">
+      {{ form.value.isPublished ? 'Aperto' : 'Chiuso' }}
+    </span>
+  </div>
+
+  <div class="booking-summary">
+    <div>
+      <span>Spazio</span>
+      <strong>{{ spaceName }}</strong>
+    </div>
+    <div>
+      <span>Data</span>
+      <strong>{{ bookingDate }}</strong>
+    </div>
+    <div>
+      <span>Orario</span>
+      <strong>{{ bookingTime }}</strong>
+    </div>
+  </div>
+
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" class="course-form">
+      <div class="field-block main-fields">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome corso</mat-label>
+          <input matInput formControlName="title" autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Descrizione</mat-label>
+          <textarea matInput formControlName="description" rows="4"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="field-block form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Posti disponibili</mat-label>
+          <input matInput type="number" min="1" formControlName="capacity">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Accesso</mat-label>
+          <mat-select formControlName="enrollmentType">
+            <mat-option value="free">Prenotazione gratuita</mat-option>
+            <mat-option value="paid">Acquisto</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="field-block price-row" *ngIf="isPaidCourse">
+        <mat-form-field appearance="outline">
+          <mat-label>Prezzo</mat-label>
+          <input matInput type="number" min="0" formControlName="price">
+          <span matTextPrefix>€&nbsp;</span>
+        </mat-form-field>
+      </div>
+
+      <label class="publish-control">
+        <mat-checkbox formControlName="isPublished"></mat-checkbox>
+        <span>
+          <strong>Aperto alle iscrizioni</strong>
+          <small>Il corso sarà visibile e prenotabile dagli utenti.</small>
+        </span>
+      </label>
+
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    </form>
+  </div>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button type="button" (click)="cancel()">Annulla</button>
+    <button mat-flat-button color="primary" type="button" [disabled]="isSaving" (click)="submit()">
+      {{ isSaving ? 'Salvataggio...' : (isEditMode ? 'Salva modifiche' : 'Crea corso') }}
+    </button>
+  </mat-dialog-actions>
+</div>

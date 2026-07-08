@@ -18,7 +18,11 @@ import { FeathericonsModule } from "../../../icons/feathericons/feathericons.mod
 import { MatSelect } from "@angular/material/select";
 import { MatOptionModule } from "@angular/material/core";
 import { UtilsService } from '../../../services/utils.service';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
+import { CourseDialogComponent } from './course-dialog/course-dialog.component';
+import { Course } from '../../../interfaces/courses';
+import { CourseService } from '../../../services/Course.service';
 
 @Component({
   selector: 'app-bookings',
@@ -36,7 +40,8 @@ import { NgFor } from '@angular/common';
     MatSelect,
     MatOptionModule,
     ReactiveFormsModule,
-    NgFor
+    NgFor,
+    NgIf
 ],
   templateUrl: './bookings.component.html',
   styleUrl: './bookings.component.scss'
@@ -44,7 +49,9 @@ import { NgFor } from '@angular/common';
 export class BookingsComponent {
  bookingWithPayments: BookingWithPayments[] = [];
 
- displayedColumns: string[] = ['name', 'date', 'startTime', 'endTime', 'status','amount', 'paymentStatus', 'delete'];
+ courses: Course[] = [];
+
+ displayedColumns: string[] = ['name', 'date', 'startTime', 'endTime', 'status','amount', 'paymentStatus', 'course', 'delete'];
 
  dataSource = new MatTableDataSource<BookingWithPayments>(this.bookingWithPayments);
 
@@ -73,7 +80,8 @@ export class BookingsComponent {
       private spaceService: SpacesService,
       private dialog: MatDialog,
       private fb: FormBuilder,
-      private utilService: UtilsService
+      private utilService: UtilsService,
+      private courseService: CourseService
   ) 
   {
      this.form = this.fb.group({
@@ -93,13 +101,17 @@ export class BookingsComponent {
   }
 
   ngOnInit(): void {
-    this.year = new Date().getFullYear();
-    this.month = new Date().getMonth() + 1;
+    const queryMonth = Number(this.route.snapshot.queryParamMap.get('month'));
+    const queryYear = Number(this.route.snapshot.queryParamMap.get('year'));
+
+    this.year = queryYear || new Date().getFullYear();
+    this.month = queryMonth || new Date().getMonth() + 1;
 
     this.route.paramMap.subscribe(params => {
       this.id = params.get('id')!;
       this.getSpace(this.id!);
       this.getBookings(this.id!, this.year?.toString()!, this.month?.toString()!);
+      this.getCourses();
     });
 
 
@@ -121,6 +133,13 @@ export class BookingsComponent {
             this.spaceName = data.name;
         }
       });
+   }
+
+   getCourses(){
+      this.courseService.getCourses()
+        .subscribe((data: Course[]) => {
+          this.courses = data;
+        });
    }
 
    getBookings(id: string, year?: string, month?: string){
@@ -146,6 +165,75 @@ export class BookingsComponent {
 
     UpdateItem(item:Spaces){
       this.router.navigate(["/spaces/add/" + item._id]);
+    }
+
+    DeleteItem(item: BookingWithPayments){
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '500px'
+      });
+
+      dialogRef.afterClosed().subscribe((result: boolean) => {
+        if (result) {
+          this.bookingService.delete(item.booking._id)
+            .subscribe(() => this.getBookings(this.id!, this.year?.toString()!, this.month?.toString()!));
+        }
+      });
+    }
+
+    IsPaid(item: BookingWithPayments): boolean {
+      return item.payments?.some(payment => payment.status === 'PAID') || false;
+    }
+
+    IsFutureOrToday(item: BookingWithPayments): boolean {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const bookingDate = new Date(item.booking.date);
+      bookingDate.setHours(0, 0, 0, 0);
+
+      return bookingDate >= today;
+    }
+
+    CanCreateCourse(item: BookingWithPayments): boolean {
+      return this.IsPaid(item) && this.IsFutureOrToday(item);
+    }
+
+    GetCourse(item: BookingWithPayments): Course | undefined {
+      return this.courses.find((course) => this.GetCourseBookingId(course) === item.booking._id);
+    }
+
+    GetCourseBookingId(course: Course): string | null {
+      if (!course.booking) {
+        return null;
+      }
+
+      return typeof course.booking === 'string' ? course.booking : course.booking._id;
+    }
+
+    CanShowCourseAction(item: BookingWithPayments): boolean {
+      return !!this.GetCourse(item) || this.CanCreateCourse(item);
+    }
+
+    CreateCourse(item: BookingWithPayments){
+      const course = this.GetCourse(item);
+      if (!course && !this.CanCreateCourse(item)) {
+        return;
+      }
+
+      const dialogRef = this.dialog.open(CourseDialogComponent, {
+        width: '680px',
+        data: {
+          bookingWithPayments: item,
+          course
+        }
+      });
+
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result) {
+          this.getCourses();
+          this.getBookings(this.id!, this.year?.toString()!, this.month?.toString()!);
+        }
+      });
     }
 
 

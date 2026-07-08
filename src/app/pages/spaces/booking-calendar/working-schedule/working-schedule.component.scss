@@ -6,6 +6,15 @@
                 border-radius: 6px;
                 margin-bottom: 8px;
                 background-color: #f7faff;
+                transition: var(--transition);
+
+                &.cursor-pointer {
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: #eef4ff;
+                    }
+                }
 
                 .content {
                     .number {
@@ -29,6 +38,17 @@
                 }
                 &:last-child {
                     margin-bottom: 0;
+                }
+            }
+
+            .empty-message {
+                color: var(--bodyColor);
+                cursor: default;
+                text-align: center;
+                background-color: #f7faff;
+
+                &:hover {
+                    background-color: #f7faff;
                 }
             }
         }
@@ -116,6 +136,19 @@
                                 color: var(--whiteColor);
                                 box-shadow: unset !important;
                                 border-color: var(--primaryColor) !important;
+                            }
+                        }
+                        &.has-bookings {
+                            .mat-calendar-body-cell-content {
+                                background-color: #eaf4ff;
+                                border-color: var(--primaryColor);
+                                color: var(--primaryColor);
+                                font-weight: 600;
+                            }
+
+                            .mat-calendar-body-selected {
+                                color: var(--whiteColor);
+                                background-color: var(--primaryColor);
                             }
                         }
                         .mat-calendar-body-cell-content {

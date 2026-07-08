@@ -38,6 +38,8 @@ export class CalendarComponent {
 
     day: number | null = null;
 
+    selectedDate: Date = new Date();
+
     id: string = "";
         
     calendarOptions: CalendarOptions = {
@@ -56,13 +58,14 @@ export class CalendarComponent {
     };
 
     onDatesSet(dateInfo: DatesSetArg) {
-        const start = new Date(dateInfo.startStr);
-        const end = new Date(dateInfo.endStr);
+        const start = dateInfo.view.currentStart;
 
         this.month = start.getMonth() + 1; 
-        this.year = end.getFullYear();
+        this.year = start.getFullYear();
         this.day = 1;
-        this.getBookings(this.id);
+        if (this.id) {
+            this.getBookings(this.id, this.year.toString(), this.month.toString());
+        }
     }
 
     constructor(
@@ -78,7 +81,7 @@ export class CalendarComponent {
 
     handleEventClick(clickInfo: any) {
         const event = clickInfo.event;
-        console.log(event);
+        this.selectedDate = new Date(event.startStr);
         this.dialog.open(EventDetailDialogComponent, {
             data: 
             {
@@ -90,13 +93,35 @@ export class CalendarComponent {
         });
     }
 
+    openBookingDetail(item: BookingWithPayments) {
+        this.dialog.open(EventDetailDialogComponent, {
+            data:
+            {
+                title: item.booking.user.name,
+                date: item.booking.date,
+                extendedProps: {
+                    bookingId: item.booking._id,
+                    user: item.booking.user,
+                    space: item.booking.space,
+                    name: item.booking.name,
+                    startTime: item.booking.startTime,
+                    endTime: item.booking.endTime,
+                    status: item.booking.status,
+                    payments: item.payments
+                }
+            },
+            width: '600px'
+        });
+    }
+
     ngOnInit(): void {
 
         this.route.paramMap.subscribe(params => {
             this.id = params.get('id')!;
             this.year = parseInt(params.get('year')!);
             this.month = parseInt(params.get('month')!);
-            this.day = new Date().getDay();
+            this.day = 1;
+            this.selectedDate = new Date(this.year, this.month - 1, this.day);
             const monthStr = this.month.toString().padStart(2, '0');
             const dateStr = `${this.year}-${monthStr}-01`;
 
@@ -127,11 +152,18 @@ export class CalendarComponent {
         this.bookingService.getBookings(id, year, month)
         .subscribe((data: BookingWithPayments[]) => {
             if (!data || data.length === 0) {
+                this.bookingWithPayments = [];
+                this.calendarOptions.events = [];
                 console.log('Nessun dato disponibile');
             } 
             else 
             {
                 this.bookingWithPayments = data;
+                const firstBookingDate = data.length ? new Date(data[0].booking.date) : null;
+                if (firstBookingDate) {
+                    this.selectedDate = firstBookingDate;
+                    this.day = firstBookingDate.getDate();
+                }
                 this.getCalendar();
             }
         });
@@ -143,7 +175,12 @@ export class CalendarComponent {
 
 
     gotoBooking(){
-      this.router.navigate(["/space/bookings/" + this.id]);
+      this.router.navigate(["/space/bookings/" + this.id], {
+        queryParams: {
+            month: this.month,
+            year: this.year
+        }
+      });
     }
 
     getCalendar()

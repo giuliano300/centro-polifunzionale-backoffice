@@ -17,6 +17,12 @@
         </mat-card>
     </div>
     <div class="col-xxxl-4 col-lg-5 col-md-12">
-        <app-working-schedule [month] = "month" [year] = "year"  [day] = "day" />
+        <app-working-schedule
+            [month]="month"
+            [year]="year"
+            [selectedDate]="selectedDate"
+            [bookings]="bookingWithPayments"
+            (bookingSelected)="openBookingDetail($event)"
+        />
     </div>
 </div>

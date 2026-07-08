@@ -1,0 +1,176 @@
+.course-dialog {
+  width: min(720px, 86vw);
+  max-width: 100%;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #eef1f6;
+
+  h1 {
+    margin: 3px 0 0;
+    padding: 0;
+    color: #1f2937;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+}
+
+.eyebrow {
+  color: #6b7a90;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.publish-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 76px;
+  min-height: 30px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #e8f6ee;
+  color: #167345;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+
+  &.closed {
+    background: #fdecec;
+    color: #b42318;
+  }
+}
+
+.booking-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px 24px;
+  background: #f8fafc;
+  border-bottom: 1px solid #eef1f6;
+
+  div {
+    min-width: 0;
+  }
+
+  span {
+    display: block;
+    margin-bottom: 5px;
+    color: #7b8798;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  strong {
+    display: block;
+    overflow: hidden;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.dialog-content {
+  padding: 22px 24px 6px !important;
+}
+
+.course-form {
+  display: grid;
+  gap: 16px;
+}
+
+.field-block {
+  display: grid;
+  gap: 14px;
+}
+
+.main-fields {
+  grid-template-columns: 1fr;
+}
+
+.form-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.price-row {
+  max-width: 240px;
+}
+
+.publish-control {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #e7ecf3;
+  border-radius: 8px;
+  background: #fbfcfe;
+  cursor: pointer;
+
+  strong,
+  small {
+    display: block;
+  }
+
+  strong {
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  small {
+    margin-top: 3px;
+    color: #7b8798;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+}
+
+.error-message {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: #fdecec;
+  color: #b42318;
+  font-weight: 700;
+}
+
+.dialog-actions {
+  gap: 10px;
+  padding: 16px 24px 24px !important;
+  border-top: 1px solid #eef1f6;
+}
+
+@media (max-width: 680px) {
+  .course-dialog {
+    width: min(94vw, 720px);
+  }
+
+  .dialog-header,
+  .booking-summary,
+  .dialog-content,
+  .dialog-actions {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .booking-summary,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .price-row {
+    max-width: none;
+  }
+}

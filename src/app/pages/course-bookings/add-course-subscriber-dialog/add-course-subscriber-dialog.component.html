@@ -1,0 +1,73 @@
+<h1 mat-dialog-title>Aggiungi iscritto</h1>
+
+<div mat-dialog-content class="subscriber-dialog">
+  <mat-tab-group>
+    <mat-tab label="Cliente esistente">
+      <form [formGroup]="searchForm" class="search-box" (ngSubmit)="searchClients()">
+        <mat-form-field appearance="outline">
+          <mat-label>Email, telefono o codice fiscale</mat-label>
+          <input matInput formControlName="search" autocomplete="off">
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="isSearching">
+          {{isSearching ? 'Ricerca...' : 'Cerca'}}
+        </button>
+      </form>
+
+      <div class="results-list" *ngIf="results.length">
+        <button
+          type="button"
+          class="result-row"
+          *ngFor="let user of results"
+          [class.selected]="selectedUser?._id === user._id"
+          (click)="selectUser(user)"
+        >
+          <strong>{{user.name}}</strong>
+          <span>{{user.email}}</span>
+          <small>{{user.phone || '-'}} · {{user.taxCode || '-'}}</small>
+        </button>
+      </div>
+
+      <p class="empty-state" *ngIf="!results.length && !isSearching">
+        Cerca un cliente per email, telefono o codice fiscale.
+      </p>
+    </mat-tab>
+
+    <mat-tab label="Nuovo cliente">
+      <form [formGroup]="newClientForm" class="new-client-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome e cognome</mat-label>
+          <input matInput formControlName="name" autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" autocomplete="off">
+        </mat-form-field>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Telefono</mat-label>
+            <input matInput formControlName="phone" autocomplete="off">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Codice fiscale</mat-label>
+            <input matInput formControlName="taxCode" autocomplete="off">
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+
+  <p *ngIf="errorMessage" class="error-message">{{errorMessage}}</p>
+</div>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Annulla</button>
+  <button mat-button type="button" [disabled]="!selectedUser || isSaving" (click)="addSelectedUser()">
+    Iscrivi selezionato
+  </button>
+  <button mat-flat-button color="primary" type="button" [disabled]="newClientForm.invalid || isSaving" (click)="createAndAddClient()">
+    Crea e iscrivi
+  </button>
+</mat-dialog-actions>

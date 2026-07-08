@@ -7,70 +7,33 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-    <mat-calendar [(selected)]="selected" 
-        (monthSelected)="onMonthSelected($event)" 
-        (yearSelected)="onYearSelected($event)" [startAt]="selected">
-    </mat-calendar>        
+    <mat-calendar
+        [(selected)]="selected"
+        [startAt]="selected"
+        [dateClass]="dateClass"
+        (selectedChange)="onSelectedChange($event)">
+    </mat-calendar>
         <ul class="events-list p-0 m-0 list-unstyled">
-            <li class="d-sm-flex align-items-center justify-content-between">
+            <li
+                *ngFor="let item of selectedBookings; let index = index"
+                class="d-sm-flex align-items-center justify-content-between cursor-pointer"
+                (click)="selectBooking(item)">
                 <div class="content d-flex align-items-center">
                     <div class="number d-flex align-items-center justify-content-center text-center bg-primary text-white fw-semibold rounded-circle flex-shrink-0">
-                        1
+                        {{ index + 1 }}
                     </div>
                     <div class="title flex-grow-1">
                         <h6>
-                            Meeting with Developers
+                            {{ item.booking.name || item.booking.user.name }}
                         </h6>
                         <span class="d-block time text-body">
-                            7:30 AM - 10:00 AM
+                            {{ item.booking.startTime }} - {{ item.booking.endTime }} · {{ item.booking.user.name }}
                         </span>
                     </div>
                 </div>
             </li>
-            <li class="d-sm-flex align-items-center justify-content-between">
-                <div class="content d-flex align-items-center">
-                    <div class="number d-flex align-items-center justify-content-center text-center bg-primary text-white fw-semibold rounded-circle flex-shrink-0">
-                        2
-                    </div>
-                    <div class="title flex-grow-1">
-                        <h6>
-                            Develop A Marketing Strategy
-                        </h6>
-                        <span class="d-block time text-body">
-                            10:30 AM - 12:00 PM
-                        </span>
-                    </div>
-                </div>
-            </li>
-            <li class="d-sm-flex align-items-center justify-content-between">
-                <div class="content d-flex align-items-center">
-                    <div class="number d-flex align-items-center justify-content-center text-center bg-primary text-white fw-semibold rounded-circle flex-shrink-0">
-                        3
-                    </div>
-                    <div class="title flex-grow-1">
-                        <h6>
-                            Prepare For App Deployment
-                        </h6>
-                        <span class="d-block time text-body">
-                            2:30 AM - 6:20 PM
-                        </span>
-                    </div>
-                </div>
-            </li>
-            <li class="d-sm-flex align-items-center justify-content-between">
-                <div class="content d-flex align-items-center">
-                    <div class="number d-flex align-items-center justify-content-center text-center bg-primary text-white fw-semibold rounded-circle flex-shrink-0">
-                        4
-                    </div>
-                    <div class="title flex-grow-1">
-                        <h6>
-                            Reusable Components Function
-                        </h6>
-                        <span class="d-block time text-body">
-                            10:30 AM - 12:00 PM
-                        </span>
-                    </div>
-                </div>
+            <li *ngIf="selectedBookings.length === 0" class="empty-message">
+                Nessuna prenotazione per il giorno selezionato
             </li>
         </ul>
     </mat-card-content>
