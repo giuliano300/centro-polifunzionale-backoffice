@@ -8,7 +8,7 @@
           <mat-label>Email, telefono o codice fiscale</mat-label>
           <input matInput formControlName="search" autocomplete="off">
         </mat-form-field>
-        <button mat-flat-button color="primary" type="submit" [disabled]="isSearching">
+        <button mat-flat-button color="primary" class="action-filter" type="submit" [disabled]="isSearching">
           {{isSearching ? 'Ricerca...' : 'Cerca'}}
         </button>
       </form>
@@ -53,6 +53,9 @@
           <mat-form-field appearance="outline">
             <mat-label>Codice fiscale</mat-label>
             <input matInput formControlName="taxCode" autocomplete="off">
+            <mat-error *ngIf="newClientForm.get('taxCode')?.hasError('taxCode')">
+              Codice fiscale non valido
+            </mat-error>
           </mat-form-field>
         </div>
       </form>
@@ -63,11 +66,11 @@
 </div>
 
 <mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="cancel()">Annulla</button>
-  <button mat-button type="button" [disabled]="!selectedUser || isSaving" (click)="addSelectedUser()">
+  <button mat-button type="button" class="action-cancel" (click)="cancel()">Annulla</button>
+  <button mat-button type="button" class="action-save" [disabled]="!selectedUser || isSaving" (click)="addSelectedUser()">
     Iscrivi selezionato
   </button>
-  <button mat-flat-button color="primary" type="button" [disabled]="newClientForm.invalid || isSaving" (click)="createAndAddClient()">
+  <button mat-flat-button color="primary" class="action-new" type="button" [disabled]="newClientForm.invalid || isSaving" (click)="createAndAddClient()">
     Crea e iscrivi
   </button>
 </mat-dialog-actions>

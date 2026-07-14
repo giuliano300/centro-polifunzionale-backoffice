@@ -6,6 +6,7 @@ import { routes } from './app/app.routes';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideHttpClient } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 // Definisci l'URL globale dell'API
 export const API_URL = 'http://localhost:3000/';
@@ -19,6 +20,7 @@ bootstrapApplication(AppComponent, {
     provideAnimations(),
     provideToastr(), 
     provideHttpClient(),
-    provideAuth(() => getAuth())
+    provideAuth(() => getAuth()),
+    { provide: MAT_DATE_LOCALE, useValue: 'it-IT' }
   ]
 }).catch(err => console.error(err));

@@ -4,6 +4,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Course, CreateCourse } from '../interfaces/courses';
 
+export interface CourseFilters {
+  start?: string;
+  end?: string;
+  status?: string;
+  search?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,13 +19,14 @@ export class CourseService {
 
   constructor(private http: HttpClient) {}
 
-  getCourses(): Observable<Course[]>{
+  getCourses(filters: CourseFilters = {}): Observable<Course[]>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get<Course[]>(this.apiUrl, { headers });
+    const params = this.buildQuery(filters);
+    return this.http.get<Course[]>(this.apiUrl + params, { headers });
   }
 
   getCourse(id: string): Observable<Course>{
@@ -55,5 +63,16 @@ export class CourseService {
     });
 
     return this.http.delete<{ deleted: boolean }>(this.apiUrl + "/" + id, { headers });
+  }
+
+  private buildQuery(filters: object): string {
+    const params = new URLSearchParams();
+    Object.entries(filters as Record<string, unknown>).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value.toString());
+      }
+    });
+    const query = params.toString();
+    return query ? `?${query}` : '';
   }
 }

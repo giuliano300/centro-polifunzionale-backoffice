@@ -12,9 +12,10 @@ import { BookingsListComponent } from './pages/bookings/bookings-list.component'
 import { PaymentsComponent } from './pages/payments/payments.component';
 import { CoursesComponent } from './pages/courses/courses.component';
 import { CourseBookingsComponent } from './pages/course-bookings/course-bookings.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo : '/authentication', pathMatch: 'full' },
+    { path: '', redirectTo : '/dashboard', pathMatch: 'full' },
     {
         path: 'authentication',
         component: AuthenticationComponent,
@@ -26,6 +27,7 @@ export const routes: Routes = [
         path: '',
         canActivate: [AuthGuard],
         children: [
+            { path: 'dashboard', component: DashboardComponent },
             { path: 'spaces', component: SpacesComponent },
             { path: 'spaces/add', component: SpaceFormComponent },
             { path: 'spaces/add/:id', component: SpaceFormComponent },

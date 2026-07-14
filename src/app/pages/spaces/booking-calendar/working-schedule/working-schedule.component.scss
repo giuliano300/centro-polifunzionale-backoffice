@@ -5,14 +5,14 @@
                 padding: 19px 15px;
                 border-radius: 6px;
                 margin-bottom: 8px;
-                background-color: #f7faff;
+                background-color: var(--calendar-panel-bg);
                 transition: var(--transition);
 
                 &.cursor-pointer {
                     cursor: pointer;
 
                     &:hover {
-                        background-color: #eef4ff;
+                        background-color: var(--calendar-soft-bg);
                     }
                 }
 
@@ -45,10 +45,10 @@
                 color: var(--bodyColor);
                 cursor: default;
                 text-align: center;
-                background-color: #f7faff;
+                background-color: var(--calendar-panel-bg);
 
                 &:hover {
-                    background-color: #f7faff;
+                    background-color: var(--calendar-panel-bg);
                 }
             }
         }
@@ -76,7 +76,7 @@
                         }
                         .mat-calendar-previous-button {
                             order: 1;
-                            background-color: #f7f7f7;
+                            background-color: var(--ui-surface-muted);
                         }
                         .mat-calendar-period-button {
                             order: 2;
@@ -96,7 +96,7 @@
                         }
                         .mat-calendar-next-button {
                             order: 3;
-                            background-color: #f7f7f7;
+                            background-color: var(--ui-surface-muted);
                         }
                     }
                     .mat-calendar-table-header {
@@ -140,7 +140,7 @@
                         }
                         &.has-bookings {
                             .mat-calendar-body-cell-content {
-                                background-color: #eaf4ff;
+                                background-color: var(--calendar-event-bg);
                                 border-color: var(--primaryColor);
                                 color: var(--primaryColor);
                                 font-weight: 600;
@@ -172,7 +172,7 @@
                     }
                     .mat-calendar-body-today {
                         &:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
-                            border-color: #e0e0e0;
+                            border-color: var(--calendar-border-muted);
                         }
                     }
                     .mat-calendar-body-cell-container {

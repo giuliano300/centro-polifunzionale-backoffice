@@ -160,7 +160,9 @@ export class CourseBookingsComponent {
     }
 
     const dialogRef = this.dialog.open(AddCourseSubscriberDialogComponent, {
-      width: '820px',
+      width: '860px',
+      minWidth: 'min(800px, 94vw)',
+      maxWidth: '94vw',
       data: { courseId: this.courseId }
     });
 
@@ -173,7 +175,9 @@ export class CourseBookingsComponent {
 
   deleteSubscriber(item: CourseBooking): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '500px'
+      width: '860px',
+      minWidth: 'min(800px, 94vw)',
+      maxWidth: '94vw'
     });
 
     dialogRef.afterClosed().subscribe((result: boolean) => {

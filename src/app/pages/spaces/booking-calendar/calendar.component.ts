@@ -89,7 +89,9 @@ export class CalendarComponent {
                 date: event.startStr,
                 extendedProps: event.extendedProps
             },
-            width: '600px'
+            width: '860px',
+            minWidth: 'min(800px, 94vw)',
+            maxWidth: '94vw'
         });
     }
 
@@ -110,7 +112,9 @@ export class CalendarComponent {
                     payments: item.payments
                 }
             },
-            width: '600px'
+            width: '860px',
+            minWidth: 'min(800px, 94vw)',
+            maxWidth: '94vw'
         });
     }
 
@@ -136,11 +140,7 @@ export class CalendarComponent {
     getSpace(id: string){
         this.spaceService.getSpace(id)
         .subscribe((data: Spaces) => {
-            if (!data) 
-            {
-                console.log('Nessun dato disponibile');
-            } 
-            else 
+            if (data) 
             {
                 this.space = data;
                 this.spaceName = data.name;
@@ -154,7 +154,6 @@ export class CalendarComponent {
             if (!data || data.length === 0) {
                 this.bookingWithPayments = [];
                 this.calendarOptions.events = [];
-                console.log('Nessun dato disponibile');
             } 
             else 
             {

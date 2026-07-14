@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item">
-      <button type="button" mat-button (click)="cancel()">Spazi</button>
+      <button type="button" mat-button class="action-cancel" (click)="cancel()">Spazi</button>
     </li>
     <li aria-current="page" class="breadcrumb-item active">
       {{ id ? 'Modifica spazio' : 'Aggiungi spazio' }}
@@ -96,8 +96,8 @@
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 
       <div class="actions">
-        <button type="button" mat-button (click)="cancel()">Annulla</button>
-        <button type="submit" mat-flat-button color="primary" [disabled]="isSaving || isLoading">
+        <button type="button" mat-button class="action-cancel" (click)="cancel()">Annulla</button>
+        <button type="submit" mat-flat-button color="primary" class="action-save" [disabled]="isSaving || isLoading">
           {{ isSaving ? 'Salvataggio...' : 'Salva' }}
         </button>
       </div>

@@ -1,0 +1,231 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li aria-current="page" class="breadcrumb-item active">Dashboard</li>
+    </ol>
+</nav>
+<div class="dashboard-page">
+  <div *ngIf="isLoading" class="dashboard-state">
+    <i-feather name="loader"></i-feather>
+    Caricamento statistiche...
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="dashboard-state error">
+    <i-feather name="alert-circle"></i-feather>
+    {{ errorMessage }}
+  </div>
+
+  <ng-container *ngIf="stats && !isLoading">
+    <section class="kpi-grid">
+      <a *ngFor="let card of kpis" [routerLink]="card.link" class="kpi-card" [ngClass]="'tone-' + card.tone">
+        <span class="kpi-icon">
+          <i-feather [name]="card.icon"></i-feather>
+        </span>
+        <span class="kpi-label">{{ card.label }}</span>
+        <strong>{{ card.value }}</strong>
+        <small>{{ card.detail }}</small>
+      </a>
+    </section>
+
+    <section class="dashboard-grid main-grid">
+      <mat-card class="dashboard-card revenue-card border-none">
+        <mat-card-content>
+          <div class="card-title-row">
+            <div>
+              <span>Economia</span>
+              <h2>Incassi e pagamenti</h2>
+            </div>
+            <i-feather name="trending-up"></i-feather>
+          </div>
+          <div class="revenue-total">{{ formatCurrency(stats.period.paidRevenue) }}</div>
+          <p>Totale incassato registrato. Questo mese: <strong>{{ formatCurrency(stats.period.monthRevenue) }}</strong>.</p>
+
+          <div class="status-list">
+            <div *ngFor="let item of paymentStatusItems" class="status-item">
+              <div>
+                <span>{{ getStatusLabel(item.status) }}</span>
+                <strong>{{ formatCurrency(item.amount) }}</strong>
+              </div>
+              <small>{{ formatNumber(item.count) }} movimenti</small>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="dashboard-card border-none">
+        <mat-card-content>
+          <div class="card-title-row">
+            <div>
+              <span>Utilizzo</span>
+              <h2>Spazi piu richiesti</h2>
+            </div>
+            <i-feather name="bar-chart-2"></i-feather>
+          </div>
+
+          <div class="usage-list" *ngIf="stats.breakdowns.spaceUsage.length; else noSpaceUsage">
+            <div *ngFor="let item of stats.breakdowns.spaceUsage" class="usage-row">
+              <div>
+                <strong>{{ item.name }}</strong>
+                <span>{{ formatNumber(item.bookings) }} prenotazioni negli ultimi 30 giorni</span>
+              </div>
+              <div class="usage-bar">
+                <span [style.width.%]="getPercent(item.bookings, maxSpaceUsage)"></span>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noSpaceUsage>
+            <div class="empty-panel">Nessun utilizzo recente degli spazi.</div>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <section class="dashboard-grid triple-grid">
+      <mat-card class="dashboard-card border-none">
+        <mat-card-content>
+          <div class="card-title-row compact">
+            <div>
+              <span>Nuovi</span>
+              <h2>Iscritti</h2>
+            </div>
+            <a routerLink="/users" mat-button class="action-filter">Vedi</a>
+          </div>
+          <div class="activity-list">
+            <div *ngFor="let user of stats.recent.users" class="activity-row">
+              <span class="avatar">{{ (user.name || user.email || '?').charAt(0).toUpperCase() }}</span>
+              <div>
+                <strong>{{ user.name || '-' }}</strong>
+                <small>{{ user.email || '-' }}</small>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="dashboard-card border-none">
+        <mat-card-content>
+          <div class="card-title-row compact">
+            <div>
+              <span>Nuove</span>
+              <h2>Prenotazioni</h2>
+            </div>
+            <a routerLink="/bookings" mat-button class="action-filter">Vedi</a>
+          </div>
+          <div class="activity-list">
+            <div *ngFor="let booking of stats.recent.bookings" class="activity-row">
+              <span class="avatar blue"><i-feather name="calendar"></i-feather></span>
+              <div>
+                <strong>{{ booking.name || getBookingUser(booking) }}</strong>
+                <small>{{ getBookingSpace(booking) }} - {{ formatDate(booking.date) }}</small>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="dashboard-card border-none">
+        <mat-card-content>
+          <div class="card-title-row compact">
+            <div>
+              <span>Nuovi</span>
+              <h2>Corsi</h2>
+            </div>
+            <a routerLink="/courses" mat-button class="action-filter">Vedi</a>
+          </div>
+          <div class="activity-list">
+            <div *ngFor="let course of stats.recent.courses" class="activity-row">
+              <span class="avatar violet"><i-feather name="book-open"></i-feather></span>
+              <div>
+                <strong>{{ course.title }}</strong>
+                <small>{{ getCourseSpace(course) }} - {{ formatDate(course.date) }}</small>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <section class="dashboard-grid bottom-grid">
+      <mat-card class="dashboard-card border-none">
+        <mat-card-content>
+          <div class="card-title-row">
+            <div>
+              <span>Agenda</span>
+              <h2>Prossime prenotazioni</h2>
+            </div>
+            <i-feather name="clock"></i-feather>
+          </div>
+          <div class="timeline-list">
+            <div *ngFor="let booking of stats.upcoming.bookings" class="timeline-row">
+              <span></span>
+              <div>
+                <strong>{{ formatDate(booking.date) }} - {{ booking.startTime }}</strong>
+                <small>{{ getBookingUser(booking) }} / {{ getBookingSpace(booking) }}</small>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="dashboard-card border-none">
+        <mat-card-content>
+          <div class="card-title-row">
+            <div>
+              <span>Corsi</span>
+              <h2>Prossimi corsi aperti</h2>
+            </div>
+            <i-feather name="star"></i-feather>
+          </div>
+          <div class="timeline-list">
+            <div *ngFor="let course of stats.upcoming.courses" class="timeline-row course">
+              <span></span>
+              <div>
+                <strong>{{ formatDate(course.date) }} - {{ course.startTime }}</strong>
+                <small>{{ course.title }} / {{ getCourseManager(course) }}</small>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="dashboard-card border-none">
+        <mat-card-content>
+          <div class="card-title-row">
+            <div>
+              <span>Stati</span>
+              <h2>Prenotazioni</h2>
+            </div>
+            <i-feather name="pie-chart"></i-feather>
+          </div>
+          <div class="status-list">
+            <div *ngFor="let item of bookingStatusItems" class="status-item">
+              <div>
+                <span>{{ getStatusLabel(item.status) }}</span>
+                <strong>{{ formatNumber(item.count) }}</strong>
+              </div>
+              <small>{{ getPercent(item.count, stats.totals.bookings) }}%</small>
+            </div>
+          </div>
+
+          <div class="mini-divider"></div>
+
+          <div class="card-title-row compact">
+            <div>
+              <span>Ultime</span>
+              <h2>Iscrizioni corsi</h2>
+            </div>
+          </div>
+          <div class="activity-list dense">
+            <div *ngFor="let item of stats.recent.courseBookings" class="activity-row">
+              <span class="avatar green"><i-feather name="user-plus"></i-feather></span>
+              <div>
+                <strong>{{ getCourseBookingUser(item) }}</strong>
+                <small>{{ getCourseBookingTitle(item) }} - {{ getStatusLabel(item.status) }}</small>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </ng-container>
+</div>

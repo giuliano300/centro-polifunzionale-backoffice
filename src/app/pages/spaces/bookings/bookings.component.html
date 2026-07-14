@@ -5,7 +5,8 @@
             <li aria-current="page" class="breadcrumb-item active">Prenotazioni {{spaceName}}</li>
         </ol>
         <div class="flex-end">
-            <button class="filter-button" (click)="gotoCalendar()">Formato calendario</button>
+            <button class="filter-button new-booking-button action-new" (click)="CreateBooking()">Nuova prenotazione</button>
+            <button class="filter-button action-filter" (click)="gotoCalendar()">Formato calendario</button>
         </div>
     </div>
 </nav>
@@ -14,32 +15,27 @@
         <form [formGroup]="form">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-3">
-                        <mat-form-field>
-                            <i-feather name="Calendar"></i-feather>
-                            <mat-label>Seleziona mese</mat-label>
-                            <mat-select formControlName="month">
-                                <mat-option *ngFor="let option of months" [value]="option.id">
-                                {{ option.name }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>                        
-                    </div>
-                    <div class="col-lg-3">
-                        <mat-form-field>
-                            <i-feather name="Calendar"></i-feather>
-                            <mat-label>Seleziona anno</mat-label>
-                            <mat-select formControlName="year">
-                                <mat-option *ngFor="let option of years" [value]="option">
-                                {{ option }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>                        
+                    <div class="col-lg-4">
+                        <mat-form-field class="date-range-field">
+                            <i-feather name="calendar"></i-feather>
+                            <mat-label>Intervallo date</mat-label>
+                            <mat-date-range-input [rangePicker]="spaceBookingRangePicker">
+                                <input matStartDate formControlName="startDate" placeholder="Dal">
+                                <input matEndDate formControlName="endDate" placeholder="Al">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="spaceBookingRangePicker">
+                                
+                            </mat-datepicker-toggle>
+                            <mat-date-range-picker #spaceBookingRangePicker></mat-date-range-picker>
+                        </mat-form-field>
                     </div>
                     <div class="col-lg-2">
-                         <button mat-button type="submit" [disabled]="form.invalid" (click)="onSubmit()">
+                         <button mat-button type="submit" class="action-filter" [disabled]="form.invalid" (click)="onSubmit()">
                             Filtra
                         </button>               
+                    </div>
+                    <div class="col-lg-2">
+                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Oggi</button>
                     </div>
                 </div>
             </div>
@@ -114,7 +110,7 @@
                         <td mat-cell *matCellDef="let element" class="pl-0">
                             <div class="position-relative">
                                 <h6 class="mt-0 mb-0">
-                                    {{element.booking.status}}
+                                    {{GetBookingStatusLabel(element)}}
                                 </h6>
                             </div>
                         </td>
@@ -127,7 +123,7 @@
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
                                 <h6 class="mt-0 mb-0">
-                                   {{ element.payments?.[0]?.amount || '' }}
+                                   {{ GetPendingAmount(element) || '' }}
                                 </h6>
                             </div>
                         </td>
@@ -140,8 +136,27 @@
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
                                 <h6 class="mt-0 mb-0">
-                                   {{ element.payments?.[0]?.status || 'N/A' }}
+                                   {{ GetPaymentStatus(element) }}
                                 </h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="pay">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">
+                            Pagamento
+                        </th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <div class="action">
+                                <button
+                                    *ngIf="!IsPaid(element) && GetPendingAmount(element)"
+                                    type="button"
+                                    mat-button
+                                    class="table-action-button action-save"
+                                    (click)="RegisterPayment(element)">
+                                    <i class="ri-money-euro-circle-line"></i>
+                                </button>
+                                <h6 *ngIf="IsPaid(element) || !GetPendingAmount(element)" class="mt-0 mb-0">-</h6>
                             </div>
                         </td>
                     </ng-container>
@@ -156,7 +171,7 @@
                                     *ngIf="CanShowCourseAction(element)"
                                     type="button"
                                     mat-button
-                                    class="p-0 min-w-auto lh-1 h-auto"
+                                    class="table-action-button action-new"
                                     (click)="CreateCourse(element)">
                                     <i [class]="GetCourse(element) ? 'ri-edit-line' : 'ri-add-circle-line'"></i>
                                 </button>
@@ -171,7 +186,7 @@
                         </th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
-                                <button type="button" mat-button class="p-0 min-w-auto lh-1 h-auto" (click)="DeleteItem(element)">
+                                <button type="button" mat-button class="table-action-button action-delete" (click)="DeleteItem(element)">
                                     <i class="{{element.action.delete}}"></i>
                                 </button>
                             </div>

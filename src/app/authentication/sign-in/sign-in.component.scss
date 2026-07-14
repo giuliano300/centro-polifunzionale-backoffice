@@ -99,7 +99,7 @@
                     }
                     .mdc-text-field--filled {
                         &:not(.mdc-text-field--disabled) {
-                            background-color: #f5f7fa;
+                            background-color: var(--app-bg);
                         }
                     }
                     .mdc-text-field--focused {
@@ -112,7 +112,7 @@
                     .mat-mdc-text-field-wrapper {
                         border-radius: 10px;
                         padding: 0 15px 0 60px;
-                        border: 1px solid #f5f7fa;
+                        border: 1px solid var(--app-bg);
                     }
                     .mat-mdc-icon-button {
                         &.mat-mdc-button-base {
@@ -195,7 +195,7 @@
                         family: var(--headingFontFamily);
                     };
                     &[disabled] {
-                        background-color: #eff3f9;
+                        background-color: var(--calendar-control-bg);
                     }
                 }
             }
@@ -308,8 +308,8 @@ a.recovery{
     padding: 12px 14px;
     border: 1px solid #f5c2c7;
     border-radius: 6px;
-    background: #fdecec;
-    color: #b42318;
+    background: var(--action-delete-bg-soft);
+    color: var(--action-delete-text-strong);
     font-size: 14px;
     font-weight: 400;
     line-height: 1.35;

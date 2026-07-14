@@ -4,6 +4,30 @@
     </ol>
 </nav>
 
+<mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
+    <mat-card-content>
+        <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <mat-form-field>
+                            <i-feather name="search"></i-feather>
+                            <mat-label>Nome, cognome o codice fiscale</mat-label>
+                            <input matInput formControlName="search" placeholder="Cerca utente">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-2">
+                        <button mat-button type="submit" class="action-filter">Filtra</button>
+                    </div>
+                    <div class="col-lg-2">
+                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Mostra tutti</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
+
 <mat-card class="trinta-card to-do-list-card mb-25 bg-white border-none d-block">
     <mat-card-content>
         <div class="to-do-list-table">
@@ -36,13 +60,53 @@
                         </td>
                     </ng-container>
 
+                    <ng-container matColumnDef="phone">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Telefono</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">{{element.phone || '-'}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="taxCode">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Codice fiscale</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">{{element.taxCode || '-'}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Stato</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <span class="status-badge" [class.inactive]="element.isActive === false">
+                                {{getStatusLabel(element)}}
+                            </span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="toggle">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Attiva</th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <div class="action">
+                                <button *ngIf="canManageUser(element)" type="button" mat-button class="table-action-button action-warning" (click)="ToggleActive(element)">
+                                    <i class="{{element.action.toggle}}"></i>
+                                </button>
+                                <h6 *ngIf="!canManageUser(element)" class="mt-0 mb-0">-</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
                     <ng-container matColumnDef="delete">
                         <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Elimina</th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
-                                <button type="button" mat-button class="p-0 min-w-auto lh-1 h-auto" (click)="DeleteItem(element)">
+                                <button *ngIf="canManageUser(element)" type="button" mat-button class="table-action-button action-delete" (click)="DeleteItem(element)">
                                     <i class="{{element.action.delete}}"></i>
                                 </button>
+                                <h6 *ngIf="!canManageUser(element)" class="mt-0 mb-0">-</h6>
                             </div>
                         </td>
                     </ng-container>

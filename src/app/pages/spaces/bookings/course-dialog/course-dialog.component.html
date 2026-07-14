@@ -71,11 +71,56 @@
 
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
     </form>
+
+    <section class="subscribers-panel" *ngIf="canManageSubscribers">
+      <div class="subscribers-head">
+        <div>
+          <span>Iscritti</span>
+          <strong>{{ subscribers.length }} / {{ form.value.capacity }}</strong>
+        </div>
+        <button mat-button type="button" class="action-new" (click)="addSubscriber()">Aggiungi iscritto</button>
+      </div>
+
+      <div class="subscribers-table" *ngIf="subscribers.length; else noSubscribers">
+        <div class="subscriber-row subscriber-header">
+          <span>Cliente</span>
+          <span>Email</span>
+          <span>Iscrizione</span>
+          <span>Pagamento</span>
+          <span>Importo</span>
+          <span></span>
+        </div>
+        <div class="subscriber-row" *ngFor="let subscriber of subscribers">
+          <span>{{ getSubscriberName(subscriber) }}</span>
+          <span>{{ getSubscriberEmail(subscriber) }}</span>
+          <span>{{ getStatusLabel(subscriber.status) }}</span>
+          <span>{{ getPaymentStatusLabel(subscriber.paymentStatus) }}</span>
+          <span>{{ formatAmount(subscriber.amount) }}</span>
+          <span class="subscriber-actions action">
+            <button type="button" mat-button class="table-action-button action-delete" (click)="deleteSubscriber(subscriber)">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+          </span>
+        </div>
+      </div>
+
+      <ng-template #noSubscribers>
+        <div class="empty-subscribers">
+          {{ isLoadingSubscribers ? 'Caricamento iscritti...' : 'Nessun iscritto presente' }}
+        </div>
+      </ng-template>
+    </section>
+
+    <section class="subscribers-panel muted" *ngIf="!canManageSubscribers">
+      <div class="empty-subscribers">
+        Salva il corso per aggiungere e visualizzare gli iscritti.
+      </div>
+    </section>
   </div>
 
   <mat-dialog-actions align="end" class="dialog-actions">
-    <button mat-button type="button" (click)="cancel()">Annulla</button>
-    <button mat-flat-button color="primary" type="button" [disabled]="isSaving" (click)="submit()">
+    <button mat-button type="button" class="action-cancel" (click)="cancel()">Annulla</button>
+    <button mat-flat-button color="primary" class="action-save" type="button" [disabled]="isSaving" (click)="submit()">
       {{ isSaving ? 'Salvataggio...' : (isEditMode ? 'Salva modifiche' : 'Crea corso') }}
     </button>
   </mat-dialog-actions>

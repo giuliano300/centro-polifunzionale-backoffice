@@ -24,7 +24,7 @@
                     height: 46px;
                     padding: 0 20px;
                     border-radius: 6px;
-                    background: #f5f7fa;
+                    background: var(--app-bg);
                     color: var(--darkColor);
                     font: {
                         weight: normal;
@@ -62,10 +62,10 @@
                         width: 42px;
                         height: 42px;
                         min-width: auto;
-                        color: #818093;
+                        color: var(--header-text-muted);
                         border-radius: 50%;
                         display: inline-block;
-                        background-color: rgba(55, 97, 238, 0.05);
+                        background-color: var(--header-primary-soft);
 
                         .mdc-button__label {
                             left: 0;
@@ -92,10 +92,10 @@
                         width: 42px;
                         height: 42px;
                         min-width: auto;
-                        color: #818093;
+                        color: var(--header-text-muted);
                         border-radius: 50%;
                         display: inline-block;
-                        background-color: rgba(55, 97, 238, 0.05);
+                        background-color: var(--header-primary-soft);
 
                         .mdc-button__label {
                             left: 0;
@@ -117,7 +117,7 @@
                                 height: 20px;
                                 font-size: 12px;
                                 position: absolute;
-                                background: #e74c3c;
+                                background: var(--header-danger-dot);
                                 letter-spacing: 0.12px;
                             }
                         }
@@ -132,10 +132,10 @@
                         width: 42px;
                         height: 42px;
                         min-width: auto;
-                        color: #818093;
+                        color: var(--header-text-muted);
                         border-radius: 50%;
                         display: inline-block;
-                        background-color: rgba(55, 97, 238, 0.05);
+                        background-color: var(--header-primary-soft);
 
                         .mdc-button__label {
                             left: 0;
@@ -169,7 +169,7 @@
                     margin-left: 11px;
                     border-radius: 4px;
                     color: var(--blackColor);
-                    border: 1px solid #e2e8f0;
+                    border: 1px solid var(--tone-slate-bg);
                     padding: 13px 20px 10px 48px;
 
                     i-feather {
@@ -264,7 +264,7 @@
             overflow: hidden;
             margin-top: 19px;
             border-radius: 0;
-            box-shadow: 0px 4px 20px 0px rgba(47, 143, 232, 0.07);
+            box-shadow: 0px 4px 20px 0px var(--header-dropdown-shadow);
 
             .title {
                 padding: {
@@ -280,7 +280,7 @@
                 margin-bottom: 20px;
 
                 li {
-                    border-bottom: 1px dashed #eeeeee;
+                    border-bottom: 1px dashed var(--header-border-soft);
                     padding: 18px 20px 18px 80px;
 
                     img {
@@ -305,7 +305,7 @@
                         transform: translateY(-50%);
                     }
                     &:first-child {
-                        border-top: 1px dashed #eeeeee;
+                        border-top: 1px dashed var(--header-border-soft);
                     }
                 }
             }
@@ -318,7 +318,7 @@
             overflow: hidden;
             margin-top: 19px;
             border-radius: 0;
-            box-shadow: 0px 4px 20px 0px rgba(47, 143, 232, 0.07);
+            box-shadow: 0px 4px 20px 0px var(--header-dropdown-shadow);
 
             .title {
                 padding: {
@@ -334,7 +334,7 @@
                 margin-bottom: 20px;
 
                 li {
-                    border-bottom: 1px dashed #eeeeee;
+                    border-bottom: 1px dashed var(--header-border-soft);
                     padding: 18px 20px 18px 75px;
 
                     .icon {
@@ -344,7 +344,7 @@
                         height: 44px;
                         color: var(--primaryColor);
                         transform: translateY(-50%);
-                        background-color: rgba(55, 97, 238, 0.05);
+                        background-color: var(--header-primary-soft);
 
                         i {
                             line-height: 1;
@@ -365,16 +365,16 @@
                         transform: translateY(-50%);
                     }
                     &:first-child {
-                        border-top: 1px dashed #eeeeee;
+                        border-top: 1px dashed var(--header-border-soft);
                     }
                     &:nth-child(2) {
                         .icon {
-                            color: #39b2de;
+                            color: var(--header-info-text);
                         }
                     }
                     &:nth-child(3) {
                         .icon {
-                            color: #00b69b;
+                            color: var(--sidebar-badge-success);
                         }
                     }
                     &:hover {
@@ -394,7 +394,7 @@
             margin-top: 29px;
             border-radius: 0;
             padding: 15px 0 0;
-            box-shadow: 0px 4px 20px 0px rgba(47, 143, 232, 0.07);
+            box-shadow: 0px 4px 20px 0px var(--header-dropdown-shadow);
 
             .title {
                 padding: 0 20px 15px;
@@ -404,7 +404,7 @@
             }
             .menu-body {
                 li {
-                    border-bottom: 1px dashed #eeeeee;
+                    border-bottom: 1px dashed var(--header-border-soft);
 
                     .mdc-button {
                         padding: 0;
@@ -426,7 +426,7 @@
                         }
                     }
                     &:first-child {
-                        border-top: 1px dashed #eeeeee;
+                        border-top: 1px dashed var(--header-border-soft);
                     }
                     &:last-child {
                         border-bottom: 0;
@@ -442,10 +442,10 @@
             margin-top: 19px;
             border-radius: 0;
             padding: 20px 0 12px;
-            box-shadow: 0px 4px 20px 0px rgba(47, 143, 232, 0.07);
+            box-shadow: 0px 4px 20px 0px var(--header-dropdown-shadow);
 
             .menu-header {
-                border-bottom: 1px dashed #eeeeee;
+                border-bottom: 1px dashed var(--header-border-soft);
                 margin-bottom: 10px;
                 padding: {
                     left: 20px;
@@ -484,7 +484,7 @@
                         transform: translateY(-50%);
                     }
                     &:hover {
-                        background-color: rgba(55, 97, 238, 0.05);
+                        background-color: var(--header-primary-soft);
                         color: var(--primaryColor);
                     }
                 }

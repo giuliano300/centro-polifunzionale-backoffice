@@ -71,7 +71,7 @@ export class SignInComponent {
                         this.authService.setLoginName(this.user!.name!);
                         localStorage.setItem('authToken', data.access_token);
                         localStorage.setItem('user', JSON.stringify(this.user!));
-                        this.router.navigate(['/spaces']);
+                        this.router.navigate(['/dashboard']);
                     }
                 },
                 error: () => {
@@ -79,15 +79,13 @@ export class SignInComponent {
                 }
             });
                         
-        } else {
-            console.log('Il modulo non è valido. Si prega di controllare i campi.');
         }
     }
 
     ngOnInit(): void {
         const token = localStorage.getItem('authToken');
         if (token) 
-            this.router.navigate(['/spaces']);
+            this.router.navigate(['/dashboard']);
    }
    
 

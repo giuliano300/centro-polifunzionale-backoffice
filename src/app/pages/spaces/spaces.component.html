@@ -94,7 +94,7 @@
                         </th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
-                                <button type="button" mat-button class="p-0 min-w-auto lh-1 h-auto" (click)="BookingItem(element)">
+                                <button type="button" mat-button class="table-action-button" (click)="BookingItem(element)">
                                     <i class="{{element.action.viewDetails}}"></i>
                                 </button>
                             </div>
@@ -107,7 +107,7 @@
                         </th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
-                                <button type="button" mat-button class="p-0 min-w-auto lh-1 h-auto" (click)="UpdateItem(element)">
+                                <button type="button" mat-button class="table-action-button" (click)="UpdateItem(element)">
                                     <i class="{{element.action.edit}}"></i>
                                 </button>
                             </div>
@@ -120,7 +120,7 @@
                         </th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
-                                <button type="button" mat-button class="p-0 min-w-auto lh-1 h-auto" (click)="DeleteItem(element)">
+                                <button type="button" mat-button class="table-action-button action-delete" (click)="DeleteItem(element)">
                                     <i class="{{element.action.delete}}"></i>
                                 </button>
                             </div>

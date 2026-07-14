@@ -40,7 +40,9 @@ export class SpacesComponent {
         this.spaceService.getSpaces()
         .subscribe((data: Spaces[]) => {
           if (!data || data.length === 0) {
-            console.log('Nessun dato disponibile');
+            this.spaces = [];
+            this.dataSource = new MatTableDataSource<Spaces>(this.spaces);
+            this.dataSource.paginator = this.paginator;
           } else {
             this.spaces = data.map(c => ({
                 ...c, 
@@ -60,7 +62,9 @@ export class SpacesComponent {
     DeleteItem(item:Spaces){
 
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        width: '500px'
+        width: '860px',
+        minWidth: 'min(800px, 94vw)',
+        maxWidth: '94vw'
       });
 
       dialogRef.afterClosed().subscribe((result: any) => {
@@ -72,10 +76,6 @@ export class SpacesComponent {
               }
             });
         } 
-        else 
-        {
-          console.log("Close");
-        }
       });
     }
 

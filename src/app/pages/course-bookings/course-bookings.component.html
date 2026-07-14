@@ -17,7 +17,7 @@
                 <span class="status-badge" [ngClass]="courseDetails.isPublished ? 'status-confirmed' : 'status-cancelled'">
                     {{courseDetails.isPublished ? 'Aperto' : 'Chiuso'}}
                 </span>
-                <button type="button" mat-flat-button color="primary" (click)="addSubscriber()">
+                <button type="button" mat-flat-button color="primary" class="add-button action-new" (click)="addSubscriber()">
                     Aggiungi iscritto
                 </button>
             </div>
@@ -141,7 +141,7 @@
                         <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Elimina</th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
-                                <button type="button" mat-button (click)="deleteSubscriber(element)">
+                                <button type="button" mat-button class="table-action-button action-delete" (click)="deleteSubscriber(element)">
                                     <i class="ri-delete-bin-line"></i>
                                 </button>
                             </div>

@@ -6,7 +6,7 @@
             input {
                 height: 46px;
                 border-radius: 6px;
-                background: #f5f7fa;
+                background: var(--app-bg);
                 padding: {
                     left: 20px;
                     right: 20px;
@@ -55,7 +55,7 @@
                         padding: 0 15px 15px;
                         letter-spacing: normal;
                         background: transparent;
-                        border-bottom: 2px solid #edeff5;
+                        border-bottom: 2px solid var(--ui-border-table);
                     }
                 }
                 .mat-mdc-row, .mdc-data-table__content {
@@ -80,7 +80,7 @@
                     line-height: initial;
                     letter-spacing: 0.14px;
                     background: transparent;
-                    border-bottom: 1px solid #edeff5;
+                    border-bottom: 1px solid var(--ui-border-table);
 
                     .task-name {
                         padding-left: 28px;
@@ -102,26 +102,20 @@
                         padding: 1.5px 7px;
                         letter-spacing: 1px;
                         color: var(--primaryColor);
-                        background: rgba(55, 97, 238, 0.10);
+                        background: var(--primary-tint-bg);
 
                         &.urgent {
                             color: var(--dangerColor);
-                            background: rgba(238, 54, 140, 0.10);
+                            background: var(--danger-tint-bg);
                         }
                         &.onHand {
-                            color: #00b69b;
-                            background: rgba(0, 182, 155, 0.10);
+                            color: var(--sidebar-badge-success);
+                            background: var(--success-tint-bg);
                         }
                     }
                     .action {
                         .mat-mdc-button {
-                            font-size: 18px;
-                            color: #818093;
-                            margin-right: 12px;
-
-                            &:last-child {
-                                margin-right: 0;
-                            }
+                            margin-right: 0;
                         }
                     }
                 }
@@ -138,10 +132,10 @@
             .to-do-list-table {
                 .mat-mdc-table {
                     .mat-mdc-row{
-                        background-color: #fafafa!important;
+                        background-color: var(--ui-surface-neutral)!important;
 
                         &:nth-child(2n){
-                            background-color: #ffff!important;
+                            background-color: var(--ui-surface)!important;
                         }
 
                     }
@@ -326,10 +320,30 @@
         margin-top: 0;
         border-radius: 6px;
         padding: 18px 25px;
-        color: var(--whiteColor) !important;
-        background-color: var(--primaryColor);
+        color: var(--action-filter-text) !important;
+        background-color: var(--action-filter-bg);
+        border-color: var(--action-filter-border);
         font-size: 14px;
         font-weight: 400;
         font-family: var(--headingFontFamily);
+    }
+}
+
+.flex-end {
+    gap: 10px;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.filter-button.new-booking-button {
+    width: auto;
+    min-width: max-content;
+    white-space: nowrap;
+    color: var(--action-save-text) !important;
+    background-color: var(--action-save-bg);
+
+    &:hover {
+        background-color: var(--action-save-bg-hover);
+        opacity: 1;
     }
 }

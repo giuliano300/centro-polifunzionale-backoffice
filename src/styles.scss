@@ -65,6 +65,87 @@ $trinta-theme: mat.define-theme((
     --bodyColor: #a9a9c8;
     --transition: .5s;
     --fontSize: 14px;
+    --app-bg: #f5f7fa;
+    --ui-surface: #ffffff;
+    --ui-surface-soft: #fbfcfe;
+    --ui-surface-muted: #f8fafc;
+    --ui-surface-blue: #eff6ff;
+    --ui-border: #e5e7eb;
+    --ui-border-soft: #eef1f6;
+    --ui-border-muted: #eef2f7;
+    --ui-border-panel: #e7ecf3;
+    --ui-text-strong: #111827;
+    --ui-text: #1f2937;
+    --ui-text-muted: #64748b;
+    --ui-text-soft: #7b8798;
+    --ui-text-subtle: #6b7a90;
+    --ui-text-muted-alt: #5d6b82;
+    --ui-text-faint: #8695aa;
+    --ui-glass-bg: rgba(255,255,255, 0.4);
+    --ui-shadow-soft: rgba(15, 23, 42, 0.06);
+    --ui-shadow-hover: rgba(15, 23, 42, 0.09);
+    --ui-shadow-sidebar: rgba(15, 23, 42, 0.05);
+    --ui-shadow-outline: #999999;
+    --ui-border-input: #d8e0ea;
+    --ui-border-table: #edeff5;
+    --ui-surface-neutral: #fafafa;
+    --action-filter-text: #1d4ed8;
+    --action-filter-text-strong: #1e40af;
+    --action-filter-bg: #dbeafe;
+    --action-filter-bg-hover: #e0f2fe;
+    --action-filter-bg-soft: #eff6ff;
+    --action-filter-border: #bfdbfe;
+    --action-filter-border-strong: #60a5fa;
+    --action-filter-accent: #93c5fd;
+    --action-save-text: #166534;
+    --action-save-text-strong: #167345;
+    --action-save-bg: #dcfce7;
+    --action-save-bg-hover: #bbf7d0;
+    --action-save-bg-soft: #e8f6ee;
+    --action-cancel-text: #374151;
+    --action-cancel-bg: #e5e7eb;
+    --action-cancel-border: #d1d5db;
+    --action-delete-text: #b91c1c;
+    --action-delete-text-strong: #b42318;
+    --action-delete-bg: #fee2e2;
+    --action-delete-bg-soft: #fdecec;
+    --action-delete-border: #fecaca;
+    --action-warning-text: #c2410c;
+    --action-warning-text-strong: #9a3412;
+    --action-warning-text-muted: #946200;
+    --action-warning-bg: #ffedd5;
+    --action-warning-bg-soft: #fff4df;
+    --action-warning-border: #fed7aa;
+    --tone-violet-text: #6d28d9;
+    --tone-violet-bg: #ede9fe;
+    --tone-violet-accent: #8b5cf6;
+    --tone-slate-text: #334155;
+    --tone-slate-bg: #e2e8f0;
+    --dashboard-bar-blue: #60a5fa;
+    --sidebar-badge-success: #00b69b;
+    --sidebar-primary-badge-bg: rgba(117, 127, 239, 0.1);
+    --sidebar-success-badge-bg: rgba(0, 182, 155, 0.07);
+    --sidebar-danger-badge-bg: rgba(238, 54, 140, 0.1);
+    --sidebar-scrollbar-thumb: rgba(147, 197, 253, 0.72);
+    --sidebar-shadow: #e7eaf0;
+    --header-text-muted: #818093;
+    --header-primary-soft: rgba(55, 97, 238, 0.05);
+    --header-danger-dot: #e74c3c;
+    --header-info-text: #39b2de;
+    --header-dropdown-shadow: rgba(47, 143, 232, 0.07);
+    --header-border-soft: #eeeeee;
+    --primary-tint-bg: rgba(55, 97, 238, 0.10);
+    --success-tint-bg: rgba(0, 182, 155, 0.10);
+    --danger-tint-bg: rgba(238, 54, 140, 0.10);
+    --calendar-border: #f5f6f7;
+    --calendar-control-border: #dae0ec;
+    --calendar-control-bg: #eff3f9;
+    --calendar-muted-bg: #f9f9f9;
+    --calendar-panel-bg: #f7faff;
+    --calendar-soft-bg: #eef4ff;
+    --calendar-event-bg: #eaf4ff;
+    --calendar-shadow: rgba(101, 96, 240, 0.1);
+    --calendar-border-muted: #e0e0e0;
 }
 
 *, ::after, ::before {
@@ -75,7 +156,7 @@ body {
     padding: 0;
     letter-spacing: 0.15px;
     color: var(--darkColor);
-    background-color: #f5f7fa;
+    background-color: var(--app-bg);
     font: {
         weight: 400;
         size: var(--fontSize);
@@ -216,6 +297,277 @@ input {
     }
 }
 
+button,
+.mat-mdc-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-icon-button,
+.filter-button {
+    border-radius: 6px !important;
+}
+
+button.mat-mdc-button,
+a.mat-mdc-button,
+button.mat-mdc-unelevated-button,
+button.mat-mdc-raised-button,
+button.mat-mdc-outlined-button {
+    color: var(--action-filter-text) !important;
+    background-color: var(--action-filter-bg) !important;
+    border-color: var(--action-filter-border) !important;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+::ng-deep button.mat-mdc-button:not(.p-0):not(.min-w-auto),
+::ng-deep a.mat-mdc-button,
+::ng-deep button.mat-mdc-unelevated-button,
+::ng-deep button.mat-mdc-raised-button,
+::ng-deep button.mat-mdc-outlined-button {
+    color: var(--action-filter-text) !important;
+    background-color: var(--action-filter-bg) !important;
+    border-color: var(--action-filter-border) !important;
+}
+
+.action,
+.to-do-list-table {
+    button.table-action-button.mat-mdc-button,
+    button.mat-mdc-button.p-0,
+    button.mat-mdc-button.min-w-auto,
+    button.mat-mdc-button.h-auto {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        padding: 0 !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--action-filter-text) !important;
+        background-color: var(--action-filter-bg) !important;
+
+        i {
+            display: inline-block;
+            color: inherit !important;
+            font-size: 18px;
+            line-height: 1;
+        }
+    }
+}
+
+.action-filter,
+button.action-filter.mat-mdc-button,
+button.action-filter.mat-mdc-unelevated-button,
+.filter-button {
+    color: var(--action-filter-text) !important;
+    background-color: var(--action-filter-bg) !important;
+    border-color: var(--action-filter-border) !important;
+}
+
+.action-save,
+.action-new,
+.add-button,
+.new-booking-button,
+button.action-save.mat-mdc-button,
+button.action-save.mat-mdc-unelevated-button,
+button.action-new.mat-mdc-button,
+button.action-new.mat-mdc-unelevated-button,
+button.add-button.mat-mdc-button,
+button.add-button.mat-mdc-unelevated-button,
+button.new-booking-button.mat-mdc-button,
+button.new-booking-button.mat-mdc-unelevated-button {
+    color: var(--action-save-text) !important;
+    background-color: var(--action-save-bg) !important;
+    border-color: var(--action-save-bg-hover) !important;
+
+    &:hover {
+        background-color: var(--action-save-bg-hover) !important;
+        opacity: 1;
+    }
+}
+
+.action-cancel,
+button.action-cancel.mat-mdc-button,
+button.action-cancel.mat-mdc-unelevated-button,
+.btn.back {
+    color: var(--action-cancel-text) !important;
+    background-color: var(--ui-border) !important;
+    border-color: var(--action-cancel-border) !important;
+}
+
+.action-delete,
+button.action-delete.mat-mdc-button,
+button.action-delete.mat-mdc-unelevated-button,
+.btn.confirm-button {
+    color: var(--action-delete-text) !important;
+    background-color: var(--action-delete-bg) !important;
+    border-color: var(--action-delete-border) !important;
+}
+
+.action-warning,
+button.action-warning.mat-mdc-button,
+button.action-warning.mat-mdc-unelevated-button {
+    color: var(--action-warning-text) !important;
+    background-color: var(--action-warning-bg) !important;
+    border-color: var(--action-warning-border) !important;
+}
+
+.table-action-button.action-delete,
+.to-do-list-table button.table-action-button.action-delete.mat-mdc-button,
+button.table-action-button.action-delete.mat-mdc-button {
+    color: var(--action-delete-text) !important;
+    background-color: var(--action-delete-bg) !important;
+}
+
+.table-action-button.action-warning,
+.to-do-list-table button.table-action-button.action-warning.mat-mdc-button {
+    color: var(--action-warning-text) !important;
+    background-color: var(--action-warning-bg) !important;
+}
+
+.table-action-button.action-save,
+.to-do-list-table button.table-action-button.action-save.mat-mdc-button,
+.table-action-button.action-new,
+.to-do-list-table button.table-action-button.action-new.mat-mdc-button {
+    color: var(--action-save-text) !important;
+    background-color: var(--action-save-bg) !important;
+}
+
+.filters{
+    padding: 30px 25px 10px;
+
+    .row {
+        align-items: flex-start;
+        flex-wrap: nowrap;
+    }
+
+    [class*="col-"] {
+        min-width: 0;
+    }
+
+    .mat-mdc-form-field {
+        width: 100%;
+    }
+
+    i-feather {
+        top: 15px;
+        left: 12px;
+        width: 18px;
+        height: 18px;
+        z-index: 1;
+        position: absolute;
+        color: var(--primaryColor);
+    }
+
+    i-feather + .mat-mdc-form-field-label,
+    i-feather ~ .mat-mdc-form-field-label {
+        padding-left: 26px;
+    }
+
+    .mat-mdc-text-field-wrapper {
+        padding-left: 34px;
+    }
+
+    .date-range-field {
+        .mat-mdc-text-field-wrapper {
+            padding-left: 16px;
+        }
+
+        .mat-date-range-input {
+            color: var(--blackColor);
+        }
+
+        .mat-date-range-input-separator {
+            color: var(--ui-text-soft);
+            margin: 0 6px;
+        }
+
+        .mat-datepicker-toggle {
+            color: var(--primaryColor);
+
+            .ri-calendar-line {
+                display: inline-block;
+                color: var(--primaryColor);
+                font-size: 20px;
+                line-height: 1;
+            }
+        }
+
+        button.mat-mdc-icon-button {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            color: var(--primaryColor) !important;
+            background-color: transparent !important;
+        }
+    }
+
+    .mat-mdc-button {
+        width: 100%;
+        height: auto;
+        display: block;
+        min-width: auto;
+        margin-top: 0;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        padding: 18px 25px;
+        color: var(--action-filter-text) !important;
+        background-color: var(--action-filter-bg);
+        border-color: var(--action-filter-border);
+        font-size: 14px;
+        font-weight: 400;
+        font-family: var(--headingFontFamily);
+        white-space: nowrap;
+    }
+
+    .mat-mdc-button.action-filter {
+        color: var(--action-filter-text) !important;
+        background-color: var(--action-filter-bg) !important;
+        border-color: var(--action-filter-border) !important;
+    }
+
+    .mat-mdc-button.action-save,
+    .mat-mdc-button.action-new {
+        color: var(--action-save-text) !important;
+        background-color: var(--action-save-bg) !important;
+        border-color: var(--action-save-bg-hover) !important;
+    }
+
+    .mat-mdc-button.action-cancel {
+        color: var(--action-cancel-text) !important;
+        background-color: var(--ui-border) !important;
+        border-color: var(--action-cancel-border) !important;
+    }
+
+    .mat-mdc-button.action-delete {
+        color: var(--action-delete-text) !important;
+        background-color: var(--action-delete-bg) !important;
+        border-color: var(--action-delete-border) !important;
+    }
+
+    .mat-mdc-button.action-warning {
+        color: var(--action-warning-text) !important;
+        background-color: var(--action-warning-bg) !important;
+        border-color: var(--action-warning-border) !important;
+    }
+}
+
+@media only screen and (max-width : 991px) {
+    .filters {
+        .row {
+            flex-wrap: wrap;
+        }
+    }
+}
+
+@media only screen and (max-width : 575px) {
+    .filters .mat-mdc-button {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
 /* Max width 767px */
 @media only screen and (max-width : 767px) {
 
@@ -280,14 +632,14 @@ h2[mat-dialog-title] {
 }
 
 .btn{
-    background:var(--primaryColor);
+    background: var(--action-filter-bg);
     padding: 8px 25px;
     margin:-10px 0 15px 10px;
     border: none;
-    color: white;
+    color: var(--action-filter-text);
     font-size: 14px;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 6px;
     font-family: 'Poppins'!important;
 }
   
@@ -297,10 +649,10 @@ h2[mat-dialog-title] {
 
 .logo{
     span{
-        color: var(--primaryColor)!important;
-        font-size: 13px!important;
+        color: var(--tone-slate-text)!important;
+        font-size: 15px!important;
         padding: 0 0 0 10px;
-        font-weight: 500;
+        font-weight: 400;
         float: left!important;
     }
 }
@@ -319,7 +671,9 @@ h5{
 
     li{
         font-size: 15px!important;
-        font-weight: 400;
+        font-weight: 500;
+        text-transform: uppercase;
+        color: var(--tone-slate-text);
     }
 }
 
@@ -350,7 +704,7 @@ h5{
     font-weight: 400!important;
     font-family: 'Poppins';
     font-size: 15px;
-    background-color: #f5f7fa;
+    background-color: var(--app-bg);
 }
 
 .error{
@@ -358,9 +712,9 @@ h5{
 }
 
 .ngx-file-drop__drop-zone{
-    background-color: #f5f7fa!important;
+    background-color: var(--app-bg)!important;
     border-radius: 10px!important;
-    border: 1px solid #f5f7fa!important;
+    border: 1px solid var(--app-bg)!important;
 }
 
 .drop-zone{
@@ -377,7 +731,9 @@ h5{
 }
 
 .back{
-    background-color:var(--bodyColor)!important;
+    color: var(--action-cancel-text) !important;
+    background-color: var(--action-cancel-bg)!important;
+    border-color: var(--action-cancel-border) !important;
 }
 
 .loader{
@@ -385,7 +741,7 @@ h5{
     z-index: 999;
     width: 100%;
     height: 100vh;
-    background:rgba(255,255,255, 0.4);
+    background: var(--ui-glass-bg);
     top: 0;
     left: 0;
     
@@ -461,6 +817,6 @@ h5{
 
 
 .ngx-toastr:hover {
-  box-shadow: 0 0 12px #999999!important;
+  box-shadow: 0 0 12px var(--ui-shadow-outline)!important;
   transition: none !important;
 }

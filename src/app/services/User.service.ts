@@ -27,13 +27,14 @@ export class UsersService {
       return this.http.post<any>(this.apiUrl + "auth/login", login);
     }
 
-    getUsers(): Observable<AuthUser[]>{
+    getUsers(search = ''): Observable<AuthUser[]>{
       const token = localStorage.getItem('authToken');
       const headers = new HttpHeaders({
         'Authorization': `Bearer ${token}`
       });
 
-      return this.http.get<AuthUser[]>(this.apiUrl + "users?limit=100", { headers });
+      const query = search.trim() ? "&search=" + encodeURIComponent(search.trim()) : "";
+      return this.http.get<AuthUser[]>(this.apiUrl + "users?limit=500&excludeRole=admin" + query, { headers });
     }
 
     searchClients(search: string): Observable<AuthUser[]>{
@@ -53,6 +54,15 @@ export class UsersService {
       });
 
       return this.http.post<AuthUser>(this.apiUrl + "users", user, { headers });
+    }
+
+    updateUser(id: string, user: Partial<AuthUser>): Observable<AuthUser>{
+      const token = localStorage.getItem('authToken');
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      return this.http.put<AuthUser>(this.apiUrl + "users/" + id, user, { headers });
     }
 
     deleteUser(id: string): Observable<{ deleted: boolean }>{

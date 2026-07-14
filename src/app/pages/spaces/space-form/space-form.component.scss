@@ -8,13 +8,13 @@
   display: grid;
   gap: 16px;
   padding: 18px;
-  border: 1px solid #e7ecf3;
+  border: 1px solid var(--ui-border-panel);
   border-radius: 8px;
-  background: #fbfcfe;
+  background: var(--ui-surface-soft);
 
   h3 {
     margin: 0;
-    color: #1f2937;
+    color: var(--ui-text);
     font-size: 16px;
     font-weight: 800;
   }
@@ -52,22 +52,22 @@
   gap: 12px;
   min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid #e7ecf3;
+  border: 1px solid var(--ui-border-panel);
   border-radius: 6px;
-  background: #ffffff;
+  background: var(--ui-surface);
 
   &.header {
     min-height: 0;
     border: 0;
     background: transparent;
-    color: #7b8798;
+    color: var(--ui-text-soft);
     font-size: 12px;
     font-weight: 800;
     text-transform: uppercase;
   }
 
   strong {
-    color: #1f2937;
+    color: var(--ui-text);
     font-size: 14px;
   }
 }
@@ -76,9 +76,9 @@
   width: 100%;
   min-height: 38px;
   padding: 8px 10px;
-  border: 1px solid #d8e0ea;
+  border: 1px solid var(--ui-border-input);
   border-radius: 6px;
-  color: #1f2937;
+  color: var(--ui-text);
 }
 
 .actions {
@@ -89,7 +89,7 @@
 
 .error-message {
   margin: 0;
-  color: #d32f2f;
+  color: var(--action-delete-text);
   font-weight: 600;
 }
 

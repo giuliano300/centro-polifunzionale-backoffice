@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,6 +11,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { BookingWithPayments } from '../../../../interfaces/BookingWithPayments';
 import { CourseService } from '../../../../services/Course.service';
 import { Course, CreateCourse } from '../../../../interfaces/courses';
+import { CourseBooking } from '../../../../interfaces/course-bookings';
+import { CourseBookingService } from '../../../../services/CourseBooking.service';
+import { AddCourseSubscriberDialogComponent } from '../../../course-bookings/add-course-subscriber-dialog/add-course-subscriber-dialog.component';
+import { ConfirmDialogComponent } from '../../../../confirm-dialog/confirm-dialog.component';
 
 export interface CourseDialogData {
   bookingWithPayments: BookingWithPayments;
@@ -21,6 +25,7 @@ export interface CourseDialogData {
   selector: 'app-course-dialog',
   standalone: true,
   imports: [
+    NgFor,
     NgIf,
     ReactiveFormsModule,
     MatButtonModule,
@@ -38,10 +43,14 @@ export class CourseDialogComponent {
   form: FormGroup;
   isSaving = false;
   errorMessage = '';
+  subscribers: CourseBooking[] = [];
+  isLoadingSubscribers = false;
 
   constructor(
     private fb: FormBuilder,
     private courseService: CourseService,
+    private courseBookingService: CourseBookingService,
+    private dialog: MatDialog,
     private dialogRef: MatDialogRef<CourseDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CourseDialogData
   ) {
@@ -56,6 +65,8 @@ export class CourseDialogComponent {
       price: [course?.price || 0, [Validators.min(0)]],
       isPublished: [course?.isPublished ?? true]
     });
+
+    this.loadSubscribers();
   }
 
   get isEditMode(): boolean {
@@ -77,6 +88,101 @@ export class CourseDialogComponent {
 
   get isPaidCourse(): boolean {
     return this.form.value.enrollmentType === 'paid';
+  }
+
+  get courseId(): string {
+    return this.data.course?._id || '';
+  }
+
+  get canManageSubscribers(): boolean {
+    return !!this.courseId;
+  }
+
+  loadSubscribers(): void {
+    if (!this.courseId) {
+      this.subscribers = [];
+      return;
+    }
+
+    this.isLoadingSubscribers = true;
+    this.courseBookingService.getCourseBookings({ courseId: this.courseId }).subscribe({
+      next: (items) => {
+        this.subscribers = items;
+        this.isLoadingSubscribers = false;
+      },
+      error: () => {
+        this.errorMessage = 'Caricamento iscritti non riuscito.';
+        this.isLoadingSubscribers = false;
+      }
+    });
+  }
+
+  addSubscriber(): void {
+    if (!this.courseId) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(AddCourseSubscriberDialogComponent, {
+      width: '860px',
+      minWidth: 'min(800px, 94vw)',
+      maxWidth: '94vw',
+      data: { courseId: this.courseId }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadSubscribers();
+      }
+    });
+  }
+
+  deleteSubscriber(item: CourseBooking): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '860px',
+      minWidth: 'min(800px, 94vw)',
+      maxWidth: '94vw'
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.courseBookingService.deleteCourseBooking(item._id).subscribe(() => this.loadSubscribers());
+      }
+    });
+  }
+
+  getSubscriberName(item: CourseBooking): string {
+    return typeof item.user === 'string' ? '-' : item.user.name || '-';
+  }
+
+  getSubscriberEmail(item: CourseBooking): string {
+    return typeof item.user === 'string' ? '-' : item.user.email || '-';
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      pending: 'In attesa',
+      confirmed: 'Confermata',
+      cancelled: 'Annullata'
+    };
+
+    return labels[status] || status;
+  }
+
+  getPaymentStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      PENDING: 'Da pagare',
+      PAID: 'Pagato',
+      FREE: 'Gratuito'
+    };
+
+    return labels[status] || status;
+  }
+
+  formatAmount(amount: number): string {
+    return new Intl.NumberFormat('it-IT', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount || 0);
   }
 
   submit(): void {

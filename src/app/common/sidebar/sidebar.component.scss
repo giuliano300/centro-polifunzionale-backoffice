@@ -1,5 +1,8 @@
 ::ng-deep {
     .sidebar-area {
+        background: var(--ui-surface) !important;
+        border-right: 1px solid var(--action-filter-bg);
+        box-shadow: 0 10px 24px var(--ui-shadow-sidebar);
         overflow: hidden;
         position: fixed;
         height: 100vh;
@@ -18,10 +21,10 @@
             
             a {
                 span {
-                    font-size: 24px;
+                    font-size: 28px;
                     margin-left: 5px;
                     letter-spacing: 0.48px;
-                    color: var(--blackColor)!important;
+                    color: var(--ui-text) !important;
                     font-family: var(--headingFontFamily);
                 }
             }
@@ -38,6 +41,7 @@
                 height: 1px;
                 width: 25px;
                 margin: 6px 0;
+                background-color: var(--ui-text-muted) !important;
             }
             &.active {
                 opacity: 1;
@@ -73,8 +77,8 @@
                 right: 0;
             }
             .ng-scrollbar-thumb {
-                border-radius: 0;
-                background-color: rgba(121, 131, 152, 0.60);
+                border-radius: 999px;
+                background-color: var(--sidebar-scrollbar-thumb);
             }
         }
         .sidebar-inner {
@@ -91,6 +95,7 @@
                     position: relative;
                     padding-left: 22px;
                     margin-bottom: 14px;
+                    color: var(--ui-text-muted) !important;
 
                     &::before {
                         left: 0;
@@ -99,7 +104,7 @@
                         height: 1px;
                         width: 12px;
                         position: absolute;
-                        background: #a6acbe;
+                        background: var(--action-filter-accent);
                         transform: translateY(-50%);
                     }
                 }
@@ -107,14 +112,16 @@
                     .mat-expansion-panel {
                         border-radius: 0;
                         box-sizing: unset;
-                        margin-bottom: 21px;
+                        margin-bottom: 8px;
                         color: var(--blackColor);
                         background-color: transparent;
             
                         .mat-expansion-panel-header {
                             transition: var(--transition);
                             background-color: transparent;
-                            color: var(--blackColor);
+                            border-radius: 6px;
+                            border-left: 3px solid transparent;
+                            color: var(--tone-slate-text);
                             letter-spacing: 0.14px;
                             position: relative;
                             display: block;
@@ -124,21 +131,18 @@
                                 size: var(--fontSize);
                                 weight: 500;
                             };
-                            padding: {
-                                right: 35px;
-                                left: 24px;
-                            };
+                            padding: 13px 36px 13px 42px;
                             i-feather {
                                 transition: var(--transition);
                                 transform: translateY(-50%);
                                 position: absolute;
                                 margin-top: -1px;
-                                color: #818093;
+                                color: var(--ui-text-muted);
                                 line-height: 1;
                                 height: 16px;
                                 width: 16px;
                                 top: 50%;
-                                left: 0;
+                                left: 16px;
                             }
                             .mat-content {
                                 display: block;
@@ -146,19 +150,21 @@
                                 .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
                                     display: block;
                                     margin-right: 0;
-                                    color: var(--blackColor);
+                                    color: var(--tone-slate-text);
                                     transition: var(--transition);
                                 }
                             }
                             &.mat-expanded {
-                                color: var(--primaryColor);
+                                background-color: var(--action-filter-bg);
+                                border-left-color: var(--action-filter-border-strong);
+                                color: var(--action-filter-text-strong);
 
                                 i-feather {
-                                    color: var(--primaryColor);
+                                    color: var(--action-filter-text-strong);
                                 }
                                 .mat-content {
                                     .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
-                                        color: var(--primaryColor);
+                                        color: var(--action-filter-text-strong);
                                     }
                                 }
                                 .mat-expansion-indicator {
@@ -171,7 +177,7 @@
                                 transform: translateY(-50%) !important;
                                 position: absolute;
                                 margin-top: 0.5px;
-                                right: -4px;
+                                right: 14px;
                                 top: 50%;
             
                                 svg {
@@ -179,7 +185,7 @@
                                 }
                                 &::before {
                                     font-size: 17px;
-                                    color: #818093;
+                                    color: var(--ui-text-muted);
                                     content: "\ea6e";
                                     position: relative;
                                     display: inline-block;
@@ -199,34 +205,36 @@
                                 display: inline-block;
                                 color: var(--primaryColor);
                                 transform: translateY(-50%);
-                                background: rgba(117, 127, 239, 0.1);
+                                background: var(--sidebar-primary-badge-bg);
                                 font: {
                                     size: 11px;
                                     weight: 500;
                                 };
                                 &.two {
-                                    color: #00b69b;
-                                    background: rgba(0, 182, 155, 0.07);
+                                    color: var(--sidebar-badge-success);
+                                    background: var(--sidebar-success-badge-bg);
                                 }
                                 &.three {
                                     color: var(--dangerColor);
-                                    background: rgba(238, 54, 140, 0.1);
+                                    background: var(--sidebar-danger-badge-bg);
                                 }
                             }
                             &:hover {
-                                color: var(--primaryColor);
+                                background-color: var(--action-filter-bg-hover);
+                                border-left-color: var(--action-filter-accent);
+                                color: var(--action-filter-text-strong);
 
                                 i-feather {
-                                    color: var(--primaryColor);
+                                    color: var(--action-filter-text-strong);
                                 }
                                 .mat-content {
                                     .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
-                                        color: var(--primaryColor);
+                                        color: var(--action-filter-text-strong);
                                     }
                                 }
                                 .mat-expansion-indicator {
                                     &::before {
-                                        color: var(--primaryColor);
+                                        color: var(--action-filter-text-strong);
                                     }
                                 }
                             }
@@ -241,7 +249,7 @@
                             display: block;
                         }
                         .mat-expansion-panel-body {
-                            padding: 16px 0 0;
+                            padding: 6px 0 0;
             
                             .mat-expansion-panel {
                                 margin-bottom: 0;
@@ -263,36 +271,36 @@
                                     border-radius: 50%;
                                     position: absolute;
                                     transform: translateY(-50%);
-                                    background-color: #818093;
+                                    background-color: var(--action-filter-accent);
                                 }
                                 .mat-content {
                                     .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
                                         transition: var(--transition);
-                                        color: var(--blackColor) !important;
+                                        color: var(--tone-slate-text) !important;
                                     }
                                 }
                                 .mat-expansion-indicator {
                                     right: 11px;
 
                                     &::before {
-                                        color: #818093 !important;
+                                        color: var(--ui-text-muted) !important;
                                     }
                                 }
                                 &.mat-expanded, &:hover {
-                                    background-color: var(--primaryColor) !important;
-                                    color: var(--whiteColor);
+                                    background-color: var(--action-filter-bg) !important;
+                                    color: var(--action-filter-text-strong);
             
                                     .mat-content {
                                         .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
-                                            color: var(--whiteColor) !important;
+                                            color: var(--action-filter-text-strong) !important;
                                         }
                                     }
                                     &::after {
-                                        background-color: var(--whiteColor);
+                                        background-color: var(--action-filter-text-strong);
                                     }
                                     .mat-expansion-indicator {
                                         &::before {
-                                            color: var(--whiteColor) !important;
+                                            color: var(--action-filter-text-strong) !important;
                                         }
                                     }
                                 }
@@ -300,7 +308,7 @@
                             .mat-expansion-panel-body {
                                 padding: {
                                     top: 6px;
-                                    left: 20px;
+                                    left: 10px;
                                 };
                             }
                             .sidebar-sub-menu {
@@ -317,17 +325,14 @@
                                         font-family: var(--fontFamily);
                                         font-size: 13px;
                                         position: relative;
-                                        border-radius: 5px;
-                                        color: var(--blackColor);
+                                        border-radius: 6px;
+                                        border-left: 3px solid transparent;
+                                        color: var(--tone-slate-text);
                                         transition: var(--transition);
-                                        padding: {
-                                            bottom: 8.5px;
-                                            left: 32px;
-                                            top: 8.5px;
-                                        };
+                                        padding: 10px 14px 10px 36px;
                                         &::after {
                                             top: 50%;
-                                            left: 15px;
+                                            left: 17px;
                                             width: 6px;
                                             height: 6px;
                                             content: '';
@@ -335,18 +340,19 @@
                                             border-radius: 50%;
                                             position: absolute;
                                             transform: translateY(-50%);
-                                            background-color: #818093;
+                                            background-color: var(--action-filter-accent);
                                         }
                                         &:hover, &.active {
-                                            background-color: var(--primaryColor);
-                                            color: var(--whiteColor);
+                                            background-color: var(--action-filter-bg);
+                                            border-left-color: var(--action-filter-border-strong);
+                                            color: var(--action-filter-text-strong);
             
                                             &::after {
-                                                background-color: var(--whiteColor);
+                                                background-color: var(--action-filter-text-strong);
                                             }
                                             .trinta-badge {
-                                                color: var(--primaryColor);
-                                                background-color: var(--whiteColor);
+                                                color: var(--action-filter-text-strong);
+                                                background-color: var(--action-filter-bg-soft);
                                             }
                                         }
                                         .trinta-badge {
@@ -367,19 +373,21 @@
                         }
                         &:has(> .mat-expansion-panel-content-wrapper > .mat-expansion-panel-content > .mat-expansion-panel-body > .sidebar-sub-menu > .sidemenu-item > .sidemenu-link.active) {
                             .mat-expansion-panel-header {
-                                color: var(--primaryColor);
+                                background-color: var(--action-filter-bg);
+                                border-left-color: var(--action-filter-border-strong);
+                                color: var(--action-filter-text-strong);
 
                                 i-feather {
-                                    color: var(--primaryColor);
+                                    color: var(--action-filter-text-strong);
                                 }
                                 .mat-content {
                                     .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
-                                        color: var(--primaryColor);
+                                        color: var(--action-filter-text-strong);
                                     }
                                 }
                                 .mat-expansion-indicator {
                                     &::before {
-                                        color: var(--primaryColor);
+                                        color: var(--action-filter-text-strong);
                                     }
                                 }
                             }
@@ -390,11 +398,13 @@
                     }
                     .sidebar-menu-link {
                         transition: var(--transition);
-                        color: var(--blackColor);
+                        color: var(--tone-slate-text);
                         letter-spacing: 0.14px;
-                        margin:20px 0 25px;
+                        margin: 0 0 8px;
                         position: relative;
-                        padding-left: 24px;
+                        padding: 13px 16px 13px 42px;
+                        border-radius: 6px;
+                        border-left: 3px solid transparent;
                         display: block;
                         font: {
                             family: var(--headingFontFamily);
@@ -406,18 +416,38 @@
                             transform: translateY(-50%);
                             position: absolute;
                             margin-top: -.5px;
-                            color: #818093;
+                            color: var(--ui-text-muted);
                             line-height: 1;
                             height: 16px;
                             width: 16px;
                             top: 50%;
-                            left: 0;
+                            left: 16px;
                         }
                         &:hover, &.active {
-                            color: var(--primaryColor);
+                            background-color: var(--action-filter-bg);
+                            border-left-color: var(--action-filter-border-strong);
+                            color: var(--action-filter-text-strong);
 
                             i-feather {
-                                color: var(--primaryColor);
+                                color: var(--action-filter-text-strong);
+                            }
+                        }
+
+                        &[href="#"] {
+                            color: var(--action-warning-text-strong);
+
+                            i-feather {
+                                color: var(--action-warning-text);
+                            }
+
+                            &:hover {
+                                background-color: var(--action-warning-bg);
+                                color: var(--action-warning-text);
+                                border-left-color: var(--action-warning-text)!important;
+
+                                i-feather {
+                                    color: var(--action-warning-text);
+                                }
                             }
                         }
                     }
@@ -709,7 +739,7 @@
 }
 
 .sidebar-shadow{
-    box-shadow: 4px 5px 10px #e7eaf0;
+    box-shadow: 4px 5px 10px var(--sidebar-shadow);
 }
 
 /* Min width 1200px to Max width 1399px */

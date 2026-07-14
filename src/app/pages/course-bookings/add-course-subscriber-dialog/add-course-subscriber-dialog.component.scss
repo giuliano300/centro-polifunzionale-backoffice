@@ -1,5 +1,6 @@
 .subscriber-dialog {
-  width: min(760px, 86vw);
+  width: min(860px, 94vw);
+  min-width: min(800px, 94vw);
   max-width: 100%;
 }
 
@@ -24,25 +25,25 @@
   gap: 4px;
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #e7ecf3;
+  border: 1px solid var(--ui-border-panel);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--ui-surface);
   text-align: left;
   cursor: pointer;
 
   &.selected {
     border-color: var(--primaryColor);
-    background: #eef5ff;
+    background: var(--action-filter-bg-soft);
   }
 
   strong {
-    color: #1f2937;
+    color: var(--ui-text);
     font-size: 14px;
   }
 
   span,
   small {
-    color: #6b7a90;
+    color: var(--ui-text-subtle);
   }
 }
 
@@ -60,20 +61,21 @@
 
 .empty-state {
   margin: 12px 0 0;
-  color: #7b8798;
+  color: var(--ui-text-soft);
 }
 
 .error-message {
   margin: 14px 0 0;
   padding: 12px 14px;
   border-radius: 6px;
-  background: #fdecec;
-  color: #b42318;
+  background: var(--action-delete-bg-soft);
+  color: var(--action-delete-text-strong);
 }
 
 @media (max-width: 680px) {
   .subscriber-dialog {
-    width: min(94vw, 760px);
+    width: 94vw;
+    min-width: 94vw;
   }
 
   .search-box,

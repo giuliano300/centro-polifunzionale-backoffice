@@ -8,4 +8,5 @@ export interface AuthUser {
   taxCode?: string;
   password: string;
   role: UserRole;
+  isActive?: boolean;
 }

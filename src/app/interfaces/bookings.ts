@@ -9,5 +9,8 @@ export interface Bookings {
   date: string;
   startTime: string;
   endTime: string;
+  rentalUnit: 'whole_room' | 'workstation';
+  rentalMode: 'time' | 'full_day';
+  workstationQuantity: number;
   status: string;
 }
