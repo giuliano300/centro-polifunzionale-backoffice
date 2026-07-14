@@ -3,6 +3,42 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_URL } from '../../main';
 
+export interface DashboardUser {
+  _id?: string;
+  name?: string;
+  email?: string;
+}
+
+export interface DashboardSpace {
+  _id?: string;
+  name?: string;
+}
+
+export interface DashboardBooking {
+  _id?: string;
+  name?: string;
+  date?: string | Date;
+  startTime?: string;
+  status?: string;
+  user?: string | DashboardUser;
+  space?: string | DashboardSpace;
+}
+
+export interface DashboardCourse {
+  _id?: string;
+  title?: string;
+  date?: string | Date;
+  startTime?: string;
+  booking?: string | DashboardBooking;
+}
+
+export interface DashboardCourseBooking {
+  _id?: string;
+  status?: string;
+  user?: string | DashboardUser;
+  course?: string | DashboardCourse;
+}
+
 export interface DashboardStats {
   generatedAt: string;
   totals: {
@@ -33,14 +69,14 @@ export interface DashboardStats {
     spaceUsage: Array<{ spaceId: string; name: string; bookings: number }>;
   };
   recent: {
-    users: any[];
-    bookings: any[];
-    courses: any[];
-    courseBookings: any[];
+    users: DashboardUser[];
+    bookings: DashboardBooking[];
+    courses: DashboardCourse[];
+    courseBookings: DashboardCourseBooking[];
   };
   upcoming: {
-    bookings: any[];
-    courses: any[];
+    bookings: DashboardBooking[];
+    courses: DashboardCourse[];
   };
 }
 

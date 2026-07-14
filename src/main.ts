@@ -7,9 +7,9 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideHttpClient } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { environment } from './environments/environment';
 
-// Definisci l'URL globale dell'API
-export const API_URL = 'http://localhost:3000/';
+export const API_URL = environment.apiUrl;
 export const TOKEN_KEY = 'a-string-secret-at-least-256-bits-long';
 export const exceedsLimit = 3;
 export const maxLenghtUploadFile = 2;

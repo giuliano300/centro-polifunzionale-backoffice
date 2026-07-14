@@ -88,7 +88,16 @@ $trinta-theme: mat.define-theme((
     --ui-shadow-outline: #999999;
     --ui-border-input: #d8e0ea;
     --ui-border-table: #edeff5;
+    --ui-border-legacy: #cccccc;
     --ui-surface-neutral: #fafafa;
+    --ui-surface-code: #f5f2f0;
+    --ui-surface-legacy: #dfe3e9;
+    --auth-border: #e3eaef;
+    --auth-divider: #f5f4f6;
+    --auth-error-border: #f5c2c7;
+    --code-token-red: #990055;
+    --code-token-green: #669900;
+    --code-token-blue: #0077aa;
     --action-filter-text: #1d4ed8;
     --action-filter-text-strong: #1e40af;
     --action-filter-bg: #dbeafe;

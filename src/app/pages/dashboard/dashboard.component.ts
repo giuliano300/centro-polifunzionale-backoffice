@@ -4,7 +4,14 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { FeathericonsModule } from '../../icons/feathericons/feathericons.module';
-import { DashboardService, DashboardStats } from '../../services/Dashboard.service';
+import {
+  DashboardBooking,
+  DashboardCourse,
+  DashboardCourseBooking,
+  DashboardService,
+  DashboardStats,
+  DashboardUser
+} from '../../services/Dashboard.service';
 
 interface KpiCard {
   label: string;
@@ -159,37 +166,37 @@ export class DashboardComponent {
     });
   }
 
-  getUserName(item: any): string {
+  getUserName(item: DashboardUser & { user?: DashboardUser }): string {
     return item?.name || item?.user?.name || '-';
   }
 
-  getBookingUser(item: any): string {
-    return item?.user?.name || '-';
-  }
-
-  getBookingSpace(item: any): string {
-    return item?.space?.name || '-';
-  }
-
-  getCourseSpace(item: any): string {
-    const booking = typeof item?.booking === 'string' ? null : item?.booking;
-    return booking?.space?.name || '-';
-  }
-
-  getCourseManager(item: any): string {
-    const booking = typeof item?.booking === 'string' ? null : item?.booking;
-    return booking?.user?.name || '-';
-  }
-
-  getCourseBookingUser(item: any): string {
+  getBookingUser(item: DashboardBooking): string {
     return typeof item?.user === 'string' ? '-' : item?.user?.name || '-';
   }
 
-  getCourseBookingTitle(item: any): string {
+  getBookingSpace(item: DashboardBooking): string {
+    return typeof item?.space === 'string' ? '-' : item?.space?.name || '-';
+  }
+
+  getCourseSpace(item: DashboardCourse): string {
+    const booking = typeof item?.booking === 'string' ? null : item?.booking;
+    return typeof booking?.space === 'string' ? '-' : booking?.space?.name || '-';
+  }
+
+  getCourseManager(item: DashboardCourse): string {
+    const booking = typeof item?.booking === 'string' ? null : item?.booking;
+    return typeof booking?.user === 'string' ? '-' : booking?.user?.name || '-';
+  }
+
+  getCourseBookingUser(item: DashboardCourseBooking): string {
+    return typeof item?.user === 'string' ? '-' : item?.user?.name || '-';
+  }
+
+  getCourseBookingTitle(item: DashboardCourseBooking): string {
     return typeof item?.course === 'string' ? '-' : item?.course?.title || '-';
   }
 
-  getStatusLabel(status: string): string {
+  getStatusLabel(status?: string): string {
     const labels: Record<string, string> = {
       pending: 'In attesa',
       confirmed: 'Confermate',
@@ -200,7 +207,7 @@ export class DashboardComponent {
       FREE: 'Gratuiti'
     };
 
-    return labels[status] || status || '-';
+    return status ? labels[status] || status : '-';
   }
 
   getPercent(value: number, total: number): number {

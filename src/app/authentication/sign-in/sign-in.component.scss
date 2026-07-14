@@ -35,7 +35,7 @@
                 min-width: auto;
                 padding: 17px 25px;
                 border-radius: 6px;
-                border: 1px solid #e3eaef;
+                border: 1px solid var(--auth-border);
             }
             .or {
                 margin-top: 30px;
@@ -55,7 +55,7 @@
                     z-index: -1;
                     margin-top: -1px;
                     position: absolute;
-                    background: #f5f4f6;
+                    background: var(--auth-divider);
                     transform: translateY(-50%);
                 }
             }
@@ -126,7 +126,7 @@
                     .mdc-text-field {
                         &:not(.mdc-text-field--disabled) {
                             .mdc-floating-label {
-                                color: #a9a9c8;
+                                color: var(--bodyColor);
                             }
                         }
                     }
@@ -306,7 +306,7 @@ a.recovery{
 
 .login-error {
     padding: 12px 14px;
-    border: 1px solid #f5c2c7;
+    border: 1px solid var(--auth-error-border);
     border-radius: 6px;
     background: var(--action-delete-bg-soft);
     color: var(--action-delete-text-strong);
