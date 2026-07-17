@@ -3,7 +3,7 @@
         .events-list {
             li {
                 padding: 19px 15px;
-                border-radius: 6px;
+                border-radius: var(--radius);
                 margin-bottom: 8px;
                 background-color: var(--calendar-panel-bg);
                 transition: var(--transition);
@@ -32,7 +32,7 @@
                 .image {
                     img {
                         margin-bottom: -5px;
-                        border-radius: 6px;
+                        border-radius: var(--radius);
                         width: 45px;
                     }
                 }
@@ -123,7 +123,7 @@
                         padding: 0;
                         width: 35px;
                         height: 35px;
-                        border-radius: 50%;
+                        border-radius: var(--radius);
                         position: relative;
                         margin: {
                             left: auto;

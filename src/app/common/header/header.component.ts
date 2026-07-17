@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
-import { DatePipe, NgClass } from '@angular/common';
+import { AsyncPipe, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
 import { FeathericonsModule } from '../../icons/feathericons/feathericons.module';
 import { ToggleService } from './toggle.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/Notification.service';
 
 @Component({
     selector: 'app-header',
-    imports: [FeathericonsModule, MatButtonModule, MatMenuModule, NgClass],
+    imports: [FeathericonsModule, MatButtonModule, MatMenuModule, NgClass, NgIf, NgFor, AsyncPipe],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
     providers: [
@@ -21,7 +23,9 @@ export class HeaderComponent {
     constructor(
         public toggleService: ToggleService,
         private datePipe: DatePipe,
-        private authService: AuthService
+        private authService: AuthService,
+        public notifications: NotificationService,
+        private router: Router
     ) {
         this.toggleService.isToggled$.subscribe(isToggled => {
             this.isToggled = isToggled;
@@ -31,6 +35,7 @@ export class HeaderComponent {
         this.authService.loginName$.subscribe(val => {
             this.area = val || (localStorage.getItem('loginName')?.replace(/^"|"$/g, '')) || '';
         });
+        this.notifications.connect();
     }
 
     // Toggle Service
@@ -47,5 +52,21 @@ export class HeaderComponent {
     // Current Date
     currentDate: Date = new Date();
     formattedDate: any;
+    isNotificationsOpen = false;
+
+    toggleNotifications() {
+        this.isNotificationsOpen = !this.isNotificationsOpen;
+        if (this.isNotificationsOpen) {
+            this.notifications.markAllRead();
+        }
+    }
+
+    openNotification(link?: string) {
+        if (!link) {
+            return;
+        }
+        this.isNotificationsOpen = false;
+        this.router.navigateByUrl(link);
+    }
 
 }

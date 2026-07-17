@@ -13,6 +13,7 @@ import { PaymentsComponent } from './pages/payments/payments.component';
 import { CoursesComponent } from './pages/courses/courses.component';
 import { CourseBookingsComponent } from './pages/course-bookings/course-bookings.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { CancellationRequestsComponent } from './pages/cancellation-requests/cancellation-requests.component';
 
 export const routes: Routes = [
     { path: '', redirectTo : '/dashboard', pathMatch: 'full' },
@@ -37,7 +38,8 @@ export const routes: Routes = [
             { path: 'bookings', component: BookingsListComponent },
             { path: 'payments', component: PaymentsComponent },
             { path: 'courses', component: CoursesComponent },
-            { path: 'course-bookings', component: CourseBookingsComponent }
+            { path: 'course-bookings', component: CourseBookingsComponent },
+            { path: 'cancellation-requests', component: CancellationRequestsComponent }
         ]
     },
     { path: '**', component: NotFoundComponent},

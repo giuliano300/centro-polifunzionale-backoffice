@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../services/auth.service';
 import { UsersService } from '../../services/User.service';
 import { JwtPayloads } from '../../interfaces/JwtPayloads';
+import { NotificationService } from '../../services/Notification.service';
 
 @Component({
     selector: 'app-sign-in',
@@ -32,7 +33,8 @@ export class SignInComponent {
         private router: Router,
         private utilsService: UtilsService,
         private authService: AuthService,
-        private userService: UsersService
+        private userService: UsersService,
+        private notificationService: NotificationService
     ) {
         this.authForm = this.fb.group({
             email: ['', [Validators.required, Validators.email]],
@@ -71,6 +73,7 @@ export class SignInComponent {
                         this.authService.setLoginName(this.user!.name!);
                         localStorage.setItem('authToken', data.access_token);
                         localStorage.setItem('user', JSON.stringify(this.user!));
+                        this.notificationService.connect();
                         this.router.navigate(['/dashboard']);
                     }
                 },
@@ -84,8 +87,14 @@ export class SignInComponent {
 
     ngOnInit(): void {
         const token = localStorage.getItem('authToken');
-        if (token) 
+        if (this.authService.isTokenValid(token)) {
             this.router.navigate(['/dashboard']);
+            return;
+        }
+
+        if (token) {
+            this.authService.clearRoles();
+        }
    }
    
 

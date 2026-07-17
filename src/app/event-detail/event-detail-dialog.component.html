@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Dettaglio prenotazione</h2>
+
+<mat-dialog-content>
+  <div class="detail-grid">
+    <div>
+      <span>Cliente</span>
+      <strong>{{ props.user?.name || data?.title || '-' }}</strong>
+    </div>
+    <div>
+      <span>Data</span>
+      <strong>{{ formatDate(data?.date) }}</strong>
+    </div>
+    <div>
+      <span>Spazio</span>
+      <strong>{{ props.space?.name || '-' }}</strong>
+    </div>
+    <div>
+      <span>Orario</span>
+      <strong>{{ props.startTime || '-' }} - {{ props.endTime || '-' }}</strong>
+    </div>
+    <div>
+      <span>Stato prenotazione</span>
+      <strong>{{ bookingStatusLabel(props.status) }}</strong>
+    </div>
+    <div>
+      <span>Pagamento</span>
+      <strong>{{ paymentStatus() }}</strong>
+    </div>
+  </div>
+
+  <div class="payments" *ngIf="props.payments?.length">
+    <h3>Pagamenti</h3>
+    <div class="payment-row" *ngFor="let payment of props.payments">
+      <span>{{ payment.amount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</span>
+      <span>{{ paymentStatusLabel(payment.status) }}</span>
+      <small>{{ payment.method || '-' }}</small>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close class="action-cancel">Chiudi</button>
+</mat-dialog-actions>

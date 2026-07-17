@@ -20,7 +20,7 @@
                                 width: 40px;
                                 height: 40px;
                                 box-shadow: unset;
-                                border-radius: 3px;
+                                border-radius: var(--radius);
                                 display: inline-block;
                                 color: var(--blackColor);
                                 border: 1px solid var(--calendar-control-border);

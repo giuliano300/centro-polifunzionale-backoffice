@@ -26,7 +26,7 @@
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--ui-border-panel);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--ui-surface);
   text-align: left;
   cursor: pointer;
@@ -67,7 +67,7 @@
 .error-message {
   margin: 14px 0 0;
   padding: 12px 14px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--action-delete-bg-soft);
   color: var(--action-delete-text-strong);
 }

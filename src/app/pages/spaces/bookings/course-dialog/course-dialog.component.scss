@@ -37,7 +37,7 @@
   min-width: 76px;
   min-height: 30px;
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--action-save-bg-soft);
   color: var(--action-save-text-strong);
   font-size: 12px;
@@ -114,7 +114,7 @@
   gap: 12px;
   padding: 14px 16px;
   border: 1px solid var(--ui-border-panel);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--ui-surface-soft);
   cursor: pointer;
 
@@ -141,7 +141,7 @@
 .error-message {
   margin: 0;
   padding: 12px 14px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--action-delete-bg-soft);
   color: var(--action-delete-text-strong);
   font-weight: 500;
@@ -153,7 +153,7 @@
   margin-top: 18px;
   padding: 16px;
   border: 1px solid var(--ui-border-panel);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--ui-surface-soft);
 
   &.muted {
@@ -194,7 +194,7 @@
   gap: 10px;
   min-height: 42px;
   padding: 8px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--ui-surface);
   color: var(--action-cancel-text);
   font-size: 13px;
@@ -222,7 +222,7 @@
 
 .empty-subscribers {
   padding: 14px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--ui-surface);
   color: var(--ui-text-soft);
   font-weight: 500;

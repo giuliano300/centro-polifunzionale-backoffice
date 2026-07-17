@@ -36,10 +36,34 @@ export class AuthService {
     }
   }
 
+  decodeRawToken(token: string): JwtPayloads | null {
+    try {
+      return jwtDecode<JwtPayloads>(token);
+    } catch (error) {
+      console.error('Errore decodifica JWT', error);
+      return null;
+    }
+  }
+
+  isTokenValid(token: string | null): boolean {
+    if (!token) {
+      return false;
+    }
+
+    const decoded = this.decodeRawToken(token);
+    if (!decoded?.exp) {
+      return false;
+    }
+
+    return decoded.exp * 1000 > Date.now();
+  }
+
   // Pulisce i ruoli
   clearRoles() {
     localStorage.removeItem('isLogin');
     localStorage.removeItem('loginName');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
     this.isLoginSubject.next(false);
     this.loginNameSubject.next("");
   }

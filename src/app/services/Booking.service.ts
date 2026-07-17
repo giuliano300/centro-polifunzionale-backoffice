@@ -9,7 +9,17 @@ export interface BookingFilters {
   start?: string;
   end?: string;
   status?: string;
+  excludeStatus?: string;
   search?: string;
+  page?: string;
+  limit?: string;
+}
+
+export interface PaginatedBookings {
+  items: BookingWithPayments[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 export interface CreateBooking {
@@ -58,13 +68,41 @@ export class BookingService {
     return this.http.get<BookingWithPayments[]>(this.apiUrl + params, { headers });
   }
 
+  getBookingsPage(filters: BookingFilters = {}): Observable<PaginatedBookings>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    const params = this.buildQuery(filters);
+    return this.http.get<PaginatedBookings>(this.apiUrl + params, { headers });
+  }
+
+  updateStatus(id: string, status: string): Observable<Bookings>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.put<Bookings>(this.apiUrl + "/" + id, { status }, { headers });
+  }
+
+  approveCancellation(id: string, walletCreditAmount: number): Observable<Bookings>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.post<Bookings>(`${this.apiUrl}/${id}/cancellation-approve`, { walletCreditAmount }, { headers });
+  }
+
   getBookings(id: string, year?: string, month?: string, start?: string, end?: string): Observable<BookingWithPayments[]>{
     const token = localStorage.getItem('authToken'); 
       const headers = new HttpHeaders({
         'Authorization': `Bearer ${token}`
       });      
 
-    let url = this.apiUrl + "?spaceId=" + id;
+    let url = this.apiUrl + "?spaceId=" + id + "&excludeStatus=cancellation_requested";
 
     if (start && end) {
       url += `&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;

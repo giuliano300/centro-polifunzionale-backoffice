@@ -1,0 +1,52 @@
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  min-width: min(760px, 80vw);
+
+  div {
+    padding: 12px;
+    border-radius: var(--radius);
+    background: var(--ui-surface-muted);
+  }
+
+  span,
+  strong {
+    display: block;
+  }
+
+  span {
+    margin-bottom: 4px;
+    color: var(--ui-text-muted);
+    font-size: 12px;
+  }
+
+  strong {
+    color: var(--ui-text-strong);
+    font-weight: 500;
+  }
+}
+
+.payments {
+  margin-top: 16px;
+
+  h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+}
+
+.payment-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--ui-border);
+}
+
+@media (max-width: 760px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

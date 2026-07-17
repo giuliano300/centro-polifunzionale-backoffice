@@ -78,6 +78,17 @@ export class PaymentsComponent {
     return new Date(date).toLocaleDateString('it-IT');
   }
 
+  getPaymentStatusLabel(status?: string): string {
+    const labels: Record<string, string> = {
+      PENDING: 'Da pagare',
+      PAID: 'Pagato',
+      FAILED: 'Fallito',
+      FREE: 'Gratuito'
+    };
+
+    return status ? labels[status] || status : '-';
+  }
+
   private getToday(): string {
     return this.toDateInputValue(new Date());
   }

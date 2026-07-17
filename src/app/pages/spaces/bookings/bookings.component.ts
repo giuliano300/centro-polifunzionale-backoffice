@@ -215,6 +215,7 @@ export class BookingsComponent {
       const labels: Record<string, string> = {
         pending: 'In attesa',
         confirmed: 'Confermata',
+        cancellation_requested: 'Richiesta annullamento',
         cancelled: 'Annullata'
       };
       return labels[item.booking.status] || item.booking.status;
@@ -226,13 +227,8 @@ export class BookingsComponent {
         return;
       }
 
-      this.paymentService.create({
-        bookingId: item.booking._id,
-        amount,
-        status: 'PAID',
-        method: 'manual',
-        transactionId: `MANUAL-${Date.now()}`
-      }).subscribe(() => this.getBookings(this.id!));
+      this.paymentService.confirmBookingPayment(item.booking._id, amount)
+        .subscribe(() => this.getBookings(this.id!));
     }
 
     IsFutureOrToday(item: BookingWithPayments): boolean {

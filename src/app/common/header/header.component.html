@@ -12,6 +12,21 @@
                 <i-feather name="align-left"></i-feather>
             </div>
         </div>
-        <div class="primary-color">{{area}}</div>
+        <div class="header-actions">
+            <button mat-button class="notification-button" type="button" (click)="toggleNotifications()">
+                <i-feather name="bell"></i-feather>
+                <span *ngIf="notifications.unread$ | async as unread">{{ unread }}</span>
+            </button>
+            <div class="notification-panel" *ngIf="isNotificationsOpen">
+                <button class="notification-item" type="button" *ngFor="let item of notifications.notifications$ | async" (click)="openNotification(item.link)">
+                    <strong>{{ item.title }}</strong>
+                    <span>{{ item.message }}</span>
+                </button>
+                <div class="notification-empty" *ngIf="(notifications.notifications$ | async)?.length === 0">
+                    Nessuna notifica
+                </div>
+            </div>
+            <div class="primary-color">{{area}}</div>
+        </div>
     </div>
 </div>

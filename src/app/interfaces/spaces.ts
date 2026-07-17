@@ -18,6 +18,7 @@ export interface Spaces {
   rentalModes: SpaceRentalMode[];
   timeSlotMinutes: number;
   workstationCount: number;
+  courseCreationAdvanceHours?: number;
   openingHours: SpaceOpeningSlot[];
   isAvailable: boolean;
 }

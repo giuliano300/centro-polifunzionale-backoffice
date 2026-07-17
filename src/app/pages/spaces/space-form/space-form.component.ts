@@ -60,6 +60,7 @@ export class SpaceFormComponent {
       rentalModes: [['time'], [Validators.required]],
       timeSlotMinutes: [60, [Validators.min(15)]],
       workstationCount: [1, [Validators.required, Validators.min(1)]],
+      courseCreationAdvanceHours: [2, [Validators.required, Validators.min(0)]],
       openingHours: this.fb.array(this.days.map((day) => this.createOpeningSlot(day.value))),
       isAvailable: [true]
     });
@@ -103,6 +104,7 @@ export class SpaceFormComponent {
             rentalModes: space.rentalModes?.length ? space.rentalModes : ['time'],
             timeSlotMinutes: space.timeSlotMinutes || 60,
             workstationCount: space.workstationCount || 1,
+            courseCreationAdvanceHours: space.courseCreationAdvanceHours ?? 2,
             dailyRate: space.dailyRate || 0
           });
           this.openingHours.clear();

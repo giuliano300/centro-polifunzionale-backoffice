@@ -46,6 +46,19 @@ export class PaymentService {
     return this.http.post<Payment>(this.apiUrl, payment, { headers });
   }
 
+  confirmBookingPayment(bookingId: string, amount: number, method = 'manual'): Observable<Payment>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.post<Payment>(`${this.apiUrl}/booking/${bookingId}/confirm`, {
+      amount,
+      method,
+      transactionId: `MANUAL-${Date.now()}`
+    }, { headers });
+  }
+
   private buildQuery(filters: object): string {
     const params = new URLSearchParams();
     Object.entries(filters as Record<string, unknown>).forEach(([key, value]) => {

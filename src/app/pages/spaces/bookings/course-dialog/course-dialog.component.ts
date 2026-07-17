@@ -162,6 +162,7 @@ export class CourseDialogComponent {
     const labels: Record<string, string> = {
       pending: 'In attesa',
       confirmed: 'Confermata',
+      cancellation_requested: 'Richiesta annullamento',
       cancelled: 'Annullata'
     };
 
@@ -172,6 +173,7 @@ export class CourseDialogComponent {
     const labels: Record<string, string> = {
       PENDING: 'Da pagare',
       PAID: 'Pagato',
+      FAILED: 'Fallito',
       FREE: 'Gratuito'
     };
 

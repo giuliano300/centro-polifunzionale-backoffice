@@ -62,6 +62,7 @@ export class BookingsListComponent {
       start: dateRange.start,
       end: dateRange.end,
       status: this.filterForm.value.status,
+      excludeStatus: 'cancellation_requested',
       search: this.filterForm.value.search
     }).subscribe((data: BookingWithPayments[]) => {
       this.bookings = data.map((item) => ({
@@ -167,6 +168,17 @@ export class BookingsListComponent {
 
   CanShowCourseAction(item: BookingWithPayments): boolean {
     return !!this.GetCourse(item) || this.CanCreateCourse(item);
+  }
+
+  getBookingStatusLabel(status?: string): string {
+    const labels: Record<string, string> = {
+      pending: 'In attesa',
+      confirmed: 'Confermata',
+      cancellation_requested: 'Richiesta annullamento',
+      cancelled: 'Annullata'
+    };
+
+    return status ? labels[status] || status : '-';
   }
 
   CreateCourse(item: BookingWithPayments): void {

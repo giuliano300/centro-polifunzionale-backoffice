@@ -7,7 +7,7 @@
   min-width: 72px;
   min-height: 28px;
   padding: 5px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--action-save-bg-soft);
   color: var(--action-save-text-strong);
   font-size: 12px;

@@ -34,7 +34,7 @@
                 display: block;
                 min-width: auto;
                 padding: 17px 25px;
-                border-radius: 6px;
+                border-radius: var(--radius);
                 border: 1px solid var(--auth-border);
             }
             .or {
@@ -110,7 +110,7 @@
                         }
                     }
                     .mat-mdc-text-field-wrapper {
-                        border-radius: 10px;
+                        border-radius: var(--radius);
                         padding: 0 15px 0 60px;
                         border: 1px solid var(--app-bg);
                     }
@@ -162,10 +162,10 @@
                         .mdc-checkbox__background {
                             top: 0;
                             left: 0;
-                            border-radius: 5px;
+                            border-radius: var(--radius);
                         }
                         .mat-mdc-checkbox-ripple, .mdc-checkbox__ripple {
-                            border-radius: 5px;
+                            border-radius: var(--radius);
                         }
                         .mat-mdc-checkbox-touch-target {
                             width: 100%;
@@ -185,7 +185,7 @@
                     display: block;
                     min-width: auto;
                     margin-top: 25px;
-                    border-radius: 6px;
+                    border-radius: var(--radius);
                     padding: 18px 25px;
                     color: var(--whiteColor);
                     background-color: var(--primaryColor);
@@ -307,7 +307,7 @@ a.recovery{
 .login-error {
     padding: 12px 14px;
     border: 1px solid var(--auth-error-border);
-    border-radius: 6px;
+    border-radius: var(--radius);
     background: var(--action-delete-bg-soft);
     color: var(--action-delete-text-strong);
     font-size: 14px;

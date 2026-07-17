@@ -23,7 +23,7 @@
                 .input-search {
                     height: 46px;
                     padding: 0 20px;
-                    border-radius: 6px;
+                    border-radius: var(--radius);
                     background: var(--app-bg);
                     color: var(--darkColor);
                     font: {
@@ -63,7 +63,7 @@
                         height: 42px;
                         min-width: auto;
                         color: var(--header-text-muted);
-                        border-radius: 50%;
+                        border-radius: var(--radius);
                         display: inline-block;
                         background-color: var(--header-primary-soft);
 
@@ -93,7 +93,7 @@
                         height: 42px;
                         min-width: auto;
                         color: var(--header-text-muted);
-                        border-radius: 50%;
+                        border-radius: var(--radius);
                         display: inline-block;
                         background-color: var(--header-primary-soft);
 
@@ -133,7 +133,7 @@
                         height: 42px;
                         min-width: auto;
                         color: var(--header-text-muted);
-                        border-radius: 50%;
+                        border-radius: var(--radius);
                         display: inline-block;
                         background-color: var(--header-primary-soft);
 
@@ -167,7 +167,7 @@
                 }
                 .date-btn {
                     margin-left: 11px;
-                    border-radius: 4px;
+                    border-radius: var(--radius);
                     color: var(--blackColor);
                     border: 1px solid var(--tone-slate-bg);
                     padding: 13px 20px 10px 48px;
@@ -219,7 +219,7 @@
                 .profile-menu-btn {
                     &.mat-mdc-button {
                         display: inline-block;
-                        border-radius: 50%;
+                        border-radius: var(--radius);
                         margin-left: 8px;
                         min-width: auto;
                         height: auto;
@@ -238,7 +238,7 @@
                         }
                         .mat-mdc-button-persistent-ripple {
                             &::before {
-                                border-radius: 50%;
+                                border-radius: var(--radius);
                             }
                         }
                     }
@@ -263,7 +263,7 @@
             max-width: 375px;
             overflow: hidden;
             margin-top: 19px;
-            border-radius: 0;
+            border-radius: var(--radius);
             box-shadow: 0px 4px 20px 0px var(--header-dropdown-shadow);
 
             .title {
@@ -317,7 +317,7 @@
             max-width: 375px;
             overflow: hidden;
             margin-top: 19px;
-            border-radius: 0;
+            border-radius: var(--radius);
             box-shadow: 0px 4px 20px 0px var(--header-dropdown-shadow);
 
             .title {
@@ -392,7 +392,7 @@
             max-width: 220px;
             overflow: hidden;
             margin-top: 29px;
-            border-radius: 0;
+            border-radius: var(--radius);
             padding: 15px 0 0;
             box-shadow: 0px 4px 20px 0px var(--header-dropdown-shadow);
 
@@ -440,7 +440,7 @@
             max-width: 100%;
             overflow: hidden;
             margin-top: 19px;
-            border-radius: 0;
+            border-radius: var(--radius);
             padding: 20px 0 12px;
             box-shadow: 0px 4px 20px 0px var(--header-dropdown-shadow);
 
@@ -491,6 +491,96 @@
             }
         }
     }
+}
+
+.header-actions {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification-button {
+    position: relative;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 !important;
+    color: var(--action-filter-text) !important;
+    background: var(--action-filter-bg-soft) !important;
+
+    i-feather {
+        width: 18px;
+        height: 18px;
+    }
+
+    span {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 5px;
+        border-radius: var(--radius);
+        background: var(--action-delete-bg-light);
+        color: var(--action-delete-text-strong);
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 20px;
+    }
+}
+
+.notification-panel {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    z-index: 20;
+    display: grid;
+    gap: 8px;
+    width: min(340px, 86vw);
+    max-height: 320px;
+    overflow: auto;
+    padding: 10px;
+    border: 1px solid var(--ui-border-soft);
+    border-radius: var(--radius);
+    background: var(--ui-surface);
+    box-shadow: 0 18px 42px var(--ui-shadow-hover);
+}
+
+.notification-item {
+    display: grid;
+    gap: 4px;
+    width: 100%;
+    padding: 10px;
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--ui-surface-muted);
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover {
+        background: var(--action-filter-bg-soft);
+    }
+
+    strong {
+        color: var(--ui-text-strong);
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    span {
+        color: var(--ui-text-muted);
+        font-size: 12px;
+        line-height: 1.35;
+    }
+}
+
+.notification-empty {
+    padding: 10px;
+    color: var(--ui-text-muted);
+    font-size: 13px;
+    text-align: center;
 }
 
 /* Max width 767px */

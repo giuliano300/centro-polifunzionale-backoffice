@@ -82,7 +82,7 @@
 .client-panel {
   padding: 14px 16px 16px;
   border: 1px solid var(--ui-border-panel);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--ui-surface-soft);
 
   .mat-mdc-form-field {
@@ -127,7 +127,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--action-save-bg-soft);
   color: var(--action-save-text-strong);
 
@@ -143,7 +143,7 @@
 .error-message {
   margin: 0;
   padding: 12px 14px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--action-delete-bg-soft);
   color: var(--action-delete-text-strong);
   font-weight: 700;

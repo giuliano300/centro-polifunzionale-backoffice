@@ -200,6 +200,7 @@ export class DashboardComponent {
     const labels: Record<string, string> = {
       pending: 'In attesa',
       confirmed: 'Confermate',
+      cancellation_requested: 'Richieste annullamento',
       cancelled: 'Annullate',
       PENDING: 'Da pagare',
       PAID: 'Pagati',

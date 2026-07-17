@@ -47,7 +47,7 @@
     min-width: 0;
     padding: 13px 14px;
     border: 1px solid var(--ui-border-panel);
-    border-radius: 8px;
+    border-radius: var(--radius);
     background: var(--ui-surface-soft);
   }
 
@@ -89,7 +89,7 @@
   min-width: 92px;
   min-height: 28px;
   padding: 5px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   font-size: 12px;
   font-weight: 700;
   line-height: 1;

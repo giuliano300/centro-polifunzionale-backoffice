@@ -5,7 +5,7 @@
             
             input {
                 height: 46px;
-                border-radius: 6px;
+                border-radius: var(--radius);
                 background: var(--app-bg);
                 padding: {
                     left: 20px;
@@ -98,7 +98,7 @@
                     }
                     .trinta-badge {
                         font-size: 12px;
-                        border-radius: 2px;
+                        border-radius: var(--radius);
                         padding: 1.5px 7px;
                         letter-spacing: 1px;
                         color: var(--primaryColor);
@@ -161,10 +161,10 @@
                             .mdc-checkbox__background {
                                 top: 0;
                                 left: 0;
-                                border-radius: 5px;
+                                border-radius: var(--radius);
                             }
                             .mat-mdc-checkbox-ripple, .mdc-checkbox__ripple {
-                                border-radius: 5px;
+                                border-radius: var(--radius);
                             }
                             .mat-mdc-checkbox-touch-target {
                                 width: 100%;
