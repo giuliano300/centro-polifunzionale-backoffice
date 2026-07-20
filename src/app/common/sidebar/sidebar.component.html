@@ -1,6 +1,5 @@
 <div
     class="sidebar-area bg-white transition sidebar-shadow"
-    [ngClass]="{'active': isToggled}"
 >
     <div class="logo">
         <a routerLink="/" class="d-flex align-items-center">
@@ -9,15 +8,6 @@
                N'Agorà - Backoffice
             </span>
         </a>
-    </div>
-    <div
-        class="burger-menu transition cursor-pointer"
-        [ngClass]="{'active': isToggled}"
-        (click)="toggle()"
-    >
-        <span class="top-bar transition bg-dark d-block"></span>
-        <span class="middle-bar transition bg-dark d-block"></span>
-        <span class="bottom-bar transition bg-dark d-block"></span>
     </div>
     <ng-scrollbar visibility="hover">
         <div class="sidebar-inner">
@@ -78,6 +68,24 @@
                         <i-feather name="alert-triangle"></i-feather>
                         <span class="title">Richieste annullamento</span>
                     </a>
+
+                    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = true">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <i-feather name="settings"></i-feather>
+                                <span class="title">
+                                    Impostazioni
+                                </span>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <ul class="sidebar-sub-menu">
+                            <li class="sidemenu-item">
+                                <a routerLink="/wallet-settings" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Wallet nuovi iscritti
+                                </a>
+                            </li>
+                        </ul>
+                    </mat-expansion-panel>
 
                     <a class="sidebar-menu-link" (click)="logout()" href="#">
                         <i-feather name="Lock"></i-feather>

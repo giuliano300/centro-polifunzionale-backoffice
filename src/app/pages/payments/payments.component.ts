@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { NgIf } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -16,7 +17,7 @@ import { FeathericonsModule } from '../../icons/feathericons/feathericons.module
 
 @Component({
   selector: 'app-payments',
-  imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MatOptionModule, MatPaginatorModule, MatSelectModule, MatTableModule, FeathericonsModule],
+  imports: [NgIf, ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MatOptionModule, MatPaginatorModule, MatSelectModule, MatTableModule, FeathericonsModule],
   templateUrl: './payments.component.html',
   styleUrl: './payments.component.scss'
 })
@@ -87,6 +88,22 @@ export class PaymentsComponent {
     };
 
     return status ? labels[status] || status : '-';
+  }
+
+  getTotalAmount(payment: Payment): number {
+    return payment.totalAmount || ((payment.amount || 0) + (payment.walletAmount || 0));
+  }
+
+  getWalletAmount(payment: Payment): number {
+    return payment.walletAmount || 0;
+  }
+
+  getExternalAmount(payment: Payment): number {
+    return payment.externalAmount || payment.amount || 0;
+  }
+
+  formatCurrency(value?: number): string {
+    return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(value || 0);
   }
 
   private getToday(): string {

@@ -11,6 +11,8 @@ import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.comp
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
+type SpaceRow = Spaces & { action: { viewDetails: string; edit: string; delete: string; toggle: string } };
+
 @Component({
   selector: 'app-spaces',
   imports: [MatCardModule, MatButtonModule, MatMenuModule, MatPaginatorModule, MatTableModule, MatCheckboxModule],
@@ -18,11 +20,11 @@ import { Router } from '@angular/router';
   styleUrl: './spaces.component.scss'
 })
 export class SpacesComponent {
- spaces: Spaces[] = [];
+ spaces: SpaceRow[] = [];
 
- displayedColumns: string[] = ['name', 'rentalUnit', 'rentalModes', 'rates', 'schedule', 'isAvailable','viewDetails', 'edit', 'delete'];
+ displayedColumns: string[] = ['name', 'rentalUnit', 'rentalModes', 'rates', 'schedule', 'isAvailable', 'toggle', 'viewDetails', 'edit', 'delete'];
 
- dataSource = new MatTableDataSource<Spaces>(this.spaces);
+ dataSource = new MatTableDataSource<SpaceRow>(this.spaces);
 
  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -41,7 +43,7 @@ export class SpacesComponent {
         .subscribe((data: Spaces[]) => {
           if (!data || data.length === 0) {
             this.spaces = [];
-            this.dataSource = new MatTableDataSource<Spaces>(this.spaces);
+            this.dataSource = new MatTableDataSource<SpaceRow>(this.spaces);
             this.dataSource.paginator = this.paginator;
           } else {
             this.spaces = data.map(c => ({
@@ -49,10 +51,11 @@ export class SpacesComponent {
                 action: {
                     viewDetails: 'ri-menu-search-line',
                     edit: 'ri-edit-line',
-                    delete: 'ri-delete-bin-line'
+                    delete: 'ri-delete-bin-line',
+                    toggle: c.isAvailable ? 'ri-pause-circle-line' : 'ri-play-circle-line'
                 }
             }));;
-            this.dataSource = new MatTableDataSource<Spaces>(this.spaces);
+            this.dataSource = new MatTableDataSource<SpaceRow>(this.spaces);
             this.dataSource.paginator = this.paginator;
         }
     });
@@ -87,6 +90,14 @@ export class SpacesComponent {
       this.router.navigate(["/space/bookings/" + item._id]);
     }
 
+    ToggleAvailability(item: SpaceRow): void {
+      this.spaceService.update(item._id, { isAvailable: !item.isAvailable }).subscribe(() => this.getSpaces());
+    }
+
+    getAvailabilityLabel(item: Spaces): string {
+      return item.isAvailable ? 'Attivo' : 'Disattivo';
+    }
+
     getRentalUnitLabel(item: Spaces): string {
       return item.rentalUnit === 'workstation' ? 'Postazioni' : 'Stanza intera';
     }
@@ -104,6 +115,7 @@ export class SpacesComponent {
       const rates: string[] = [];
       if ((item.rentalModes || ['time']).includes('time')) {
         rates.push(`${item.hourlyRate || 0}/frazione`);
+        rates.push(`max ${item.maxConsecutiveTimeSlots || 1} fasce`);
       }
       const daily = item.dailyRate ? `${item.dailyRate}/giorno` : null;
       if ((item.rentalModes || []).includes('full_day') && daily) {

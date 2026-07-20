@@ -95,7 +95,7 @@
           <span>{{ getSubscriberEmail(subscriber) }}</span>
           <span>{{ getStatusLabel(subscriber.status) }}</span>
           <span>{{ getPaymentStatusLabel(subscriber.paymentStatus) }}</span>
-          <span>{{ formatAmount(subscriber.amount) }}</span>
+          <span>{{ formatAmount(totalSubscriberAmount(subscriber)) }}</span>
           <span class="subscriber-actions action">
             <button type="button" mat-button class="table-action-button action-delete" (click)="deleteSubscriber(subscriber)">
               <i class="ri-delete-bin-line"></i>

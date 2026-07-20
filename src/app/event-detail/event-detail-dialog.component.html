@@ -31,9 +31,13 @@
   <div class="payments" *ngIf="props.payments?.length">
     <h3>Pagamenti</h3>
     <div class="payment-row" *ngFor="let payment of props.payments">
-      <span>{{ payment.amount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</span>
+      <span>{{ paymentTotal(payment) | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</span>
       <span>{{ paymentStatusLabel(payment.status) }}</span>
-      <small>{{ payment.method || '-' }}</small>
+      <small>
+        {{ payment.method || '-' }}
+        <ng-container *ngIf="payment.walletAmount"> · Wallet {{ payment.walletAmount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</ng-container>
+        <ng-container *ngIf="payment.externalAmount"> · Esterno {{ payment.externalAmount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</ng-container>
+      </small>
     </div>
   </div>
 </mat-dialog-content>

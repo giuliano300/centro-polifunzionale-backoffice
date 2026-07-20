@@ -156,6 +156,18 @@ export class CourseBookingsComponent {
     }).format(amount || 0);
   }
 
+  totalAmount(item: CourseBooking): number {
+    return item.totalAmount || ((item.amount || 0) + (item.walletAmount || 0));
+  }
+
+  walletAmount(item: CourseBooking): number {
+    return item.walletAmount || 0;
+  }
+
+  externalAmount(item: CourseBooking): number {
+    return item.externalAmount || item.amount || 0;
+  }
+
   addSubscriber(): void {
     if (!this.courseId) {
       return;

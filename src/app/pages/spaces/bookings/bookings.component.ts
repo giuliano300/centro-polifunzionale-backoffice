@@ -195,7 +195,21 @@ export class BookingsComponent {
     GetPendingAmount(item: BookingWithPayments): number {
       const paid = item.payments?.find(payment => payment.status === 'PAID');
       const pending = item.payments?.find(payment => payment.status === 'PENDING');
-      return paid?.amount || pending?.amount || 0;
+      return pending?.externalAmount || pending?.amount || paid?.externalAmount || paid?.amount || 0;
+    }
+
+    GetTotalAmount(item: BookingWithPayments): number {
+      const payment = item.payments?.find(payment => payment.status === 'PAID')
+        || item.payments?.find(payment => payment.status === 'PENDING')
+        || item.payments?.[0];
+      return payment?.totalAmount || ((payment?.amount || 0) + (payment?.walletAmount || 0));
+    }
+
+    GetWalletAmount(item: BookingWithPayments): number {
+      const payment = item.payments?.find(payment => payment.status === 'PAID')
+        || item.payments?.find(payment => payment.status === 'PENDING')
+        || item.payments?.[0];
+      return payment?.walletAmount || 0;
     }
 
     GetPaymentStatus(item: BookingWithPayments): string {
@@ -209,6 +223,10 @@ export class BookingsComponent {
         return 'Fallito';
       }
       return 'N/A';
+    }
+
+    formatCurrency(value?: number): string {
+      return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(value || 0);
     }
 
     GetBookingStatusLabel(item: BookingWithPayments): string {

@@ -500,6 +500,10 @@
     gap: 12px;
 }
 
+.notification-wrap {
+    position: relative;
+}
+
 .notification-button {
     position: relative;
     width: 40px;
@@ -533,7 +537,7 @@
 .notification-panel {
     position: absolute;
     top: 48px;
-    right: 0;
+    left: 0;
     z-index: 20;
     display: grid;
     gap: 8px;

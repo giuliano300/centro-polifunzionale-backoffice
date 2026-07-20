@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item">
-      <button type="button" mat-button class="action-cancel" (click)="cancel()">Spazi</button>
+      <a  class="action-back" (click)="cancel()">Spazi</a>
     </li>
     <li aria-current="page" class="breadcrumb-item active">
       {{ id ? 'Modifica spazio' : 'Aggiungi spazio' }}
@@ -18,6 +18,7 @@
           <mat-form-field appearance="outline">
             <mat-label>Nome</mat-label>
             <input matInput formControlName="name" autocomplete="off">
+            <mat-hint>Nome visibile a gestori e clienti.</mat-hint>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -26,12 +27,14 @@
               <mat-option value="whole_room">Stanza intera</mat-option>
               <mat-option value="workstation">Postazione di lavoro</mat-option>
             </mat-select>
+            <mat-hint>Scegli se vendere l'intera stanza o singole postazioni.</mat-hint>
           </mat-form-field>
         </div>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Descrizione</mat-label>
           <textarea matInput formControlName="description" rows="4"></textarea>
+          <mat-hint>Spiega uso, capienza e caratteristiche principali dello spazio.</mat-hint>
         </mat-form-field>
       </section>
 
@@ -44,16 +47,25 @@
               <mat-option value="time">A tempo</mat-option>
               <mat-option value="full_day">Tutta la giornata</mat-option>
             </mat-select>
+            <mat-hint>Puoi abilitare una o entrambe le modalita.</mat-hint>
           </mat-form-field>
 
           <mat-form-field appearance="outline" *ngIf="hasTimeRental">
             <mat-label>Frazione minuti</mat-label>
             <input matInput type="number" formControlName="timeSlotMinutes" min="15" step="15">
+            <mat-hint>Durata minima acquistabile per ogni fascia oraria.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="hasTimeRental">
+            <mat-label>Fasce acquistabili insieme</mat-label>
+            <input matInput type="number" formControlName="maxConsecutiveTimeSlots" min="1" step="1">
+            <mat-hint>1 mantiene la prenotazione singola, valori maggiori abilitano fasce consecutive.</mat-hint>
           </mat-form-field>
 
           <mat-form-field appearance="outline" *ngIf="form.value.rentalUnit === 'workstation'">
             <mat-label>Numero postazioni</mat-label>
             <input matInput type="number" formControlName="workstationCount" min="1">
+            <mat-hint>Numero massimo di postazioni acquistabili nello stesso orario.</mat-hint>
           </mat-form-field>
         </div>
 
@@ -61,11 +73,13 @@
           <mat-form-field appearance="outline" *ngIf="hasTimeRental">
             <mat-label>Costo frazione</mat-label>
             <input matInput type="number" formControlName="hourlyRate" min="0">
+            <mat-hint>Prezzo di una singola frazione configurata.</mat-hint>
           </mat-form-field>
 
           <mat-form-field appearance="outline" *ngIf="hasFullDayRental">
             <mat-label>Costo giornata</mat-label>
             <input matInput type="number" formControlName="dailyRate" min="0">
+            <mat-hint>Prezzo per acquistare tutto l'orario di apertura del giorno.</mat-hint>
           </mat-form-field>
 
           <div class="availability-toggle">
@@ -77,6 +91,7 @@
           <mat-form-field appearance="outline">
             <mat-label>Blocco creazione corso ore prima</mat-label>
             <input matInput type="number" formControlName="courseCreationAdvanceHours" min="0" step="0.5">
+            <mat-hint>Oltre questo limite il gestore non puo piu creare corsi sulla prenotazione.</mat-hint>
           </mat-form-field>
         </div>
       </section>

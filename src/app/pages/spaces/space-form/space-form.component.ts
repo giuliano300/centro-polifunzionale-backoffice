@@ -59,6 +59,7 @@ export class SpaceFormComponent {
       rentalUnit: ['whole_room', [Validators.required]],
       rentalModes: [['time'], [Validators.required]],
       timeSlotMinutes: [60, [Validators.min(15)]],
+      maxConsecutiveTimeSlots: [1, [Validators.required, Validators.min(1)]],
       workstationCount: [1, [Validators.required, Validators.min(1)]],
       courseCreationAdvanceHours: [2, [Validators.required, Validators.min(0)]],
       openingHours: this.fb.array(this.days.map((day) => this.createOpeningSlot(day.value))),
@@ -103,6 +104,7 @@ export class SpaceFormComponent {
             rentalUnit: space.rentalUnit || 'whole_room',
             rentalModes: space.rentalModes?.length ? space.rentalModes : ['time'],
             timeSlotMinutes: space.timeSlotMinutes || 60,
+            maxConsecutiveTimeSlots: space.maxConsecutiveTimeSlots || 1,
             workstationCount: space.workstationCount || 1,
             courseCreationAdvanceHours: space.courseCreationAdvanceHours ?? 2,
             dailyRate: space.dailyRate || 0
@@ -140,6 +142,7 @@ export class SpaceFormComponent {
     if (!this.hasTimeRental) {
       value.hourlyRate = 0;
       value.timeSlotMinutes = 60;
+      value.maxConsecutiveTimeSlots = 1;
     }
     if (!this.hasFullDayRental) {
       value.dailyRate = 0;
@@ -166,13 +169,16 @@ export class SpaceFormComponent {
     const hourlyRate = this.form.get('hourlyRate');
     const dailyRate = this.form.get('dailyRate');
     const timeSlotMinutes = this.form.get('timeSlotMinutes');
+    const maxConsecutiveTimeSlots = this.form.get('maxConsecutiveTimeSlots');
 
     if (this.hasTimeRental) {
       hourlyRate?.setValidators([Validators.required, Validators.min(0)]);
       timeSlotMinutes?.setValidators([Validators.required, Validators.min(15)]);
+      maxConsecutiveTimeSlots?.setValidators([Validators.required, Validators.min(1)]);
     } else {
       hourlyRate?.setValidators([Validators.min(0)]);
       timeSlotMinutes?.setValidators([Validators.min(15)]);
+      maxConsecutiveTimeSlots?.setValidators([Validators.min(1)]);
     }
 
     if (this.hasFullDayRental) {
@@ -184,5 +190,6 @@ export class SpaceFormComponent {
     hourlyRate?.updateValueAndValidity({ emitEvent: false });
     dailyRate?.updateValueAndValidity({ emitEvent: false });
     timeSlotMinutes?.updateValueAndValidity({ emitEvent: false });
+    maxConsecutiveTimeSlots?.updateValueAndValidity({ emitEvent: false });
   }
 }

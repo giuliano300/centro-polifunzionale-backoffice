@@ -187,6 +187,10 @@ export class CourseDialogComponent {
     }).format(amount || 0);
   }
 
+  totalSubscriberAmount(item: CourseBooking): number {
+    return item.totalAmount || ((item.amount || 0) + (item.walletAmount || 0));
+  }
+
   submit(): void {
     if (this.form.invalid || this.isSaving) {
       this.form.markAllAsTouched();

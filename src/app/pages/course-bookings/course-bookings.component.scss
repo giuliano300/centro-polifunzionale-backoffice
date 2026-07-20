@@ -11,14 +11,14 @@
     span {
       color: var(--ui-text-soft);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     h3 {
       margin: 4px 0 0;
       color: var(--ui-text);
       font-size: 20px;
-      font-weight: 800;
+      font-weight: 600;
       line-height: 1.25;
     }
   }
@@ -60,14 +60,14 @@
     margin-bottom: 5px;
     color: var(--ui-text-soft);
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   strong {
     overflow: hidden;
     color: var(--ui-text);
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 600;
     line-height: 1.3;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -91,7 +91,7 @@
   padding: 5px 10px;
   border-radius: var(--radius);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
   white-space: nowrap;
 }

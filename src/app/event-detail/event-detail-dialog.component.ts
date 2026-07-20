@@ -56,4 +56,8 @@ export class EventDetailDialogComponent {
 
     return status ? labels[status] || status : '-';
   }
+
+  paymentTotal(payment: any): number {
+    return payment?.totalAmount || ((payment?.amount || 0) + (payment?.walletAmount || 0));
+  }
 }

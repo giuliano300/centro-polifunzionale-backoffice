@@ -1,0 +1,67 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">Impostazioni</li>
+    <li aria-current="page" class="breadcrumb-item active">Wallet nuovi iscritti</li>
+  </ol>
+</nav>
+
+<mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block settings-hero">
+  <mat-card-content>
+    <div class="settings-head">
+      <div>
+        <h1>Wallet nuovi iscritti</h1>
+        <p>Definisci il credito iniziale da assegnare automaticamente ai nuovi utenti non admin.</p>
+      </div>
+      <div class="current-credit">
+        <span>Credito attuale</span>
+        <strong>{{ formatCurrency(savedCredit) }}</strong>
+      </div>
+    </div>
+
+    <div class="settings-note">
+      <i class="ri-information-line"></i>
+      <span>Il valore non e retroattivo: se lo cambi, verra applicato solo ai nuovi iscritti creati dopo il salvataggio.</span>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="trinta-card to-do-list-card mb-25 bg-white border-none d-block settings-card">
+  <mat-card-content>
+    <div *ngIf="message" class="settings-message" [class.success]="messageType === 'success'">
+      {{ message }}
+    </div>
+
+    <div *ngIf="isLoading" class="settings-loading">
+      Caricamento impostazioni...
+    </div>
+
+    <form *ngIf="!isLoading" [formGroup]="form" class="settings-form" (ngSubmit)="save()">
+      <div class="amount-editor">
+        <div class="amount-icon">
+          <i class="ri-wallet-3-line"></i>
+        </div>
+        <div class="amount-field">
+          <label for="newUserWalletCredit">Credito da accreditare</label>
+          <div class="amount-input">
+            <span>€</span>
+            <input
+              id="newUserWalletCredit"
+              type="number"
+              min="0"
+              step="0.01"
+              formControlName="newUserWalletCredit">
+          </div>
+          <small *ngIf="form.controls.newUserWalletCredit.valid">Importo in euro, applicato ai nuovi iscritti futuri.</small>
+          <small class="error" *ngIf="form.controls.newUserWalletCredit.invalid && form.controls.newUserWalletCredit.touched">
+            Inserisci un importo maggiore o uguale a zero.
+          </small>
+        </div>
+      </div>
+
+      <button mat-button class="action-primary" type="submit" [disabled]="form.invalid || isSaving">
+        <i class="ri-save-3-line"></i>
+        <span>{{ isSaving ? 'Salvataggio...' : 'Salva' }}</span>
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

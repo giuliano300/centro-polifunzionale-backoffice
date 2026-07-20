@@ -181,6 +181,24 @@ export class BookingsListComponent {
     return status ? labels[status] || status : '-';
   }
 
+  GetTotalAmount(item: BookingWithPayments): number {
+    const payment = item.payments?.[0];
+    return payment?.totalAmount || ((payment?.amount || 0) + (payment?.walletAmount || 0));
+  }
+
+  GetWalletAmount(item: BookingWithPayments): number {
+    return item.payments?.[0]?.walletAmount || 0;
+  }
+
+  GetExternalAmount(item: BookingWithPayments): number {
+    const payment = item.payments?.[0];
+    return payment?.externalAmount || payment?.amount || 0;
+  }
+
+  formatCurrency(value?: number): string {
+    return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(value || 0);
+  }
+
   CreateCourse(item: BookingWithPayments): void {
     const course = this.GetCourse(item);
     if (!course && !this.CanCreateCourse(item)) {

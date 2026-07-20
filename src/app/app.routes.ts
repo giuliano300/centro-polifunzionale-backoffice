@@ -14,6 +14,7 @@ import { CoursesComponent } from './pages/courses/courses.component';
 import { CourseBookingsComponent } from './pages/course-bookings/course-bookings.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { CancellationRequestsComponent } from './pages/cancellation-requests/cancellation-requests.component';
+import { SystemSettingsComponent } from './pages/system-settings/system-settings.component';
 
 export const routes: Routes = [
     { path: '', redirectTo : '/dashboard', pathMatch: 'full' },
@@ -39,7 +40,9 @@ export const routes: Routes = [
             { path: 'payments', component: PaymentsComponent },
             { path: 'courses', component: CoursesComponent },
             { path: 'course-bookings', component: CourseBookingsComponent },
-            { path: 'cancellation-requests', component: CancellationRequestsComponent }
+            { path: 'cancellation-requests', component: CancellationRequestsComponent },
+            { path: 'wallet-settings', component: SystemSettingsComponent },
+            { path: 'system-settings', redirectTo: 'wallet-settings', pathMatch: 'full' }
         ]
     },
     { path: '**', component: NotFoundComponent},

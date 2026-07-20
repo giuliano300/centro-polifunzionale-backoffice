@@ -65,7 +65,7 @@ export class CancellationRequestsComponent {
     this.processingId = item.booking._id;
     this.bookingService.approveCancellation(item.booking._id, creditAmount).subscribe({
       next: () => {
-        this.message = 'Richiesta approvata. Credito accreditato nel portafogli.';
+        this.message = 'Richiesta approvata. Credito accreditato nel wallet.';
         this.processingId = '';
         this.load();
       },

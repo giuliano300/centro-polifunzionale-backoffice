@@ -17,6 +17,7 @@ export interface Spaces {
   rentalUnit: SpaceRentalUnit;
   rentalModes: SpaceRentalMode[];
   timeSlotMinutes: number;
+  maxConsecutiveTimeSlots?: number;
   workstationCount: number;
   courseCreationAdvanceHours?: number;
   openingHours: SpaceOpeningSlot[];
