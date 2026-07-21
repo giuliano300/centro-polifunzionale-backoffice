@@ -90,10 +90,40 @@
   }
 }
 
+:host ::ng-deep {
+  .mat-mdc-form-field.mat-mdc-form-field-appearance-outline {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: var(--ui-border-input-form) !important;
+    }
+
+    &:hover,
+    &.mat-focused {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: var(--action-filter-border-strong) !important;
+      }
+    }
+  }
+
+  .mat-datepicker-toggle {
+    color: var(--action-filter-text);
+
+    .ri-calendar-line {
+      display: inline-block;
+      color: var(--action-filter-text);
+      font-size: 20px;
+      line-height: 1;
+    }
+  }
+}
+
 .new-client-form {
   display: grid;
   gap: 14px;
-  padding-top: 18px;
+  padding-top: 10px;
 }
 
 .two-columns {
@@ -114,11 +144,119 @@
 .availability-actions {
   display: flex;
   justify-content: flex-start;
+
+  button {
+    min-width: 100%;
+    margin-top: -20px;
+  }
+}
+
+.slots-panel,
+.payment-panel {
+  display: grid;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--ui-border-panel);
+  border-radius: var(--radius);
+  background: var(--ui-surface-soft);
+}
+
+.slots-head,
+.payment-panel {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+
+  .mat-mdc-form-field {
+    width: min(320px, 100%);
+  }
+
+  div {
+    display: grid;
+    gap: 4px;
+  }
+
+  strong {
+    color: var(--ui-text);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  span {
+    color: var(--ui-text-muted);
+    font-size: 13px;
+    line-height: 1.35;
+  }
+}
+
+.clear-slots {
+  min-height: 34px;
+  padding: 7px 12px !important;
+  white-space: nowrap;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.slot-button.mat-mdc-button {
+  min-height: 58px;
+  padding: 9px 12px !important;
+  border: 1px solid var(--ui-border-input-form) !important;
+  border-radius: var(--radius);
+  background: var(--ui-surface) !important;
+  color: var(--ui-text) !important;
+
+  .mdc-button__label {
+    display: grid;
+    gap: 4px;
+    width: 100%;
+    text-align: left;
+  }
+
+  span {
+    color: inherit;
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  small {
+    color: var(--ui-text-muted);
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  &.selected {
+    border-color: var(--action-save-text-strong) !important;
+    background: var(--action-save-bg) !important;
+    color: var(--action-save-text-strong) !important;
+  }
+
+  &.blocked:not(.selected) {
+    opacity: 0.52;
+  }
+
+  &.unavailable {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 }
 
 .empty-state {
   margin: 0;
   color: var(--ui-text-soft);
+  text-align: center;
+}
+
+.empty-states {
+  margin: -15px  0 0 2px;
+  color: var(--ui-text-soft);
+}
+.mat-mdc-tab-body-wrapper{
+ overflow: hidden !important;
 }
 
 .amount-box {
@@ -131,13 +269,24 @@
   background: var(--action-save-bg-soft);
   color: var(--action-save-text-strong);
 
+  div {
+    display: grid;
+    gap: 3px;
+  }
+
   span {
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 500;
   }
 
   strong {
     font-size: 18px;
+    font-weight: 500;
   }
+}
+
+.amount-total {
+  text-align: right;
 }
 
 .error-message {
@@ -147,6 +296,15 @@
   background: var(--action-delete-bg-soft);
   color: var(--action-delete-text-strong);
   font-weight: 600;
+}
+
+.success-message {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--action-save-bg-soft);
+  color: var(--action-save-text-strong);
+  font-weight: 500;
 }
 
 .dialog-actions {
@@ -164,8 +322,10 @@
   .search-row,
   .booking-summary,
   .form-grid,
-  .two-columns {
+  .two-columns,
+  .payment-panel {
     grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .dialog-header,
@@ -175,4 +335,14 @@
     padding-left: 18px !important;
     padding-right: 18px !important;
   }
+}
+
+
+
+.mat-mdc-form-field-subscript-wrapper{
+  display: none;
+}
+
+.search-field{
+  margin-top: 10px;
 }

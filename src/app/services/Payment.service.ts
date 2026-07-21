@@ -19,6 +19,13 @@ export interface CreatePayment {
   transactionId?: string;
 }
 
+export interface PaymentLinkResponse {
+  sent: boolean;
+  email?: string;
+  paymentId: string;
+  paymentUrl: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -46,17 +53,31 @@ export class PaymentService {
     return this.http.post<Payment>(this.apiUrl, payment, { headers });
   }
 
-  confirmBookingPayment(bookingId: string, amount: number, method = 'manual'): Observable<Payment>{
+  confirmBookingPayment(bookingId: string, amount?: number, method = 'manual'): Observable<Payment>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.post<Payment>(`${this.apiUrl}/booking/${bookingId}/confirm`, {
-      amount,
+    const payload: { amount?: number; method: string; transactionId: string } = {
       method,
       transactionId: `MANUAL-${Date.now()}`
-    }, { headers });
+    };
+
+    if (amount && amount > 0) {
+      payload.amount = amount;
+    }
+
+    return this.http.post<Payment>(`${this.apiUrl}/booking/${bookingId}/confirm`, payload, { headers });
+  }
+
+  sendBookingPaymentLink(bookingId: string): Observable<PaymentLinkResponse>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.post<PaymentLinkResponse>(`${this.apiUrl}/booking/${bookingId}/send-payment-link`, {}, { headers });
   }
 
   private buildQuery(filters: object): string {

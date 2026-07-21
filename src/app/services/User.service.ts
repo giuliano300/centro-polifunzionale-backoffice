@@ -44,7 +44,8 @@ export class UsersService {
       });
 
       const query = encodeURIComponent(search.trim());
-      return this.http.get<AuthUser[]>(this.apiUrl + "users?role=cliente&limit=20&search=" + query, { headers });
+     
+      return this.http.get<AuthUser[]>(this.apiUrl + "users?excludeRole=admin&limit=20&search=" + query, { headers });
     }
 
     createClient(user: CreateClientUser): Observable<AuthUser>{

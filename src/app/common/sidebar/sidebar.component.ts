@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NgClass } from '@angular/common';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { ToggleService } from '../header/toggle.service';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -9,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-sidebar',
-    imports: [NgScrollbarModule, MatExpansionModule, RouterLinkActive, RouterModule, RouterLink, NgClass, FeathericonsModule],
+    imports: [NgScrollbarModule, MatExpansionModule, RouterLinkActive, RouterModule, RouterLink, FeathericonsModule],
     templateUrl: './sidebar.component.html',
     styleUrl: './sidebar.component.scss'
 })

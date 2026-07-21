@@ -5,13 +5,16 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
+import { MatOptionModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { AuthUser } from '../../../../interfaces/auth-user';
 import { Spaces } from '../../../../interfaces/spaces';
 import { AvailabilitySlot, BookingService } from '../../../../services/Booking.service';
 import { UsersService } from '../../../../services/User.service';
+import { PaymentService } from '../../../../services/Payment.service';
 
 export interface BookingDialogData {
   space: Spaces;
@@ -31,6 +34,11 @@ export interface BookingDialogData {
     MatOptionModule,
     MatSelectModule,
     MatTabsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
+  providers: [
+    provideNativeDateAdapter()
   ],
   templateUrl: './booking-dialog.component.html',
   styleUrl: './booking-dialog.component.scss'
@@ -41,16 +49,20 @@ export class BookingDialogComponent {
   newClientForm: FormGroup;
   clients: AuthUser[] = [];
   slots: AvailabilitySlot[] = [];
-  selectedSlot: AvailabilitySlot | null = null;
+  selectedSlots: AvailabilitySlot[] = [];
   isLoadingSlots = false;
   isCreatingClient = false;
   isSaving = false;
   errorMessage = '';
+  successMessage = '';
+  isClientsEmpty = false;
+  isAvailabilityEmpty = false;
 
   constructor(
     private fb: FormBuilder,
     private usersService: UsersService,
     private bookingService: BookingService,
+    private paymentService: PaymentService,
     private dialogRef: MatDialogRef<BookingDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BookingDialogData
   ) {
@@ -61,6 +73,7 @@ export class BookingDialogComponent {
       name: ['', [Validators.required, Validators.maxLength(120)]],
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
+      usertype: ['cliente', [Validators.required]],
       taxCode: ['', [this.taxCodeValidator]]
     });
     this.form = this.fb.group({
@@ -69,11 +82,13 @@ export class BookingDialogComponent {
       date: ['', [Validators.required]],
       rentalMode: [this.data.space.rentalModes?.[0] || 'time', [Validators.required]],
       workstationQuantity: [1, [Validators.required, Validators.min(1)]],
-      slotKey: ['', [Validators.required]]
+      slotKey: ['', [Validators.required]],
+      paymentAction: ['none', [Validators.required]]
     });
 
     this.form.valueChanges.subscribe(() => {
       this.errorMessage = '';
+      this.successMessage = '';
     });
   }
 
@@ -93,14 +108,43 @@ export class BookingDialogComponent {
     return hasFullDay ? 'Tutta la giornata' : 'A tempo';
   }
 
+  get maxSelectableSlots(): number {
+    if (this.form.value.rentalMode === 'full_day') {
+      return 1;
+    }
+
+    return Math.max(1, Number(this.data.space.maxConsecutiveTimeSlots || 1));
+  }
+
+  get selectedStartTime(): string {
+    return this.selectedSlots[0]?.startTime || '';
+  }
+
+  get selectedEndTime(): string {
+    return this.selectedSlots[this.selectedSlots.length - 1]?.endTime || '';
+  }
+
+  get selectedAmount(): number {
+    return this.selectedSlots.reduce((total, slot) => total + (slot.amount || 0), 0);
+  }
+
   searchClients(): void {
     if (this.searchForm.invalid) {
       this.searchForm.markAllAsTouched();
       return;
     }
 
+    this.form.patchValue({ userId: '' }, { emitEvent: false });
     this.usersService.searchClients(this.searchForm.value.search).subscribe((clients) => {
-      this.clients = clients.filter((client) => client.isActive !== false);
+      this.clients = clients
+        .filter((client) =>  client.isActive !== false)
+        .sort((a, b) => (a.name || a.email || '').localeCompare(b.name || b.email || '', 'it'));
+
+      this.isClientsEmpty = !this.clients.length;
+
+      if (this.clients.length === 1) {
+        this.form.patchValue({ userId: this.clients[0]._id }, { emitEvent: false });
+      }
     });
   }
 
@@ -116,7 +160,7 @@ export class BookingDialogComponent {
     this.usersService.createClient({
       ...this.newClientForm.value,
       password: this.generateTemporaryPassword(),
-      role: 'cliente'
+      role: this.newClientForm.value.usertype
     }).subscribe({
       next: (user) => {
         this.clients = [user, ...this.clients.filter((client) => client._id !== user._id)];
@@ -132,23 +176,27 @@ export class BookingDialogComponent {
   }
 
   loadAvailability(): void {
-    if (!this.form.value.date || !this.form.value.rentalMode) {
+    const bookingDate = this.formatDateValue(this.form.value.date);
+    if (!bookingDate || !this.form.value.rentalMode) {
       this.form.markAllAsTouched();
       return;
     }
 
     this.isLoadingSlots = true;
     this.slots = [];
-    this.selectedSlot = null;
+    this.selectedSlots = [];
     this.form.patchValue({ slotKey: '' }, { emitEvent: false });
 
     this.bookingService.getAvailability(
       this.data.space._id,
-      this.form.value.date,
+      bookingDate,
       this.form.value.rentalMode,
       Number(this.form.value.workstationQuantity || 1)
     ).subscribe({
       next: (result) => {
+
+        this.isAvailabilityEmpty = !result.slots?.length;
+        
         this.slots = (result.slots || []).filter((slot) => slot.available);
         this.isLoadingSlots = false;
       },
@@ -159,12 +207,68 @@ export class BookingDialogComponent {
     });
   }
 
-  selectSlot(key: string): void {
-    this.selectedSlot = this.slots.find((slot) => this.getSlotKey(slot) === key) || null;
+  toggleSlot(slot: AvailabilitySlot): void {
+    if (!slot.available) {
+      return;
+    }
+
+    if (this.form.value.rentalMode === 'full_day') {
+      this.selectedSlots = [slot];
+      this.syncSelectedSlots();
+      return;
+    }
+
+    const currentIndex = this.selectedSlots.findIndex((item) => this.getSlotKey(item) === this.getSlotKey(slot));
+    if (currentIndex >= 0) {
+      if (this.selectedSlots.length === 1) {
+        this.selectedSlots = [];
+      } else if (currentIndex === 0) {
+        this.selectedSlots = this.selectedSlots.slice(1);
+      } else if (currentIndex === this.selectedSlots.length - 1) {
+        this.selectedSlots = this.selectedSlots.slice(0, -1);
+      } else {
+        this.selectedSlots = [slot];
+      }
+      this.syncSelectedSlots();
+      return;
+    }
+
+    const candidate = [...this.selectedSlots, slot].sort((a, b) => this.slots.indexOf(a) - this.slots.indexOf(b));
+    if (!this.isConsecutive(candidate)) {
+      this.errorMessage = 'Puoi selezionare solo fasce consecutive.';
+      return;
+    }
+
+    if (candidate.length > this.maxSelectableSlots) {
+      this.errorMessage = `Puoi selezionare al massimo ${this.maxSelectableSlots} fasce consecutive.`;
+      return;
+    }
+
+    this.selectedSlots = candidate;
+    this.syncSelectedSlots();
+  }
+
+  isSlotSelected(slot: AvailabilitySlot): boolean {
+    return this.selectedSlots.some((item) => this.getSlotKey(item) === this.getSlotKey(slot));
+  }
+
+  isSlotDisabled(slot: AvailabilitySlot): boolean {
+    if (!slot.available || this.form.value.rentalMode === 'full_day' || this.isSlotSelected(slot) || !this.selectedSlots.length) {
+      return !slot.available;
+    }
+
+    const candidate = [...this.selectedSlots, slot].sort((a, b) => this.slots.indexOf(a) - this.slots.indexOf(b));
+    return !this.isConsecutive(candidate) || candidate.length > this.maxSelectableSlots;
+  }
+
+  clearSelectedSlots(): void {
+    this.selectedSlots = [];
+    this.syncSelectedSlots();
   }
 
   submit(): void {
-    if (this.form.invalid || !this.selectedSlot || this.isSaving) {
+    const bookingDate = this.formatDateValue(this.form.value.date);
+    if (this.form.invalid || !this.selectedSlots.length || !bookingDate || this.isSaving) {
       this.form.markAllAsTouched();
       return;
     }
@@ -174,14 +278,14 @@ export class BookingDialogComponent {
       spaceId: this.data.space._id,
       userId: this.form.value.userId,
       name: this.form.value.name,
-      date: this.form.value.date,
-      startTime: this.selectedSlot.startTime,
-      endTime: this.selectedSlot.endTime,
+      date: bookingDate,
+      startTime: this.selectedStartTime,
+      endTime: this.selectedEndTime,
       rentalUnit: this.data.space.rentalUnit,
       rentalMode: this.form.value.rentalMode,
       workstationQuantity: this.isWorkstation ? Number(this.form.value.workstationQuantity) : 1
     }).subscribe({
-      next: (booking) => this.dialogRef.close(booking),
+      next: (booking) => this.afterBookingCreated(booking),
       error: (error) => {
         this.errorMessage = error?.error?.message || 'Creazione prenotazione non riuscita.';
         this.isSaving = false;
@@ -199,6 +303,67 @@ export class BookingDialogComponent {
 
   formatAmount(amount: number): string {
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(amount || 0);
+  }
+
+  private syncSelectedSlots(): void {
+    this.errorMessage = '';
+    const key = this.selectedSlots.length ? `${this.selectedStartTime}-${this.selectedEndTime}` : '';
+    this.form.patchValue({ slotKey: key }, { emitEvent: false });
+  }
+
+  private isConsecutive(candidate: AvailabilitySlot[]): boolean {
+    if (candidate.length <= 1) {
+      return true;
+    }
+
+    return candidate.every((slot, index) => {
+      if (index === 0) {
+        return true;
+      }
+
+      return candidate[index - 1].endTime === slot.startTime;
+    });
+  }
+
+  private afterBookingCreated(booking: { _id: string }): void {
+    if (this.form.value.paymentAction === 'mark_paid') {
+      this.paymentService.confirmBookingPayment(booking._id).subscribe({
+        next: () => this.dialogRef.close(booking),
+        error: (error) => {
+          this.errorMessage = error?.error?.message || 'Prenotazione creata, ma pagamento non registrato.';
+          this.isSaving = false;
+        }
+      });
+      return;
+    }
+
+    if (this.form.value.paymentAction === 'send_link') {
+      this.paymentService.sendBookingPaymentLink(booking._id).subscribe({
+        next: () => this.dialogRef.close(booking),
+        error: (error) => {
+          this.errorMessage = error?.error?.message || 'Prenotazione creata, ma link pagamento non inviato.';
+          this.isSaving = false;
+        }
+      });
+      return;
+    }
+
+    this.dialogRef.close(booking);
+  }
+
+  private formatDateValue(value: Date | string | null): string {
+    if (!value) {
+      return '';
+    }
+
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   private generateTemporaryPassword(): string {

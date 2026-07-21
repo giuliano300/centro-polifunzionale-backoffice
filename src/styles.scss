@@ -236,6 +236,7 @@ img {
 }
 input {
     color: var(--blackColor);
+    background-color: var(--blankColor);
     font: {
         weight: normal;
         size: var(--fontSize);
@@ -292,7 +293,9 @@ input {
     justify-content: flex-start;
 }
 
-
+.red{
+    color: var(--header-danger-dot)!important;
+}
 
 .filter-button {
     width: 100%;
@@ -872,4 +875,39 @@ h5{
 .ngx-toastr:hover {
   box-shadow: 0 0 12px var(--ui-shadow-outline)!important;
   transition: none !important;
+}
+
+/* Bordo normale */
+.mat-mdc-form-field .mdc-notched-outline__leading,
+.mat-mdc-form-field .mdc-notched-outline__notch,
+.mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-color: #ccd5e6!important;
+}
+
+/* Contenitore generale Angular Material */
+.cdk-overlay-container {
+  z-index: 1000 !important;
+}
+
+/* La dialog */
+.cdk-overlay-pane.booking-dialog-overlay {
+  z-index: 1000 !important;
+}
+
+/* Il datepicker aperto dentro la dialog */
+.cdk-overlay-pane:has(.booking-datepicker-panel) {
+  z-index: 1100 !important;
+  pointer-events: auto !important;
+}
+
+/* Contenuto del calendario */
+.booking-datepicker-panel {
+  position: relative;
+  z-index: 1100 !important;
+  pointer-events: auto !important;
+}
+
+/* Il backdrop del datepicker non deve sovrapporsi al calendario */
+.cdk-overlay-backdrop {
+  pointer-events: auto;
 }

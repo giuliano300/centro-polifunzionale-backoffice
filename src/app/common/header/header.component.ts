@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AsyncPipe, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, NgFor, NgIf } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { NotificationService } from '../../services/Notification.service';
 
 @Component({
     selector: 'app-header',
-    imports: [FeathericonsModule, MatButtonModule, MatMenuModule, NgClass, NgIf, NgFor, AsyncPipe],
+    imports: [FeathericonsModule, MatButtonModule, MatMenuModule, NgIf, NgFor, AsyncPipe],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
     providers: [

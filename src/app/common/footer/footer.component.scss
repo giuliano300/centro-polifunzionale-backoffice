@@ -1,5 +1,9 @@
 .footer-area {
     padding: 15.5px 20px;
+    position: fixed;
+    left: 312px;
+    bottom: 0;
+    width: calc(100% - 312px);
 
     p {
         a {
