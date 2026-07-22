@@ -8,6 +8,7 @@ import { BookingsComponent } from './pages/spaces/bookings/bookings.component';
 import { CalendarComponent } from './pages/spaces/booking-calendar/calendar.component';
 import { SpaceFormComponent } from './pages/spaces/space-form/space-form.component';
 import { UsersComponent } from './pages/users/users.component';
+import { UserFormComponent } from './pages/users/user-form/user-form.component';
 import { BookingsListComponent } from './pages/bookings/bookings-list.component';
 import { PaymentsComponent } from './pages/payments/payments.component';
 import { CoursesComponent } from './pages/courses/courses.component';
@@ -15,6 +16,7 @@ import { CourseBookingsComponent } from './pages/course-bookings/course-bookings
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { CancellationRequestsComponent } from './pages/cancellation-requests/cancellation-requests.component';
 import { SystemSettingsComponent } from './pages/system-settings/system-settings.component';
+import { DiscountCodesComponent } from './pages/discount-codes/discount-codes.component';
 
 export const routes: Routes = [
     { path: '', redirectTo : '/dashboard', pathMatch: 'full' },
@@ -35,14 +37,18 @@ export const routes: Routes = [
             { path: 'spaces/add/:id', component: SpaceFormComponent },
             { path: 'space/bookings/:id', component: BookingsComponent },
             { path: 'space/bookings-calendar/:id/:month/:year', component: CalendarComponent },
+            { path: 'users/add', component: UserFormComponent },
             { path: 'users', component: UsersComponent },
             { path: 'bookings', component: BookingsListComponent },
             { path: 'payments', component: PaymentsComponent },
+            { path: 'discount-codes', component: DiscountCodesComponent },
             { path: 'courses', component: CoursesComponent },
             { path: 'course-bookings', component: CourseBookingsComponent },
             { path: 'cancellation-requests', component: CancellationRequestsComponent },
-            { path: 'wallet-settings', component: SystemSettingsComponent },
-            { path: 'system-settings', redirectTo: 'wallet-settings', pathMatch: 'full' }
+            { path: 'wallet-client-settings', component: SystemSettingsComponent, data: { walletRole: 'cliente' } },
+            { path: 'wallet-manager-settings', component: SystemSettingsComponent, data: { walletRole: 'gestore' } },
+            { path: 'wallet-settings', redirectTo: 'wallet-client-settings', pathMatch: 'full' },
+            { path: 'system-settings', redirectTo: 'wallet-client-settings', pathMatch: 'full' }
         ]
     },
     { path: '**', component: NotFoundComponent},

@@ -31,6 +31,13 @@ $trinta-theme: mat.define-theme((
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
     ),
+    typography: (
+        plain-family: "Poppins",
+        brand-family: "Inter",
+        regular-weight: 400,
+        medium-weight: 500,
+        bold-weight: 600,
+    ),
     density: (
         scale: 0,
     )
@@ -52,8 +59,38 @@ $trinta-theme: mat.define-theme((
 
 /* You can add global styles to this file, and also import other style files */
 :root {
-    --fontFamily: "Poppins", sans-serif;
-    --headingFontFamily: "Inter", sans-serif;
+    --fontFamily: "Poppins";
+    --headingFontFamily: "Inter";
+    --mat-sys-body-large-font: var(--fontFamily);
+    --mat-sys-body-medium-font: var(--fontFamily);
+    --mat-sys-body-small-font: var(--fontFamily);
+    --mat-sys-label-large-font: var(--fontFamily);
+    --mat-sys-label-medium-font: var(--fontFamily);
+    --mat-sys-label-small-font: var(--fontFamily);
+    --mat-sys-title-large-font: var(--headingFontFamily);
+    --mat-sys-title-medium-font: var(--headingFontFamily);
+    --mat-sys-title-small-font: var(--headingFontFamily);
+    --mat-sys-headline-large-font: var(--headingFontFamily);
+    --mat-sys-headline-medium-font: var(--headingFontFamily);
+    --mat-sys-headline-small-font: var(--headingFontFamily);
+    --mat-sys-display-large-font: var(--headingFontFamily);
+    --mat-sys-display-medium-font: var(--headingFontFamily);
+    --mat-sys-display-small-font: var(--headingFontFamily);
+    --mat-sys-body-large: 400 1rem / 1.5rem var(--fontFamily);
+    --mat-sys-body-medium: 400 .875rem / 1.25rem var(--fontFamily);
+    --mat-sys-body-small: 400 .75rem / 1rem var(--fontFamily);
+    --mat-sys-label-large: 400 .875rem / 1.25rem var(--fontFamily);
+    --mat-sys-label-medium: 400 .75rem / 1rem var(--fontFamily);
+    --mat-sys-label-small: 400 .688rem / 1rem var(--fontFamily);
+    --mat-sys-title-large: 400 1.375rem / 1.75rem var(--headingFontFamily);
+    --mat-sys-title-medium: 400 1rem / 1.5rem var(--headingFontFamily);
+    --mat-sys-title-small: 400 .875rem / 1.25rem var(--headingFontFamily);
+    --mat-sys-headline-large: 400 2rem / 2.5rem var(--headingFontFamily);
+    --mat-sys-headline-medium: 400 1.75rem / 2.25rem var(--headingFontFamily);
+    --mat-sys-headline-small: 400 1.5rem / 2rem var(--headingFontFamily);
+    --mat-sys-display-large: 400 3.562rem / 4rem var(--headingFontFamily);
+    --mat-sys-display-medium: 400 2.812rem / 3.25rem var(--headingFontFamily);
+    --mat-sys-display-small: 400 2.25rem / 2.75rem var(--headingFontFamily);
     --primaryColor: #3761ee;
     --dangerColor: #EE368C;
     --infoColor: #2DB6F5;
@@ -70,6 +107,10 @@ $trinta-theme: mat.define-theme((
     --mdc-protected-button-container-shape: var(--radius);
     --mdc-outlined-button-container-shape: var(--radius);
     --fontSize: 14px;
+    --inputFontSize: 15px;
+    --inputPlaceholderFontSize: 14px;
+    --mdc-filled-text-field-label-text-size: var(--inputPlaceholderFontSize);
+    --mdc-outlined-text-field-label-text-size: var(--inputPlaceholderFontSize);
     --app-bg: #f5f7fa;
     --ui-surface: #ffffff;
     --ui-surface-soft: #fbfcfe;
@@ -128,6 +169,9 @@ $trinta-theme: mat.define-theme((
     --action-delete-bg-light-hover: #ffd2d2;
     --action-delete-border: #fecaca;
     --action-delete-border-light: #f4b7b7;
+    --mdc-theme-error: var(--action-delete-text);
+    --mat-form-field-error-text-color: var(--action-delete-text);
+    --mat-sys-error: var(--action-delete-text);
     --action-warning-text: #c2410c;
     --action-warning-text-strong: #9a3412;
     --action-warning-text-muted: #946200;
@@ -181,6 +225,54 @@ body {
         family: var(--fontFamily);
     };
 }
+
+button,
+input,
+textarea,
+select,
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-menu-item,
+.mat-mdc-option,
+.mat-mdc-select,
+.mat-mdc-select-value,
+.mat-mdc-form-field,
+.mat-mdc-input-element,
+.mat-mdc-table,
+.mat-mdc-cell,
+.mat-mdc-header-cell,
+.mat-mdc-paginator,
+.mat-mdc-dialog-container,
+.mat-mdc-card,
+.mdc-button__label,
+.mdc-list-item__primary-text,
+.mdc-list-item__secondary-text,
+.mdc-floating-label {
+    font-family: var(--fontFamily) !important;
+}
+
+.mat-mdc-form-field .mat-mdc-input-element,
+.mat-mdc-form-field input,
+.mat-mdc-form-field textarea,
+.mat-mdc-select-value,
+.mat-date-range-input,
+.mat-date-range-input input {
+    font-size: var(--inputFontSize) !important;
+}
+
+.mat-mdc-form-field .mat-mdc-input-element::placeholder,
+.mat-mdc-form-field input::placeholder,
+.mat-mdc-form-field textarea::placeholder,
+.mat-mdc-form-field .mdc-text-field__input::placeholder {
+    font-size: var(--inputPlaceholderFontSize) !important;
+}
+
+.mat-mdc-form-field .mdc-floating-label,
+.mat-mdc-form-field mat-label {
+    font-size: var(--inputPlaceholderFontSize) !important;
+}
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6, .display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
     color: var(--darkColor);
     letter-spacing: 0.18px;
@@ -218,6 +310,11 @@ p {
     &:last-child {
         margin-bottom: 0;
     }
+}
+
+strong,
+b {
+    font-weight: 600 !important;
 }
 .d-table {
     width: 100%;
@@ -399,15 +496,29 @@ button.action-filter.mat-mdc-unelevated-button,
 .new-booking-button,
 button.action-save.mat-mdc-button,
 button.action-save.mat-mdc-unelevated-button,
+a.action-save.mat-mdc-button,
+a.action-save.mat-mdc-unelevated-button,
 button.action-new.mat-mdc-button,
 button.action-new.mat-mdc-unelevated-button,
+a.action-new.mat-mdc-button,
+a.action-new.mat-mdc-unelevated-button,
 button.add-button.mat-mdc-button,
 button.add-button.mat-mdc-unelevated-button,
+a.add-button.mat-mdc-button,
+a.add-button.mat-mdc-unelevated-button,
 button.new-booking-button.mat-mdc-button,
-button.new-booking-button.mat-mdc-unelevated-button {
+button.new-booking-button.mat-mdc-unelevated-button,
+a.new-booking-button.mat-mdc-button,
+a.new-booking-button.mat-mdc-unelevated-button {
     color: var(--action-save-text) !important;
     background-color: var(--action-save-bg) !important;
     border-color: var(--action-save-bg-hover) !important;
+
+    .mdc-button__label,
+    i,
+    span {
+        color: var(--action-save-text) !important;
+    }
 
     &:hover {
         background-color: var(--action-save-bg-hover) !important;
@@ -416,12 +527,25 @@ button.new-booking-button.mat-mdc-unelevated-button {
 }
 
 .action-cancel,
+a.action-cancel.mat-mdc-button,
 button.action-cancel.mat-mdc-button,
 button.action-cancel.mat-mdc-unelevated-button,
 .btn.back {
     color: var(--action-cancel-text) !important;
-    background-color: var(--ui-border) !important;
+    background-color: var(--action-cancel-bg) !important;
     border-color: var(--action-cancel-border) !important;
+
+    .mdc-button__label,
+    i,
+    span {
+        color: var(--action-cancel-text) !important;
+    }
+
+    &:hover {
+        color: var(--action-cancel-text) !important;
+        background-color: var(--action-cancel-border) !important;
+        border-color: var(--action-cancel-border) !important;
+    }
 }
 
 .action-delete,
@@ -488,6 +612,44 @@ button.table-action-button.action-delete.mat-mdc-button {
         margin-top: 0;
         margin-bottom: 5px;
     }
+}
+
+.mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field .mat-mdc-form-field-hint-wrapper,
+.mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field .mat-mdc-form-field-error-wrapper {
+    padding-top: 0 !important;
+}
+
+.mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field .mat-mdc-form-field-hint,
+.mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field mat-hint {
+    color: var(--ui-text-muted) !important;
+    font-family: var(--fontFamily) !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+}
+
+.mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field .mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
+    color: #333343 !important;
+}
+
+.mat-mdc-form-field .mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
+    color: #333343 !important;
+}
+
+.mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field .mat-mdc-form-field-error,
+.mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field mat-error {
+    color: var(--action-delete-text) !important;
+    font-family: var(--fontFamily) !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+}
+
+mat-error,
+.mat-mdc-form-field-error,
+.mat-mdc-form-field-error-wrapper,
+.mat-mdc-form-field-error-wrapper mat-error,
+.mat-mdc-form-field-error-wrapper .mat-mdc-form-field-error,
+.mat-mdc-form-field-error-wrapper * {
+    color: var(--action-delete-text) !important;
 }
 
 .filters{
@@ -592,7 +754,7 @@ button.table-action-button.action-delete.mat-mdc-button {
 
     .mat-mdc-button.action-cancel {
         color: var(--action-cancel-text) !important;
-        background-color: var(--ui-border) !important;
+        background-color: var(--action-cancel-bg) !important;
         border-color: var(--action-cancel-border) !important;
     }
 
@@ -730,6 +892,63 @@ h5{
         font-weight: 500;
         text-transform: uppercase;
         color: var(--tone-slate-text);
+    }
+}
+
+nav[aria-label="breadcrumb"] {
+    display: none !important;
+}
+
+.page-head-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius);
+    background: var(--ui-surface);
+    box-shadow: 0 10px 24px var(--ui-shadow-soft);
+
+    h1 {
+        margin: 0;
+        color: var(--ui-text-strong);
+        font-family: var(--headingFontFamily);
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: 0.18px;
+    }
+
+    p {
+        margin: 4px 0 0;
+        color: var(--ui-text-muted);
+        line-height: 1.45;
+    }
+
+    a,
+    button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 38px;
+        padding: 0 14px;
+        white-space: nowrap;
+    }
+
+    .page-head-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 767px) {
+    .page-head-card {
+        align-items: stretch;
+        flex-direction: column;
     }
 }
 

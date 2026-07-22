@@ -1,9 +1,10 @@
 .footer-area {
-    padding: 15.5px 20px;
+    padding: 15.5px 20px 15.5px 0;
     position: fixed;
-    left: 312px;
+    left: 0;
+    right: 0;
     bottom: 0;
-    width: calc(100% - 312px);
+    width: 100%;
 
     p {
         a {
@@ -18,7 +19,7 @@
 @media only screen and (max-width : 767px) {
 
     .footer-area {
-        padding: 15px 20px;
+        padding: 15px 20px 15px 0;
     }
 
 }

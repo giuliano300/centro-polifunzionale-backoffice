@@ -3,6 +3,12 @@
         <li aria-current="page" class="breadcrumb-item active">Dashboard</li>
     </ol>
 </nav>
+<section class="page-head-card">
+  <div>
+    <h1>Dashboard</h1>
+    <p>Panoramica generale su prenotazioni, incassi, utenti, corsi e andamento operativo della piattaforma.</p>
+  </div>
+</section>
 <div class="dashboard-page">
   <div *ngIf="isLoading" class="dashboard-state">
     <i-feather name="loader"></i-feather>
@@ -27,6 +33,29 @@
     </section>
 
     <section class="dashboard-grid main-grid">
+      <mat-card class="dashboard-card new-user-card border-none">
+        <mat-card-content>
+          <div class="card-title-row">
+            <div>
+              <span>Utenti</span>
+              <h2>Nuovo utente</h2>
+            </div>
+            <i-feather name="user-plus"></i-feather>
+          </div>
+          <p>Inserisci un cliente o un gestore e scegli se inviare il link di completamento registrazione.</p>
+          <div class="quick-actions">
+            <a routerLink="/users/add" mat-button class="action-new">
+              <i class="ri-user-add-line"></i>
+              <span>Inserisci utente</span>
+            </a>
+            <a routerLink="/users" mat-button class="action-filter">
+              <i class="ri-users-line"></i>
+              <span>Vedi utenti</span>
+            </a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
       <mat-card class="dashboard-card revenue-card border-none">
         <mat-card-content>
           <div class="card-title-row">

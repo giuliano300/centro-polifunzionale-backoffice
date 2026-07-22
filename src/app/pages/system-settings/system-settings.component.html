@@ -1,29 +1,22 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item">Impostazioni</li>
-    <li aria-current="page" class="breadcrumb-item active">Wallet nuovi iscritti</li>
+    <li aria-current="page" class="breadcrumb-item active">{{ pageTitle() }}</li>
   </ol>
 </nav>
 
-<mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block settings-hero">
-  <mat-card-content>
+<section class="page-head-card settings-hero">
     <div class="settings-head">
       <div>
-        <h1>Wallet nuovi iscritti</h1>
-        <p>Definisci il credito iniziale da assegnare automaticamente ai nuovi utenti non admin.</p>
+        <h1>{{ pageTitle() }}</h1>
+        <p>Definisci il credito iniziale da assegnare automaticamente ai nuovi {{ targetLabel() }}.</p>
       </div>
       <div class="current-credit">
         <span>Credito attuale</span>
-        <strong>{{ formatCurrency(savedCredit) }}</strong>
+        <strong>{{ formatCurrency(currentCredit()) }}</strong>
       </div>
     </div>
-
-    <div class="settings-note">
-      <i class="ri-information-line"></i>
-      <span>Il valore non e retroattivo: se lo cambi, verra applicato solo ai nuovi iscritti creati dopo il salvataggio.</span>
-    </div>
-  </mat-card-content>
-</mat-card>
+</section>
 
 <mat-card class="trinta-card to-do-list-card mb-25 bg-white border-none d-block settings-card">
   <mat-card-content>
@@ -41,18 +34,13 @@
           <i class="ri-wallet-3-line"></i>
         </div>
         <div class="amount-field">
-          <label for="newUserWalletCredit">Credito da accreditare</label>
+          <label for="amount">Credito da accreditare</label>
           <div class="amount-input">
-            <span>€</span>
-            <input
-              id="newUserWalletCredit"
-              type="number"
-              min="0"
-              step="0.01"
-              formControlName="newUserWalletCredit">
+            <span>EUR</span>
+            <input id="amount" type="number" min="0" step="0.01" formControlName="amount">
           </div>
-          <small *ngIf="form.controls.newUserWalletCredit.valid">Importo in euro, applicato ai nuovi iscritti futuri.</small>
-          <small class="error" *ngIf="form.controls.newUserWalletCredit.invalid && form.controls.newUserWalletCredit.touched">
+          <small *ngIf="form.controls.amount.valid">Importo in euro, applicato ai nuovi {{ targetLabel() }} futuri.</small>
+          <small class="error" *ngIf="form.controls.amount.invalid && form.controls.amount.touched">
             Inserisci un importo maggiore o uguale a zero.
           </small>
         </div>

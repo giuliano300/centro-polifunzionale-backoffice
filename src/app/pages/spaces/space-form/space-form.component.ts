@@ -7,10 +7,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
+import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { SpacesService } from '../../../services/Space.service';
-import { SpaceOpeningSlot, Spaces } from '../../../interfaces/spaces';
+import { SpaceExceptionalClosure, SpaceOpeningSlot, Spaces } from '../../../interfaces/spaces';
 
 @Component({
   selector: 'app-space-form',
@@ -23,6 +24,8 @@ import { SpaceOpeningSlot, Spaces } from '../../../interfaces/spaces';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatOptionModule,
     MatSelectModule
   ],
@@ -44,6 +47,12 @@ export class SpaceFormComponent {
     { value: 6, label: 'Sabato' },
     { value: 0, label: 'Domenica' },
   ];
+  paymentMethods = [
+    { value: 'cash', label: 'Contanti' },
+    { value: 'stripe', label: 'Stripe' },
+    { value: 'paypal', label: 'PayPal' },
+    { value: 'nexi', label: 'Nexi' },
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -59,10 +68,11 @@ export class SpaceFormComponent {
       rentalUnit: ['whole_room', [Validators.required]],
       rentalModes: [['time'], [Validators.required]],
       timeSlotMinutes: [60, [Validators.min(15)]],
-      maxConsecutiveTimeSlots: [1, [Validators.required, Validators.min(1)]],
       workstationCount: [1, [Validators.required, Validators.min(1)]],
       courseCreationAdvanceHours: [2, [Validators.required, Validators.min(0)]],
+      paymentMethods: [['cash', 'stripe', 'paypal', 'nexi'], [Validators.required]],
       openingHours: this.fb.array(this.days.map((day) => this.createOpeningSlot(day.value))),
+      exceptionalClosures: this.fb.array([]),
       isAvailable: [true]
     });
     this.form.get('rentalModes')?.valueChanges.subscribe(() => this.syncRentalModeValidators());
@@ -71,6 +81,10 @@ export class SpaceFormComponent {
 
   get openingHours(): FormArray {
     return this.form.get('openingHours') as FormArray;
+  }
+
+  get exceptionalClosures(): FormArray {
+    return this.form.get('exceptionalClosures') as FormArray;
   }
 
   get hasTimeRental(): boolean {
@@ -87,8 +101,29 @@ export class SpaceFormComponent {
       day: [day],
       isOpen: [isWeekday],
       openTime: ['09:00', [Validators.required]],
-      closeTime: ['18:00', [Validators.required]]
+      closeTime: ['18:00', [Validators.required]],
+      maxConsecutiveTimeSlots: [1, [Validators.required, Validators.min(1)]]
     });
+  }
+
+  createExceptionalClosure(closure?: Partial<SpaceExceptionalClosure>): FormGroup {
+    return this.fb.group({
+      startDate: [closure?.startDate ? new Date(closure.startDate) : null, [Validators.required]],
+      endDate: [closure?.endDate ? new Date(closure.endDate) : null, [Validators.required]],
+      reason: [closure?.reason || '', [Validators.maxLength(160)]]
+    });
+  }
+
+  addExceptionalClosure(): void {
+    this.exceptionalClosures.push(this.createExceptionalClosure());
+  }
+
+  removeExceptionalClosure(index: number): void {
+    this.exceptionalClosures.removeAt(index);
+  }
+
+  toggleAvailability(): void {
+    this.form.patchValue({ isAvailable: !this.form.value.isAvailable });
   }
 
   ngOnInit(): void {
@@ -104,17 +139,21 @@ export class SpaceFormComponent {
             rentalUnit: space.rentalUnit || 'whole_room',
             rentalModes: space.rentalModes?.length ? space.rentalModes : ['time'],
             timeSlotMinutes: space.timeSlotMinutes || 60,
-            maxConsecutiveTimeSlots: space.maxConsecutiveTimeSlots || 1,
             workstationCount: space.workstationCount || 1,
             courseCreationAdvanceHours: space.courseCreationAdvanceHours ?? 2,
+            paymentMethods: space.paymentMethods?.length ? space.paymentMethods : ['cash', 'stripe', 'paypal', 'nexi'],
             dailyRate: space.dailyRate || 0
           });
           this.openingHours.clear();
           this.days.forEach((day) => {
             const saved = openingHours.find((slot) => slot.day === day.value);
             const group = this.createOpeningSlot(day.value);
-            group.patchValue(saved || {});
+            group.patchValue({ maxConsecutiveTimeSlots: space.maxConsecutiveTimeSlots || 1, ...(saved || {}) });
             this.openingHours.push(group);
+          });
+          this.exceptionalClosures.clear();
+          (space.exceptionalClosures || []).forEach((closure) => {
+            this.exceptionalClosures.push(this.createExceptionalClosure(closure));
           });
           this.syncRentalModeValidators();
           this.isLoading = false;
@@ -130,6 +169,7 @@ export class SpaceFormComponent {
   submit(): void {
     if (this.form.invalid || this.isSaving) {
       this.form.markAllAsTouched();
+      this.errorMessage = 'Compila i campi obbligatori.';
       return;
     }
 
@@ -143,10 +183,16 @@ export class SpaceFormComponent {
       value.hourlyRate = 0;
       value.timeSlotMinutes = 60;
       value.maxConsecutiveTimeSlots = 1;
+      value.openingHours = value.openingHours.map((slot: SpaceOpeningSlot) => ({ ...slot, maxConsecutiveTimeSlots: 1 }));
     }
     if (!this.hasFullDayRental) {
       value.dailyRate = 0;
     }
+    value.maxConsecutiveTimeSlots = Math.max(...value.openingHours.map((slot: SpaceOpeningSlot) => Number(slot.maxConsecutiveTimeSlots || 1)), 1);
+    value.exceptionalClosures = (value.exceptionalClosures || []).map((closure: SpaceExceptionalClosure) => ({
+      ...closure,
+      endDate: closure.endDate || closure.startDate
+    }));
 
     const request = this.id
       ? this.spacesService.update(this.id, value)
@@ -169,16 +215,13 @@ export class SpaceFormComponent {
     const hourlyRate = this.form.get('hourlyRate');
     const dailyRate = this.form.get('dailyRate');
     const timeSlotMinutes = this.form.get('timeSlotMinutes');
-    const maxConsecutiveTimeSlots = this.form.get('maxConsecutiveTimeSlots');
 
     if (this.hasTimeRental) {
       hourlyRate?.setValidators([Validators.required, Validators.min(0)]);
       timeSlotMinutes?.setValidators([Validators.required, Validators.min(15)]);
-      maxConsecutiveTimeSlots?.setValidators([Validators.required, Validators.min(1)]);
     } else {
       hourlyRate?.setValidators([Validators.min(0)]);
       timeSlotMinutes?.setValidators([Validators.min(15)]);
-      maxConsecutiveTimeSlots?.setValidators([Validators.min(1)]);
     }
 
     if (this.hasFullDayRental) {
@@ -190,6 +233,5 @@ export class SpaceFormComponent {
     hourlyRate?.updateValueAndValidity({ emitEvent: false });
     dailyRate?.updateValueAndValidity({ emitEvent: false });
     timeSlotMinutes?.updateValueAndValidity({ emitEvent: false });
-    maxConsecutiveTimeSlots?.updateValueAndValidity({ emitEvent: false });
   }
 }

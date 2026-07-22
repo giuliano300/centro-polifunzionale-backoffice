@@ -16,7 +16,7 @@ export class SystemSettingsService {
     return this.http.get<SystemSettings>(this.apiUrl, { headers: this.headers() });
   }
 
-  updateSettings(payload: Pick<SystemSettings, 'newUserWalletCredit'>): Observable<SystemSettings> {
+  updateSettings(payload: Partial<Pick<SystemSettings, 'newUserWalletCredit' | 'newClientWalletCredit' | 'newManagerWalletCredit'>>): Observable<SystemSettings> {
     return this.http.put<SystemSettings>(this.apiUrl, payload, { headers: this.headers() });
   }
 

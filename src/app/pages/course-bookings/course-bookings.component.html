@@ -6,6 +6,17 @@
     </ol>
 </nav>
 
+<section class="page-head-card">
+    <div>
+        <h1>{{ selectedCourseName ? 'Iscritti - ' + selectedCourseName : 'Iscritti corsi' }}</h1>
+        <p>Consulta gli iscritti ai corsi, i dati del partecipante, lo stato dell'iscrizione e gli eventuali pagamenti.</p>
+    </div>
+    <button *ngIf="courseDetails" type="button" mat-button class="action-new" (click)="addSubscriber()">
+        <i class="ri-user-add-line"></i>
+        <span>Aggiungi iscritto</span>
+    </button>
+</section>
+
 <mat-card *ngIf="courseDetails" class="course-summary-card trinta-card mb-25 bg-white border-none d-block">
     <mat-card-content>
         <div class="summary-head">
@@ -17,9 +28,6 @@
                 <span class="status-badge" [ngClass]="courseDetails.isPublished ? 'status-confirmed' : 'status-cancelled'">
                     {{courseDetails.isPublished ? 'Aperto' : 'Chiuso'}}
                 </span>
-                <button type="button" mat-flat-button color="primary" class="add-button action-new" (click)="addSubscriber()">
-                    Aggiungi iscritto
-                </button>
             </div>
         </div>
         <p class="summary-description">{{courseDetails.description || 'Nessuna descrizione inserita'}}</p>
@@ -116,7 +124,7 @@
                             <div class="action">
                                 <h6 class="mt-0 mb-0">{{formatAmount(totalAmount(element))}}</h6>
                                 <small *ngIf="walletAmount(element) > 0">
-                                    Wallet {{formatAmount(walletAmount(element))}} / Esterno {{formatAmount(externalAmount(element))}}
+                                    Wallet {{formatAmount(walletAmount(element))}} / {{paymentMethodLabel(element)}} {{formatAmount(externalAmount(element))}}
                                 </small>
                             </div>
                         </td>

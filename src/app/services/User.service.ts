@@ -4,14 +4,21 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Login } from '../interfaces/Login';
 import { AuthUser } from '../interfaces/auth-user';
+import { UserRole } from '../interfaces/roles/roles';
 
 export interface CreateClientUser {
   name: string;
   email: string;
   phone?: string;
   taxCode?: string;
-  password: string;
-  role: 'cliente';
+  password?: string;
+  role: UserRole.Cliente | UserRole.Gestore;
+}
+
+export interface InviteUserResponse {
+  user: AuthUser;
+  completeUrl: string;
+  sent: boolean;
 }
 
 @Injectable({
@@ -34,7 +41,7 @@ export class UsersService {
       });
 
       const query = search.trim() ? "&search=" + encodeURIComponent(search.trim()) : "";
-      return this.http.get<AuthUser[]>(this.apiUrl + "users?limit=500&excludeRole=admin" + query, { headers });
+      return this.http.get<AuthUser[]>(this.apiUrl + "users?limit=500&excludeRole=" + UserRole.Admin + query, { headers });
     }
 
     searchClients(search: string): Observable<AuthUser[]>{
@@ -45,7 +52,7 @@ export class UsersService {
 
       const query = encodeURIComponent(search.trim());
      
-      return this.http.get<AuthUser[]>(this.apiUrl + "users?excludeRole=admin&limit=20&search=" + query, { headers });
+      return this.http.get<AuthUser[]>(this.apiUrl + "users?excludeRole=" + UserRole.Admin + "&limit=20&search=" + query, { headers });
     }
 
     createClient(user: CreateClientUser): Observable<AuthUser>{
@@ -55,6 +62,15 @@ export class UsersService {
       });
 
       return this.http.post<AuthUser>(this.apiUrl + "users", user, { headers });
+    }
+
+    inviteUser(user: Omit<CreateClientUser, 'password'>): Observable<InviteUserResponse>{
+      const token = localStorage.getItem('authToken');
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      return this.http.post<InviteUserResponse>(this.apiUrl + "users/invite-client", user, { headers });
     }
 
     updateUser(id: string, user: Partial<AuthUser>): Observable<AuthUser>{

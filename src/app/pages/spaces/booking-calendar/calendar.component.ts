@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { WorkingScheduleComponent } from './working-schedule/working-schedule.component';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, DatesSetArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -14,10 +15,11 @@ import { UtilsService } from '../../../services/utils.service';
 import { BookingWithPayments } from '../../../interfaces/BookingWithPayments';
 import itLocale from '@fullcalendar/core/locales/it';
 import { EventDetailDialogComponent } from '../../../event-detail/event-detail-dialog.component';
+import { BookingDialogComponent } from '../bookings/booking-dialog/booking-dialog.component';
 
 @Component({
     selector: 'app-calendar',
-    imports: [WorkingScheduleComponent, MatCardModule, FullCalendarModule],
+    imports: [WorkingScheduleComponent, MatCardModule, MatButtonModule, FullCalendarModule],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss'
 })
@@ -178,6 +180,25 @@ export class CalendarComponent {
         queryParams: {
             month: this.month,
             year: this.year
+        }
+      });
+    }
+
+    CreateBooking(): void {
+      if (!this.space) {
+        return;
+      }
+
+      const dialogRef = this.dialog.open(BookingDialogComponent, {
+        width: '860px',
+        minWidth: 'min(800px, 94vw)',
+        maxWidth: '94vw',
+        data: { space: this.space }
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.getBookings(this.id!, this.year?.toString()!, this.month?.toString()!);
         }
       });
     }

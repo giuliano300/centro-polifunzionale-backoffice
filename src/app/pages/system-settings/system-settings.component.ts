@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { NgIf } from '@angular/common';
 import { SystemSettingsService } from '../../services/SystemSettings.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-system-settings',
@@ -17,15 +18,18 @@ export class SystemSettingsComponent {
   isSaving = false;
   message = '';
   messageType: 'success' | 'warning' = 'warning';
-  savedCredit = 0;
+  savedClientCredit = 0;
+  savedManagerCredit = 0;
+  mode: 'cliente' | 'gestore' = 'cliente';
 
   form = this.fb.group({
-    newUserWalletCredit: [0, [Validators.required, Validators.min(0)]]
+    amount: [0, [Validators.required, Validators.min(0)]]
   });
 
-  constructor(private systemSettingsService: SystemSettingsService) {}
+  constructor(private systemSettingsService: SystemSettingsService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
+    this.mode = this.route.snapshot.data['walletRole'] === 'gestore' ? 'gestore' : 'cliente';
     this.load();
   }
 
@@ -33,10 +37,13 @@ export class SystemSettingsComponent {
     this.isLoading = true;
     this.systemSettingsService.getSettings().subscribe({
       next: (settings) => {
+        const clientCredit = settings.newClientWalletCredit ?? settings.newUserWalletCredit ?? 0;
+        const managerCredit = settings.newManagerWalletCredit ?? settings.newUserWalletCredit ?? 0;
         this.form.patchValue({
-          newUserWalletCredit: settings.newUserWalletCredit || 0
+          amount: this.mode === 'cliente' ? clientCredit : managerCredit
         });
-        this.savedCredit = settings.newUserWalletCredit || 0;
+        this.savedClientCredit = clientCredit;
+        this.savedManagerCredit = managerCredit;
         this.isLoading = false;
       },
       error: () => {
@@ -55,13 +62,18 @@ export class SystemSettingsComponent {
 
     this.isSaving = true;
     this.message = '';
-    const newUserWalletCredit = Number(this.form.value.newUserWalletCredit || 0);
+    const amount = Number(this.form.value.amount || 0);
+    const newClientWalletCredit = this.mode === 'cliente' ? amount : this.savedClientCredit;
+    const newManagerWalletCredit = this.mode === 'gestore' ? amount : this.savedManagerCredit;
 
     this.systemSettingsService.updateSettings({
-      newUserWalletCredit
+      newUserWalletCredit: newClientWalletCredit,
+      newClientWalletCredit,
+      newManagerWalletCredit
     }).subscribe({
       next: () => {
-        this.savedCredit = newUserWalletCredit;
+        this.savedClientCredit = newClientWalletCredit;
+        this.savedManagerCredit = newManagerWalletCredit;
         this.messageType = 'success';
         this.message = 'Impostazioni salvate.';
         this.isSaving = false;
@@ -76,5 +88,17 @@ export class SystemSettingsComponent {
 
   formatCurrency(value?: number | null): string {
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(value || 0);
+  }
+
+  pageTitle(): string {
+    return this.mode === 'cliente' ? 'Wallet nuovi clienti' : 'Wallet nuovi gestori';
+  }
+
+  currentCredit(): number {
+    return this.mode === 'cliente' ? this.savedClientCredit : this.savedManagerCredit;
+  }
+
+  targetLabel(): string {
+    return this.mode === 'cliente' ? 'clienti' : 'gestori';
   }
 }

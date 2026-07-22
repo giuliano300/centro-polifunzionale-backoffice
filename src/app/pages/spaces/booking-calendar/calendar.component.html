@@ -4,11 +4,25 @@
             <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Spazi </li>
             <li aria-current="page" class="breadcrumb-item active">Prenotazioni {{spaceName}}</li>
         </ol>
-        <div class="flex-end">
-            <button class="filter-button action-filter" (click)="gotoBooking()">Formato lista</button>
-        </div>
     </div>
-</nav><div class="row">
+</nav>
+<section class="page-head-card">
+    <div>
+        <h1>Calendario prenotazioni {{spaceName}}</h1>
+        <p>Visualizza le prenotazioni dello spazio su calendario e apri il dettaglio selezionando un giorno o un evento.</p>
+    </div>
+    <div class="page-head-actions">
+        <button mat-button class="action-new" (click)="CreateBooking()">
+            <i class="ri-add-line"></i>
+            <span>Nuova prenotazione</span>
+        </button>
+        <button mat-button class="action-filter" (click)="gotoBooking()">
+            <i class="ri-list-check"></i>
+            <span>Lista</span>
+        </button>
+    </div>
+</section>
+<div class="row">
     <div class="col-xxxl-8">
         <mat-card class="trinta-card full-calendar-card mb-25 bg-white border-none d-block">
             <mat-card-content>

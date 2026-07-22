@@ -15,6 +15,7 @@ import { Spaces } from '../../../../interfaces/spaces';
 import { AvailabilitySlot, BookingService } from '../../../../services/Booking.service';
 import { UsersService } from '../../../../services/User.service';
 import { PaymentService } from '../../../../services/Payment.service';
+import { UserRole } from '../../../../interfaces/roles/roles';
 
 export interface BookingDialogData {
   space: Spaces;
@@ -55,8 +56,11 @@ export class BookingDialogComponent {
   isSaving = false;
   errorMessage = '';
   successMessage = '';
+  completeUrl = '';
   isClientsEmpty = false;
   isAvailabilityEmpty = false;
+  availabilityMaxConsecutiveTimeSlots = 1;
+  readonly UserRole = UserRole;
 
   constructor(
     private fb: FormBuilder,
@@ -73,8 +77,9 @@ export class BookingDialogComponent {
       name: ['', [Validators.required, Validators.maxLength(120)]],
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
-      usertype: ['cliente', [Validators.required]],
-      taxCode: ['', [this.taxCodeValidator]]
+      usertype: [UserRole.Cliente, [Validators.required]],
+      taxCode: ['', [this.taxCodeValidator]],
+      sendCompletionLink: [true]
     });
     this.form = this.fb.group({
       userId: ['', [Validators.required]],
@@ -113,7 +118,7 @@ export class BookingDialogComponent {
       return 1;
     }
 
-    return Math.max(1, Number(this.data.space.maxConsecutiveTimeSlots || 1));
+    return Math.max(1, Number(this.availabilityMaxConsecutiveTimeSlots || 1));
   }
 
   get selectedStartTime(): string {
@@ -156,22 +161,65 @@ export class BookingDialogComponent {
 
     this.isCreatingClient = true;
     this.errorMessage = '';
+    this.successMessage = '';
+    this.completeUrl = '';
+
+    const raw = this.newClientForm.getRawValue();
+    const payload = {
+      name: raw.name,
+      email: raw.email,
+      phone: raw.phone || undefined,
+      taxCode: raw.taxCode || undefined,
+      role: raw.usertype
+    };
+
+    if (raw.sendCompletionLink) {
+      this.usersService.inviteUser(payload).subscribe({
+        next: (result) => {
+          this.clients = [result.user, ...this.clients.filter((client) => client._id !== result.user._id)];
+          this.form.patchValue({ userId: result.user._id });
+          this.completeUrl = result.completeUrl;
+          this.successMessage = 'Cliente creato con link di completamento.';
+          this.resetNewClientForm();
+          this.isCreatingClient = false;
+        },
+        error: (error) => {
+          this.errorMessage = error?.error?.message || 'Creazione cliente non riuscita.';
+          this.isCreatingClient = false;
+        }
+      });
+      return;
+    }
 
     this.usersService.createClient({
-      ...this.newClientForm.value,
-      password: this.generateTemporaryPassword(),
-      role: this.newClientForm.value.usertype
+      ...payload,
+      password: this.generateTemporaryPassword()
     }).subscribe({
-      next: (user) => {
-        this.clients = [user, ...this.clients.filter((client) => client._id !== user._id)];
-        this.form.patchValue({ userId: user._id });
-        this.newClientForm.reset();
+      next: (createdUser) => {
+        this.clients = [createdUser, ...this.clients.filter((client) => client._id !== createdUser._id)];
+        this.form.patchValue({ userId: createdUser._id });
+        this.completeUrl = '';
+        this.successMessage = this.completeUrl
+          ? 'Cliente creato con link di completamento.'
+          : 'Cliente creato e selezionato.';
+        this.resetNewClientForm();
         this.isCreatingClient = false;
       },
       error: (error) => {
         this.errorMessage = error?.error?.message || 'Creazione cliente non riuscita.';
         this.isCreatingClient = false;
       }
+    });
+  }
+
+  private resetNewClientForm(): void {
+    this.newClientForm.reset({
+      name: '',
+      email: '',
+      phone: '',
+      usertype: UserRole.Cliente,
+      taxCode: '',
+      sendCompletionLink: true
     });
   }
 
@@ -196,6 +244,7 @@ export class BookingDialogComponent {
       next: (result) => {
 
         this.isAvailabilityEmpty = !result.slots?.length;
+        this.availabilityMaxConsecutiveTimeSlots = Math.max(1, Number(result.maxConsecutiveTimeSlots || 1));
         
         this.slots = (result.slots || []).filter((slot) => slot.available);
         this.isLoadingSlots = false;
@@ -235,12 +284,12 @@ export class BookingDialogComponent {
 
     const candidate = [...this.selectedSlots, slot].sort((a, b) => this.slots.indexOf(a) - this.slots.indexOf(b));
     if (!this.isConsecutive(candidate)) {
-      this.errorMessage = 'Puoi selezionare solo fasce consecutive.';
+      this.errorMessage = 'Puoi selezionare solo fasce orarie consecutive.';
       return;
     }
 
     if (candidate.length > this.maxSelectableSlots) {
-      this.errorMessage = `Puoi selezionare al massimo ${this.maxSelectableSlots} fasce consecutive.`;
+      this.errorMessage = `Puoi selezionare al massimo ${this.maxSelectableSlots} fasce orarie consecutive.`;
       return;
     }
 
@@ -327,7 +376,7 @@ export class BookingDialogComponent {
 
   private afterBookingCreated(booking: { _id: string }): void {
     if (this.form.value.paymentAction === 'mark_paid') {
-      this.paymentService.confirmBookingPayment(booking._id).subscribe({
+      this.paymentService.confirmBookingPayment(booking._id, undefined, 'cash').subscribe({
         next: () => this.dialogRef.close(booking),
         error: (error) => {
           this.errorMessage = error?.error?.message || 'Prenotazione creata, ma pagamento non registrato.';

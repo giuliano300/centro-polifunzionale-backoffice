@@ -168,6 +168,14 @@ export class CourseBookingsComponent {
     return item.externalAmount || item.amount || 0;
   }
 
+  paymentMethodLabel(item: CourseBooking): string {
+    if (this.externalAmount(item) <= 0) {
+      return 'Nessun pagamento aggiuntivo';
+    }
+
+    return item.paymentStatus === 'PAID' ? 'Pagamento registrato' : 'Pagamento da completare';
+  }
+
   addSubscriber(): void {
     if (!this.courseId) {
       return;

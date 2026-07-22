@@ -60,4 +60,23 @@ export class EventDetailDialogComponent {
   paymentTotal(payment: any): number {
     return payment?.totalAmount || ((payment?.amount || 0) + (payment?.walletAmount || 0));
   }
+
+  paymentMethodLabel(payment: any): string {
+    const method = String(payment?.provider || payment?.method || '').toLowerCase();
+    const labels: Record<string, string> = {
+      wallet: 'Wallet',
+      manual: 'Pagamento manuale',
+      stripe: 'Stripe',
+      paypal: 'PayPal',
+      nexi: 'Nexi',
+      card: 'Carta',
+      cash: 'Contanti'
+    };
+
+    if (method && labels[method]) {
+      return labels[method];
+    }
+
+    return payment?.status === 'PAID' ? 'Pagamento registrato' : 'Pagamento da completare';
+  }
 }

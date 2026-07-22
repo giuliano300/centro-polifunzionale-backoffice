@@ -9,6 +9,13 @@
   </ol>
 </nav>
 
+<section class="page-head-card">
+  <div>
+    <h1>{{ id ? 'Modifica spazio' : 'Aggiungi spazio' }}</h1>
+    <p>Configura dati, disponibilita, prezzi, orari settimanali, chiusure eccezionali e metodi di pagamento.</p>
+  </div>
+</section>
+
 <mat-card class="trinta-card mb-25 bg-white border-none d-block">
   <mat-card-content>
     <form [formGroup]="form" (ngSubmit)="submit()" class="space-form">
@@ -38,6 +45,21 @@
         </mat-form-field>
       </section>
 
+      <button
+        type="button"
+        class="availability-toggle"
+        [class.active]="form.value.isAvailable"
+        [class.inactive]="!form.value.isAvailable"
+        (click)="toggleAvailability()">
+        <span>
+          <i [class]="form.value.isAvailable ? 'ri-checkbox-circle-line' : 'ri-close-circle-line'"></i>
+          <strong>{{ form.value.isAvailable ? 'Attivo' : 'Disattivo' }}</strong>
+        </span>
+        <small>
+          {{ form.value.isAvailable ? 'Lo spazio e acquistabile dai gestori.' : 'Lo spazio non sara acquistabile dai gestori.' }}
+        </small>
+      </button>
+
       <section class="form-section">
         <h3>Acquisto e disponibilita</h3>
         <div class="form-grid three">
@@ -56,20 +78,12 @@
             <mat-hint>Durata minima acquistabile per ogni fascia oraria.</mat-hint>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" *ngIf="hasTimeRental">
-            <mat-label>Fasce acquistabili insieme</mat-label>
-            <input matInput type="number" formControlName="maxConsecutiveTimeSlots" min="1" step="1">
-            <mat-hint>1 mantiene la prenotazione singola, valori maggiori abilitano fasce consecutive.</mat-hint>
-          </mat-form-field>
-
           <mat-form-field appearance="outline" *ngIf="form.value.rentalUnit === 'workstation'">
             <mat-label>Numero postazioni</mat-label>
             <input matInput type="number" formControlName="workstationCount" min="1">
             <mat-hint>Numero massimo di postazioni acquistabili nello stesso orario.</mat-hint>
           </mat-form-field>
-        </div>
-
-        <div class="form-grid three">
+          
           <mat-form-field appearance="outline" *ngIf="hasTimeRental">
             <mat-label>Costo frazione</mat-label>
             <input matInput type="number" formControlName="hourlyRate" min="0">
@@ -81,17 +95,19 @@
             <input matInput type="number" formControlName="dailyRate" min="0">
             <mat-hint>Prezzo per acquistare tutto l'orario di apertura del giorno.</mat-hint>
           </mat-form-field>
-
-          <div class="availability-toggle">
-            <mat-checkbox formControlName="isAvailable">Disponibile</mat-checkbox>
-          </div>
-        </div>
-
-        <div class="form-grid three">
+          
           <mat-form-field appearance="outline">
             <mat-label>Blocco creazione corso ore prima</mat-label>
             <input matInput type="number" formControlName="courseCreationAdvanceHours" min="0" step="0.5">
             <mat-hint>Oltre questo limite il gestore non puo piu creare corsi sulla prenotazione.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Metodi pagamento</mat-label>
+            <mat-select formControlName="paymentMethods" multiple>
+              <mat-option *ngFor="let method of paymentMethods" [value]="method.value">{{ method.label }}</mat-option>
+            </mat-select>
+            <mat-hint>Seleziona i metodi disponibili per acquistare questo spazio.</mat-hint>
           </mat-form-field>
         </div>
       </section>
@@ -104,6 +120,7 @@
             <span>Aperto</span>
             <span>Apertura</span>
             <span>Chiusura</span>
+            <span>Fasce orarie acquistabili</span>
           </div>
 
           <div class="schedule-row" *ngFor="let slot of openingHours.controls; let i = index" [formGroupName]="i">
@@ -111,8 +128,56 @@
             <mat-checkbox formControlName="isOpen"></mat-checkbox>
             <input class="time-input" type="time" formControlName="openTime">
             <input class="time-input" type="time" formControlName="closeTime">
+            <input class="time-input" type="number" min="1" step="1" formControlName="maxConsecutiveTimeSlots">
           </div>
         </div>
+        <p class="section-hint" *ngIf="hasTimeRental">
+          Le fasce orarie acquistabili sono configurate per giorno. 1 mantiene la prenotazione singola, valori maggiori abilitano fasce orarie consecutive.
+        </p>
+      </section>
+
+      <section class="form-section">
+        <div class="section-title-row">
+          <h3>Chiusure eccezionali</h3>
+          <button mat-button type="button" class="action-new" (click)="addExceptionalClosure()">
+            Aggiungi chiusura
+          </button>
+        </div>
+
+        <div class="closures-grid" formArrayName="exceptionalClosures" *ngIf="exceptionalClosures.length; else noClosures">
+          <div class="closure-row" *ngFor="let closure of exceptionalClosures.controls; let i = index" [formGroupName]="i">
+            <mat-form-field appearance="outline">
+              <mat-label>Dal</mat-label>
+              <input matInput [matDatepicker]="closureStartPicker" formControlName="startDate">
+              <mat-datepicker-toggle matSuffix [for]="closureStartPicker">
+                <i class="ri-calendar-line" matDatepickerToggleIcon></i>
+              </mat-datepicker-toggle>
+              <mat-datepicker #closureStartPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Al</mat-label>
+              <input matInput [matDatepicker]="closureEndPicker" formControlName="endDate">
+              <mat-datepicker-toggle matSuffix [for]="closureEndPicker">
+                <i class="ri-calendar-line" matDatepickerToggleIcon></i>
+              </mat-datepicker-toggle>
+              <mat-datepicker #closureEndPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Motivo</mat-label>
+              <input matInput formControlName="reason" autocomplete="off">
+            </mat-form-field>
+
+            <button mat-button type="button" class="action-delete" (click)="removeExceptionalClosure(i)">
+              Elimina
+            </button>
+          </div>
+        </div>
+
+        <ng-template #noClosures>
+          <p class="section-hint">Nessuna chiusura eccezionale configurata.</p>
+        </ng-template>
       </section>
 
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>

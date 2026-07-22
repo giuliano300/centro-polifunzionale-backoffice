@@ -4,6 +4,13 @@
     </ol>
 </nav>
 
+<section class="page-head-card">
+    <div>
+        <h1>Pagamenti</h1>
+        <p>Verifica incassi, stati di pagamento, metodo utilizzato e ripartizione tra wallet e pagamento esterno.</p>
+    </div>
+</section>
+
 <mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
     <mat-card-content>
         <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
@@ -102,7 +109,7 @@
                             <div class="action">
                                 <h6 class="mt-0 mb-0">{{formatCurrency(getTotalAmount(element))}}</h6>
                                 <small *ngIf="getWalletAmount(element) > 0">
-                                    Wallet {{formatCurrency(getWalletAmount(element))}} / Esterno {{formatCurrency(getExternalAmount(element))}}
+                                    Wallet {{formatCurrency(getWalletAmount(element))}} / {{getPaymentMethodLabel(element)}} {{formatCurrency(getExternalAmount(element))}}
                                 </small>
                             </div>
                         </td>
@@ -121,7 +128,7 @@
                         <th mat-header-cell *matHeaderCellDef class="pl-0">Metodo</th>
                         <td mat-cell *matCellDef="let element" class="pl-0">
                             <div class="position-relative">
-                                <h6 class="mt-0 mb-0">{{element.method}}</h6>
+                                <h6 class="mt-0 mb-0">{{getPaymentMethodLabel(element)}}</h6>
                             </div>
                         </td>
                     </ng-container>

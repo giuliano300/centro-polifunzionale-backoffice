@@ -9,6 +9,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { AuthUser } from '../../../interfaces/auth-user';
 import { CourseBookingService } from '../../../services/CourseBooking.service';
 import { UsersService } from '../../../services/User.service';
+import { UserRole } from '../../../interfaces/roles/roles';
 
 export interface AddCourseSubscriberDialogData {
   courseId: string;
@@ -104,7 +105,7 @@ export class AddCourseSubscriberDialogComponent {
     this.usersService.createClient({
       ...this.newClientForm.value,
       password: this.generateTemporaryPassword(),
-      role: 'cliente'
+      role: UserRole.Cliente
     }).subscribe({
       next: (user) => this.createCourseBooking(user._id),
       error: (error) => {

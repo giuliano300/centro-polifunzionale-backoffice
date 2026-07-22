@@ -155,7 +155,34 @@
 }
 
 .main-grid {
-  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  grid-template-columns: minmax(260px, .55fr) minmax(0, .95fr) minmax(0, 1.05fr);
+}
+
+.new-user-card {
+  p {
+    margin: 0 0 16px;
+    color: var(--ui-text-muted);
+    line-height: 1.45;
+  }
+}
+
+.quick-actions {
+  display: grid;
+  gap: 10px;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 14px;
+
+    i {
+      font-size: 17px;
+      line-height: 1;
+    }
+  }
 }
 
 .triple-grid {

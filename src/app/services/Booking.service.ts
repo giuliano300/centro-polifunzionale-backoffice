@@ -46,6 +46,8 @@ export interface BookingAvailability {
   date: string;
   rentalMode: string;
   isOpen: boolean;
+  maxConsecutiveTimeSlots?: number;
+  closureReason?: string;
   slots: AvailabilitySlot[];
 }
 

@@ -1,0 +1,98 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li aria-current="page" class="breadcrumb-item">
+            <a routerLink="/users">Utenti</a>
+        </li>
+        <li aria-current="page" class="breadcrumb-item active">Nuovo utente</li>
+    </ol>
+</nav>
+
+<section class="page-head-card">
+    <div>
+        <h1>Nuovo utente</h1>
+        <p>Crea un cliente o un gestore e scegli se inviare il link per completare la registrazione.</p>
+    </div>
+</section>
+
+<mat-card class="trinta-card mb-25 bg-white border-none d-block">
+    <mat-card-content>
+        <form [formGroup]="userForm" (ngSubmit)="SaveUser()" class="space-form">
+            <section class="form-section">
+                <h3>Dati utente</h3>
+                <div class="form-grid">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome e cognome</mat-label>
+                        <input matInput formControlName="name" autocomplete="off">
+                        <mat-hint>Nome visibile nel backoffice e nelle prenotazioni.</mat-hint>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="email" autocomplete="off">
+                        <mat-hint>Email univoca usata per accedere o completare la registrazione.</mat-hint>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Telefono</mat-label>
+                        <input matInput formControlName="phone" autocomplete="off">
+                        <mat-hint>Numero di cellulare del cliente o gestore.</mat-hint>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Codice fiscale</mat-label>
+                        <input matInput formControlName="taxCode" autocomplete="off">
+                        <mat-hint>Codice fiscale univoco, se disponibile.</mat-hint>
+                    </mat-form-field>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <h3>Accesso e registrazione</h3>
+                <div class="form-grid">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Ruolo</mat-label>
+                        <mat-select formControlName="role">
+                            <mat-option *ngFor="let role of userRoles" [value]="role">{{ roleLabel(role) }}</mat-option>
+                        </mat-select>
+                        <mat-hint>Scegli se creare un cliente o un gestore.</mat-hint>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" *ngIf="!userForm.value.sendCompletionLink">
+                        <mat-label>Password</mat-label>
+                        <input matInput type="password" formControlName="password" placeholder="Password provvisoria">
+                        <mat-hint>Password iniziale se non invii il link di completamento.</mat-hint>
+                    </mat-form-field>
+                </div>
+
+                <label class="option-toggle">
+                    <input type="checkbox" formControlName="sendCompletionLink">
+                    <span>
+                        <strong>Invia link completamento registrazione</strong>
+                        <small>L'utente completerà dati e accesso dal link ricevuto.</small>
+                    </span>
+                </label>
+
+                <label class="option-toggle">
+                    <input type="checkbox" formControlName="isActive">
+                    <span>
+                        <strong>Utente attivo</strong>
+                        <small>Se disattivo, l'utente resta salvato ma non puo accedere.</small>
+                    </span>
+                </label>
+            </section>
+
+            <div *ngIf="userMessage" class="user-message" [class.error]="userMessageType === 'error'" [class.success]="userMessageType === 'success'">{{ userMessage }}</div>
+            <div *ngIf="completeUrl" class="complete-link">
+                <span>Link completamento</span>
+                <strong>{{ completeUrl }}</strong>
+            </div>
+
+            <div class="actions">
+                <a mat-button class="action-cancel" routerLink="/users">Annulla</a>
+                <button mat-flat-button color="primary" class="action-save" type="submit" [disabled]="isSaving">
+                    {{ isSaving ? 'Salvataggio...' : 'Salva' }}
+                </button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

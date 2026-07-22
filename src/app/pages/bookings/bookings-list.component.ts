@@ -151,7 +151,10 @@ export class BookingsListComponent {
   }
 
   CanCreateCourse(item: BookingWithPayments): boolean {
-    return this.IsPaid(item) && this.IsFutureOrToday(item);
+    return this.IsPaid(item)
+      && this.IsFutureOrToday(item)
+      && item.booking.status !== 'cancelled'
+      && item.booking.status !== 'cancellation_requested';
   }
 
   GetCourse(item: BookingWithPayments): Course | undefined {
@@ -167,7 +170,9 @@ export class BookingsListComponent {
   }
 
   CanShowCourseAction(item: BookingWithPayments): boolean {
-    return !!this.GetCourse(item) || this.CanCreateCourse(item);
+    return item.booking.status !== 'cancelled'
+      && item.booking.status !== 'cancellation_requested'
+      && (!!this.GetCourse(item) || this.CanCreateCourse(item));
   }
 
   getBookingStatusLabel(status?: string): string {
@@ -193,6 +198,28 @@ export class BookingsListComponent {
   GetExternalAmount(item: BookingWithPayments): number {
     const payment = item.payments?.[0];
     return payment?.externalAmount || payment?.amount || 0;
+  }
+
+  GetPaymentMethodLabel(item: BookingWithPayments): string {
+    const payment = item.payments?.find(payment => payment.status === 'PAID')
+      || item.payments?.find(payment => payment.status === 'PENDING')
+      || item.payments?.[0];
+    const method = String(payment?.provider || payment?.method || '').toLowerCase();
+    const labels: Record<string, string> = {
+      wallet: 'Wallet',
+      manual: 'Pagamento manuale',
+      stripe: 'Stripe',
+      paypal: 'PayPal',
+      nexi: 'Nexi',
+      card: 'Carta',
+      cash: 'Contanti'
+    };
+
+    if (method && labels[method]) {
+      return labels[method];
+    }
+
+    return payment?.status === 'PAID' ? 'Pagamento registrato' : 'Pagamento da completare';
   }
 
   formatCurrency(value?: number): string {

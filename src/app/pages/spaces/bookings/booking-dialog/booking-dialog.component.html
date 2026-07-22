@@ -79,11 +79,24 @@
                 <mat-form-field appearance="outline">
                   <mat-label>Tipologia cliente</mat-label>
                   <mat-select formControlName="usertype">
-                    <mat-option value="cliente">Cliente</mat-option>
-                    <mat-option value="gestore">Gestore</mat-option>
+                    <mat-option [value]="UserRole.Cliente">Cliente</mat-option>
+                    <mat-option [value]="UserRole.Gestore">Gestore</mat-option>
                   </mat-select>
 
                 </mat-form-field>
+              </div>
+
+              <label class="completion-option">
+                <input type="checkbox" formControlName="sendCompletionLink">
+                <span>
+                  <strong>Invia link completamento registrazione</strong>
+                  <small>Il cliente completerà dati e accesso dal link ricevuto.</small>
+                </span>
+              </label>
+
+              <div *ngIf="completeUrl" class="complete-link">
+                <span>Link completamento</span>
+                <strong>{{completeUrl}}</strong>
               </div>
 
               <div class="client-actions">
@@ -136,8 +149,8 @@
         <div class="slots-head">
           <div>
             <strong>Disponibilita</strong>
-            <span *ngIf="maxSelectableSlots > 1">Puoi selezionare piu fasce, solo consecutive, fino a {{maxSelectableSlots}}.</span>
-            <span *ngIf="maxSelectableSlots === 1">Seleziona una fascia disponibile.</span>
+            <span *ngIf="maxSelectableSlots > 1">Per il giorno selezionato puoi acquistare fino a {{maxSelectableSlots}} fasce orarie consecutive.</span>
+            <span *ngIf="maxSelectableSlots === 1">Per il giorno selezionato puoi acquistare una fascia.</span>
           </div>
           <button mat-button type="button" class="action-cancel clear-slots" *ngIf="selectedSlots.length" (click)="clearSelectedSlots()">
             Annulla selezione
@@ -147,7 +160,6 @@
         <div class="slot-grid">
           <button
             *ngFor="let slot of slots"
-            mat-button
             type="button"
             class="slot-button"
             [class.selected]="isSlotSelected(slot)"
@@ -155,8 +167,8 @@
             [class.blocked]="isSlotDisabled(slot)"
             [disabled]="!slot.available"
             (click)="toggleSlot(slot)">
-            <span>{{slot.startTime}} - {{slot.endTime}}</span>
-            <small>&nbsp;&nbsp;{{formatAmount(slot.amount)}}</small>
+            <span class="slot-time">{{slot.startTime}} - {{slot.endTime}}</span>
+            <small class="slot-price">{{formatAmount(slot.amount)}}</small>
           </button>
         </div>
       </section>
@@ -171,7 +183,7 @@
 
       <div class="amount-box" *ngIf="selectedSlots.length">
         <div>
-          <span>Fasce selezionate</span>
+          <span>Fasce orarie selezionate</span>
           <strong>{{selectedStartTime}} - {{selectedEndTime}}</strong>
         </div>
         <div class="amount-total">
@@ -189,7 +201,7 @@
           <mat-label>Azione pagamento</mat-label>
           <mat-select formControlName="paymentAction">
             <mat-option value="none">Lascia da pagare</mat-option>
-            <mat-option value="mark_paid">Segna come pagato</mat-option>
+            <mat-option value="mark_paid">Segna pagato in contanti</mat-option>
             <mat-option value="send_link">Invia link pagamento al cliente</mat-option>
           </mat-select>
         </mat-form-field>

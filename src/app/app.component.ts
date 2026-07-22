@@ -15,7 +15,11 @@ import { ToggleService } from './common/header/toggle.service';
 export class AppComponent {
   title = 'district-operation-frontend';
 
-  constructor(public router: Router,  public toggleService: ToggleService) {}
+  constructor(public router: Router,  public toggleService: ToggleService) {
+      this.toggleService.isToggled$.subscribe(isToggled => {
+          this.isToggled = isToggled;
+      });
+  }
   
     routerSubscription: any;
     location: any;

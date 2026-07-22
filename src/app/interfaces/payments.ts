@@ -9,5 +9,6 @@ export interface Payment {
   externalAmount?: number;
   status: string;
   method: string;
+  provider?: 'manual' | 'stripe' | 'paypal' | 'nexi';
   transactionId?: string;
 }

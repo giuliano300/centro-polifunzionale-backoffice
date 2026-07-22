@@ -1,0 +1,225 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li aria-current="page" class="breadcrumb-item active">Sconti</li>
+  </ol>
+</nav>
+
+<section class="page-head-card">
+  <div>
+    <h1>Sconti</h1>
+    <p>Gestisci codici sconto per prenotazioni e corsi, limitandoli per spazio, periodo, ruolo o regola.</p>
+  </div>
+</section>
+
+<mat-card class="trinta-card to-do-list-card mb-25 bg-white border-none d-block discount-card">
+  <mat-card-content>
+    <div *ngIf="message" class="page-message" [class.success]="messageType === 'success'" [class.delete]="messageType === 'delete'">
+      {{ message }}
+    </div>
+
+    <form [formGroup]="form" class="discount-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Codice</mat-label>
+        <input matInput formControlName="code" placeholder="WELCOME10">
+        <mat-hint>Codice che verra inserito in fase di acquisto.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="type">
+          <mat-option value="percentage">Percentuale</mat-option>
+          <mat-option value="fixed">Importo fisso</mat-option>
+        </mat-select>
+        <mat-hint>Percentuale sul totale oppure importo fisso in euro.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Valore</mat-label>
+        <input matInput type="number" formControlName="value">
+        <mat-hint>Inserisci 10 per 10% oppure 10 euro, in base al tipo scelto.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Applicazione</mat-label>
+        <mat-select formControlName="target">
+          <mat-option value="all">Seleziona tutto</mat-option>
+          <mat-option value="booking">Prenotazioni</mat-option>
+          <mat-option value="course">Corsi</mat-option>
+        </mat-select>
+        <mat-hint>Scegli dove puo essere usato il codice.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Spazi</mat-label>
+        <mat-select formControlName="spaceIds" multiple (selectionChange)="onSpaceSelectionChange($event.value)">
+          <mat-select-trigger>{{ selectedSpacesLabel() }}</mat-select-trigger>
+          <mat-option [value]="allOption" (click)="selectAllSpaces()">Seleziona tutto</mat-option>
+          <mat-option *ngFor="let space of spaces" [value]="space._id">{{ space.name }}</mat-option>
+        </mat-select>
+        <mat-hint>Seleziona uno o piu spazi, oppure tutti.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipi utente</mat-label>
+        <mat-select formControlName="userRoles" multiple (selectionChange)="onRoleSelectionChange($event.value)">
+          <mat-select-trigger>{{ selectedRolesLabel() }}</mat-select-trigger>
+          <mat-option [value]="allOption" (click)="selectAllRoles()">Seleziona tutto</mat-option>
+          <mat-option value="cliente">Clienti</mat-option>
+          <mat-option value="gestore">Gestori</mat-option>
+        </mat-select>
+        <mat-hint>Limita lo sconto a clienti, gestori o tutti.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Regola</mat-label>
+        <mat-select formControlName="rule">
+          <mat-option value="manual">Codice manuale</mat-option>
+          <mat-option value="new_user">Nuovo registrato</mat-option>
+          <mat-option value="monthly_purchases">Acquisti mensili</mat-option>
+        </mat-select>
+        <mat-hint>Definisce quando l utente puo usare lo sconto.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="form.value.rule === 'new_user'">
+        <mat-label>Giorni da registrazione</mat-label>
+        <input matInput type="number" formControlName="newUserDays">
+        <mat-hint>Numero massimo di giorni dalla registrazione.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="form.value.rule === 'monthly_purchases'">
+        <mat-label>Acquisti minimi nel mese</mat-label>
+        <input matInput type="number" formControlName="monthlyPurchaseMin">
+        <mat-hint>Numero minimo di acquisti nel mese della prenotazione o corso.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Valido da</mat-label>
+        <input matInput [matDatepicker]="validFromPicker" formControlName="validFrom">
+        <mat-datepicker-toggle matSuffix [for]="validFromPicker">
+          <i class="ri-calendar-line" matDatepickerToggleIcon></i>
+        </mat-datepicker-toggle>
+        <mat-datepicker #validFromPicker></mat-datepicker>
+        <mat-hint>Primo giorno in cui lo sconto puo essere usato.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Valido a</mat-label>
+        <input matInput [matDatepicker]="validToPicker" formControlName="validTo">
+        <mat-datepicker-toggle matSuffix [for]="validToPicker">
+          <i class="ri-calendar-line" matDatepickerToggleIcon></i>
+        </mat-datepicker-toggle>
+        <mat-datepicker #validToPicker></mat-datepicker>
+        <mat-hint>Ultimo giorno valido. Per un giorno solo usa la stessa data.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Utilizzi massimi</mat-label>
+        <input matInput type="number" formControlName="maxUses">
+        <mat-hint>Lascia vuoto per utilizzi illimitati.</mat-hint>
+      </mat-form-field>
+
+      <div class="active-box">
+        <mat-slide-toggle formControlName="isActive">Attivo</mat-slide-toggle>
+        <small>Se disattivo, il codice resta salvato ma non puo essere usato.</small>
+      </div>
+
+      <div class="discount-actions">
+        <button mat-button class="action-save" type="button" (click)="save()" [disabled]="isSaving">
+          <i class="ri-save-3-line"></i>
+          <span>{{ isSaving ? 'Salvataggio...' : 'Salva' }}</span>
+        </button>
+        <button mat-button class="action-cancel" type="button" (click)="reset()">Annulla</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="trinta-card to-do-list-card mb-25 bg-white border-none d-block">
+  <mat-card-content>
+    <div class="to-do-list-table">
+      <div *ngIf="isLoading" class="empty-state">Caricamento sconti...</div>
+      <div class="table-responsive" *ngIf="!isLoading">
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="code">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Codice</th>
+            <td mat-cell *matCellDef="let element" class="pl-0">
+              <h6 class="mt-0 mb-0">{{ element.code }}</h6>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Valore</th>
+            <td mat-cell *matCellDef="let element" class="pl-0">
+              <h6 class="mt-0 mb-0">{{ typeLabel(element.type) }} - {{ valueLabel(element) }}</h6>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="target">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Applicazione</th>
+            <td mat-cell *matCellDef="let element" class="pl-0">
+              <h6 class="mt-0 mb-0">{{ targetLabel(element.target) }}</h6>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="spaces">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Spazi</th>
+            <td mat-cell *matCellDef="let element" class="pl-0">
+              <h6 class="mt-0 mb-0">{{ spaceName(element) }}</h6>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="users">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Utenti</th>
+            <td mat-cell *matCellDef="let element" class="pl-0">
+              <h6 class="mt-0 mb-0">{{ roleLabel(element) }}</h6>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="rule">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Regola</th>
+            <td mat-cell *matCellDef="let element" class="pl-0">
+              <h6 class="mt-0 mb-0">{{ ruleLabel(element) }}</h6>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="uses">
+            <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Utilizzi</th>
+            <td mat-cell *matCellDef="let element" class="text-center pr-0">
+              <h6 class="mt-0 mb-0">{{ element.usedCount || 0 }}{{ element.maxUses ? ' / ' + element.maxUses : '' }}</h6>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Stato</th>
+            <td mat-cell *matCellDef="let element" class="pl-0">
+              <span class="status-badge" [class.status-cancelled]="!element.isActive">{{ element.isActive ? 'Attivo' : 'Disattivo' }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Azioni</th>
+            <td mat-cell *matCellDef="let element" class="text-center pr-0">
+              <div class="action">
+                <button mat-button class="table-action-button action-filter" type="button" (click)="edit(element)">
+                  <i class="ri-edit-line"></i>
+                </button>
+                <button mat-button class="table-action-button action-delete" type="button" (click)="delete(element)">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center no-data" [attr.colspan]="displayedColumns.length">
+              Nessuno sconto creato
+            </td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator *ngIf="!isLoading" [pageSizeOptions]="[20, 50, 100]"></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

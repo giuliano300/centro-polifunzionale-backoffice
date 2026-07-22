@@ -4,12 +4,24 @@
             <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Spazi </li>
             <li aria-current="page" class="breadcrumb-item active">Prenotazioni {{spaceName}}</li>
         </ol>
-        <div class="flex-end">
-            <button class="filter-button new-booking-button action-new" (click)="CreateBooking()">Nuova prenotazione</button>
-            <button class="filter-button action-filter" (click)="gotoCalendar()">Formato calendario</button>
-        </div>
     </div>
 </nav>
+<section class="page-head-card">
+    <div>
+        <h1>Prenotazioni {{spaceName}}</h1>
+        <p>Gestisci le prenotazioni dello spazio, filtra per periodo e crea nuove prenotazioni per i clienti.</p>
+    </div>
+    <div class="page-head-actions">
+        <button mat-button class="action-new" (click)="CreateBooking()">
+            <i class="ri-add-line"></i>
+            <span>Nuova prenotazione</span>
+        </button>
+        <button mat-button class="action-filter" (click)="gotoCalendar()">
+            <i class="ri-calendar-line"></i>
+            <span>Calendario</span>
+        </button>
+    </div>
+</section>
 <mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
     <mat-card-content>
         <form [formGroup]="form">
@@ -125,7 +137,7 @@
                                 <h6 class="mt-0 mb-0">
                                    {{ formatCurrency(GetTotalAmount(element)) }}
                                    <small *ngIf="GetWalletAmount(element) > 0">
-                                      Wallet {{formatCurrency(GetWalletAmount(element))}} / Esterno {{formatCurrency(GetPendingAmount(element))}}
+                                      Wallet {{formatCurrency(GetWalletAmount(element))}} / {{GetPaymentMethodLabel(element)}} {{formatCurrency(GetPendingAmount(element))}}
                                    </small>
                                 </h6>
                             </div>

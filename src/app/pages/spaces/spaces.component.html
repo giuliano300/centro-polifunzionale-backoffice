@@ -3,6 +3,16 @@
         <li aria-current="page" class="breadcrumb-item active">Spazi</li>
     </ol>
 </nav>
+<section class="page-head-card">
+    <div>
+        <h1>Spazi</h1>
+        <p>Gestisci sale e postazioni, disponibilita, prezzi, metodi di pagamento e regole di prenotazione.</p>
+    </div>
+    <a mat-button class="action-new" routerLink="/spaces/add">
+        <i class="ri-add-line"></i>
+        <span>Aggiungi spazio</span>
+    </a>
+</section>
 <mat-card
     class="trinta-card to-do-list-card mb-25 bg-white border-none d-block"
 >
@@ -57,6 +67,19 @@
                             <div class="position-relative">
                                 <h6 class="mt-0 mb-0">
                                     {{getRatesLabel(element)}}
+                                </h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="slots">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">
+                            Fasce orarie
+                        </th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">
+                                    {{getSlotsLabel(element)}}
                                 </h6>
                             </div>
                         </td>

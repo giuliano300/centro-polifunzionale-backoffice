@@ -1,5 +1,6 @@
 <div
     class="sidebar-area bg-white transition sidebar-shadow"
+    [class.active]="isToggled"
 >
     <div class="logo">
         <a routerLink="/" class="d-flex align-items-center">
@@ -33,21 +34,39 @@
                         <ul class="sidebar-sub-menu">
                             <li class="sidemenu-item">
                                 <a routerLink="/spaces" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
-                                    Vedi tutti
+                                    Vedi spazi
                                 </a>
                             </li>
                             <li class="sidemenu-item">
                                 <a routerLink="/spaces/add" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
-                                    Aggiungi
+                                    Aggiungi spazio
                                 </a>
                             </li>
                         </ul>
                     </mat-expansion-panel>
 
-                    <a routerLink="/users" routerLinkActive="active" class="sidebar-menu-link">
-                        <i-feather name="users"></i-feather>
-                        <span class="title">Utenti</span>
-                    </a>
+                    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = true">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <i-feather name="users"></i-feather>
+                                <span class="title">
+                                    Utenti
+                                </span>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <ul class="sidebar-sub-menu">
+                            <li class="sidemenu-item">
+                                <a routerLink="/users" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Vedi utenti
+                                </a>
+                            </li>
+                            <li class="sidemenu-item">
+                                <a routerLink="/users/add" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Aggiungi utenti
+                                </a>
+                            </li>
+                        </ul>
+                    </mat-expansion-panel>
 
                     <a routerLink="/bookings" routerLinkActive="active" class="sidebar-menu-link">
                         <i-feather name="calendar"></i-feather>
@@ -62,6 +81,11 @@
                     <a routerLink="/payments" routerLinkActive="active" class="sidebar-menu-link">
                         <i-feather name="credit-card"></i-feather>
                         <span class="title">Pagamenti</span>
+                    </a>
+
+                    <a routerLink="/discount-codes" routerLinkActive="active" class="sidebar-menu-link">
+                        <i-feather name="percent"></i-feather>
+                        <span class="title">Sconti</span>
                     </a>
 
                     <a routerLink="/cancellation-requests" routerLinkActive="active" class="sidebar-menu-link">
@@ -80,8 +104,13 @@
                         </mat-expansion-panel-header>
                         <ul class="sidebar-sub-menu">
                             <li class="sidemenu-item">
-                                <a routerLink="/wallet-settings" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
-                                    Wallet nuovi iscritti
+                                <a routerLink="/wallet-client-settings" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Wallet nuovi clienti
+                                </a>
+                            </li>
+                            <li class="sidemenu-item">
+                                <a routerLink="/wallet-manager-settings" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Wallet nuovi gestori
                                 </a>
                             </li>
                         </ul>

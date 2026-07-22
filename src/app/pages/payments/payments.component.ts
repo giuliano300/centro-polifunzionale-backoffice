@@ -102,6 +102,25 @@ export class PaymentsComponent {
     return payment.externalAmount || payment.amount || 0;
   }
 
+  getPaymentMethodLabel(payment?: Payment): string {
+    const method = String(payment?.provider || payment?.method || '').toLowerCase();
+    const labels: Record<string, string> = {
+      wallet: 'Wallet',
+      manual: 'Pagamento manuale',
+      stripe: 'Stripe',
+      paypal: 'PayPal',
+      nexi: 'Nexi',
+      card: 'Carta',
+      cash: 'Contanti'
+    };
+
+    if (method && labels[method]) {
+      return labels[method];
+    }
+
+    return payment?.status === 'PAID' ? 'Pagamento registrato' : 'Pagamento da completare';
+  }
+
   formatCurrency(value?: number): string {
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(value || 0);
   }

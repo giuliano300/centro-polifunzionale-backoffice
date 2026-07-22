@@ -34,9 +34,9 @@
       <span>{{ paymentTotal(payment) | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</span>
       <span>{{ paymentStatusLabel(payment.status) }}</span>
       <small>
-        {{ payment.method || '-' }}
-        <ng-container *ngIf="payment.walletAmount"> · Wallet {{ payment.walletAmount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</ng-container>
-        <ng-container *ngIf="payment.externalAmount"> · Esterno {{ payment.externalAmount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</ng-container>
+        {{ paymentMethodLabel(payment) }}
+        <ng-container *ngIf="payment.walletAmount"> - Wallet {{ payment.walletAmount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</ng-container>
+        <ng-container *ngIf="payment.externalAmount"> - {{ paymentMethodLabel(payment) }} {{ payment.externalAmount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</ng-container>
       </small>
     </div>
   </div>

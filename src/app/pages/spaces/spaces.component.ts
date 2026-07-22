@@ -9,20 +9,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 type SpaceRow = Spaces & { action: { viewDetails: string; edit: string; delete: string; toggle: string } };
 
 @Component({
   selector: 'app-spaces',
-  imports: [MatCardModule, MatButtonModule, MatMenuModule, MatPaginatorModule, MatTableModule, MatCheckboxModule],
+  imports: [RouterLink, MatCardModule, MatButtonModule, MatMenuModule, MatPaginatorModule, MatTableModule, MatCheckboxModule],
   templateUrl: './spaces.component.html',
   styleUrl: './spaces.component.scss'
 })
 export class SpacesComponent {
  spaces: SpaceRow[] = [];
 
- displayedColumns: string[] = ['name', 'rentalUnit', 'rentalModes', 'rates', 'schedule', 'isAvailable', 'toggle', 'viewDetails', 'edit', 'delete'];
+ displayedColumns: string[] = ['name', 'rentalUnit', 'rentalModes', 'rates', 'slots', 'schedule', 'isAvailable', 'toggle', 'viewDetails', 'edit', 'delete'];
 
  dataSource = new MatTableDataSource<SpaceRow>(this.spaces);
 
@@ -115,13 +115,33 @@ export class SpacesComponent {
       const rates: string[] = [];
       if ((item.rentalModes || ['time']).includes('time')) {
         rates.push(`${item.hourlyRate || 0}/frazione`);
-        rates.push(`max ${item.maxConsecutiveTimeSlots || 1} fasce`);
       }
       const daily = item.dailyRate ? `${item.dailyRate}/giorno` : null;
       if ((item.rentalModes || []).includes('full_day') && daily) {
         rates.push(daily);
       }
       return rates.length ? rates.join(' - ') : '-';
+    }
+
+    getSlotsLabel(item: Spaces): string {
+      if (!(item.rentalModes || ['time']).includes('time')) {
+        return 'Non previste';
+      }
+
+      const openSlots = (item.openingHours || []).filter((slot) => slot.isOpen);
+      if (!openSlots.length) {
+        return 'Nessun giorno aperto';
+      }
+
+      const values = openSlots.map((slot) => Number(slot.maxConsecutiveTimeSlots || item.maxConsecutiveTimeSlots || 1));
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+
+      if (min === max) {
+        return min === 1 ? '1 fascia oraria per acquisto' : `Fino a ${max} fasce orarie consecutive`;
+      }
+
+      return `Da ${min} a ${max} fasce orarie in base al giorno`;
     }
 
     getScheduleLabel(item: Spaces): string {
