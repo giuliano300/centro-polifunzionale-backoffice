@@ -80,6 +80,15 @@ export class PaymentService {
     return this.http.post<PaymentLinkResponse>(`${this.apiUrl}/booking/${bookingId}/send-payment-link`, {}, { headers });
   }
 
+  getByBooking(bookingId: string): Observable<Payment[]>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<Payment[]>(`${this.apiUrl}/by-booking/${bookingId}`, { headers });
+  }
+
   private buildQuery(filters: object): string {
     const params = new URLSearchParams();
     Object.entries(filters as Record<string, unknown>).forEach(([key, value]) => {

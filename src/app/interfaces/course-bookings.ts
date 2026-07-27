@@ -14,6 +14,7 @@ export interface CourseBooking {
   totalAmount?: number;
   walletAmount?: number;
   externalAmount?: number;
+  paymentMethod?: 'cash' | 'stripe' | 'paypal' | 'nexi';
   paymentStatus: CourseBookingPaymentStatus;
   createdAt?: string;
   updatedAt?: string;

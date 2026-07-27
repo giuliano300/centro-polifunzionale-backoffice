@@ -1,21 +1,75 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li aria-current="page" class="breadcrumb-item active">
-            {{ selectedCourseName ? 'Iscritti - ' + selectedCourseName : 'Iscritti corsi' }}
+            {{ pageTitle() }}
         </li>
     </ol>
 </nav>
 
 <section class="page-head-card">
     <div>
-        <h1>{{ selectedCourseName ? 'Iscritti - ' + selectedCourseName : 'Iscritti corsi' }}</h1>
-        <p>Consulta gli iscritti ai corsi, i dati del partecipante, lo stato dell'iscrizione e gli eventuali pagamenti.</p>
+        <h1>{{ pageTitle() }}</h1>
+        <p>{{ pageDescription() }}</p>
     </div>
-    <button *ngIf="courseDetails" type="button" mat-button class="action-new" (click)="addSubscriber()">
+    <button *ngIf="courseDetails && !isPaymentsMode" type="button" mat-button class="action-new" (click)="addSubscriber()">
         <i class="ri-user-add-line"></i>
         <span>Aggiungi iscritto</span>
     </button>
 </section>
+
+<mat-card *ngIf="isPaymentsMode" class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
+    <mat-card-content>
+        <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <mat-form-field class="date-range-field">
+                            <i-feather name="calendar"></i-feather>
+                            <mat-label>Intervallo date</mat-label>
+                            <mat-date-range-input [rangePicker]="coursePaymentRangePicker">
+                                <input matStartDate formControlName="startDate" placeholder="Dal">
+                                <input matEndDate formControlName="endDate" placeholder="Al">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="coursePaymentRangePicker">
+                            </mat-datepicker-toggle>
+                            <mat-date-range-picker #coursePaymentRangePicker></mat-date-range-picker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-3">
+                        <mat-form-field>
+                            <i-feather name="book-open"></i-feather>
+                            <mat-label>Corso</mat-label>
+                            <mat-select formControlName="courseId">
+                                <mat-option value="">Tutti</mat-option>
+                                <mat-option *ngFor="let course of courses" [value]="course._id">
+                                    {{ course.title }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-2">
+                        <mat-form-field>
+                            <i-feather name="filter"></i-feather>
+                            <mat-label>Pagamento</mat-label>
+                            <mat-select formControlName="paymentStatus">
+                                <mat-option value="">Tutti</mat-option>
+                                <mat-option value="PENDING">Da pagare</mat-option>
+                                <mat-option value="PAID">Pagato</mat-option>
+                                <mat-option value="FREE">Gratuito</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-2">
+                        <button mat-button type="submit" class="action-filter">Filtra</button>
+                    </div>
+                    <div class="col-lg-1">
+                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Oggi</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
 
 <mat-card *ngIf="courseDetails" class="course-summary-card trinta-card mb-25 bg-white border-none d-block">
     <mat-card-content>
@@ -163,7 +217,7 @@
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                     <tr class="mat-row" *matNoDataRow>
                         <td class="mat-cell text-center no-data" [attr.colspan]="displayedColumns.length">
-                            Nessun iscritto trovato
+                            {{ isPaymentsMode ? 'Nessun pagamento corso trovato' : 'Nessun iscritto trovato' }}
                         </td>
                     </tr>
                 </table>

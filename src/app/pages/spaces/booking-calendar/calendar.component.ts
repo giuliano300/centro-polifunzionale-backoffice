@@ -16,6 +16,7 @@ import { BookingWithPayments } from '../../../interfaces/BookingWithPayments';
 import itLocale from '@fullcalendar/core/locales/it';
 import { EventDetailDialogComponent } from '../../../event-detail/event-detail-dialog.component';
 import { BookingDialogComponent } from '../bookings/booking-dialog/booking-dialog.component';
+import { PaymentService } from '../../../services/Payment.service';
 
 @Component({
     selector: 'app-calendar',
@@ -74,6 +75,7 @@ export class CalendarComponent {
         private route: ActivatedRoute,
         private router: Router,
         private bookingService: BookingService,
+        private paymentService: PaymentService,
         private spaceService: SpacesService,
         private dialog: MatDialog,
         private utilService: UtilsService
@@ -84,20 +86,22 @@ export class CalendarComponent {
     handleEventClick(clickInfo: any) {
         const event = clickInfo.event;
         this.selectedDate = new Date(event.startStr);
-        this.dialog.open(EventDetailDialogComponent, {
-            data: 
-            {
-                title: event.title,
-                date: event.startStr,
-                extendedProps: event.extendedProps
-            },
-            width: '860px',
-            minWidth: 'min(800px, 94vw)',
-            maxWidth: '94vw'
-        });
+        const bookingWithPayments = event.extendedProps?.bookingWithPayments
+            || this.bookingWithPayments.find(item => item.booking._id === event.extendedProps?.bookingId);
+        if (bookingWithPayments) {
+            this.openBookingDetail(bookingWithPayments);
+        }
     }
 
     openBookingDetail(item: BookingWithPayments) {
+        const bookingId = item.booking._id;
+        this.paymentService.getByBooking(bookingId).subscribe({
+          next: (payments) => this.openBookingDetailDialog({ ...item, payments }),
+          error: () => this.openBookingDetailDialog(item)
+        });
+    }
+
+    private openBookingDetailDialog(item: BookingWithPayments) {
         this.dialog.open(EventDetailDialogComponent, {
             data:
             {
@@ -111,7 +115,7 @@ export class CalendarComponent {
                     startTime: item.booking.startTime,
                     endTime: item.booking.endTime,
                     status: item.booking.status,
-                    payments: item.payments
+                    payments: item.payments || []
                 }
             },
             width: '860px',
@@ -210,6 +214,7 @@ export class CalendarComponent {
           start: b.booking.date,
           allDay: true,
           extendedProps: {
+                bookingWithPayments: b,
                 bookingId: b.booking._id,
                 user: b.booking.user,
                 space: b.booking.space,
@@ -217,12 +222,16 @@ export class CalendarComponent {
                 startTime: b.booking.startTime,
                 endTime: b.booking.endTime,
                 status: b.booking.status,
-                payments: b.payments.map(payment => ({
+                payments: (b.payments || []).map(payment => ({
                     _id: payment._id,
                     bookingId: payment.bookingId,
                     amount: payment.amount,
+                    totalAmount: payment.totalAmount,
+                    walletAmount: payment.walletAmount,
+                    externalAmount: payment.externalAmount,
                     status: payment.status,
                     method: payment.method,
+                    provider: payment.provider,
                     transactionId: payment.transactionId,
                 })),
             }

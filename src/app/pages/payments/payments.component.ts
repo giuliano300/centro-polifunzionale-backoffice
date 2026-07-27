@@ -10,6 +10,7 @@ import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { Payment } from '../../interfaces/payments';
 import { PaymentService } from '../../services/Payment.service';
 import { Bookings } from '../../interfaces/bookings';
@@ -31,17 +32,20 @@ export class PaymentsComponent {
 
   constructor(
     private paymentService: PaymentService,
+    private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
+    const defaultRange = this.getCurrentMonthRange();
     this.filterForm = this.fb.group({
-      startDate: [this.getTodayDate()],
-      endDate: [this.getTodayDate()],
+      startDate: [defaultRange.startDate],
+      endDate: [defaultRange.endDate],
       search: [''],
       status: ['']
     });
   }
 
   ngOnInit(): void {
+    this.applyQueryDateSelection();
     this.getPayments();
   }
 
@@ -64,7 +68,8 @@ export class PaymentsComponent {
   }
 
   resetFilters(): void {
-    this.filterForm.patchValue({ startDate: this.getTodayDate(), endDate: this.getTodayDate(), search: '', status: '' });
+    const defaultRange = this.getCurrentMonthRange();
+    this.filterForm.patchValue({ startDate: defaultRange.startDate, endDate: defaultRange.endDate, search: '', status: '' });
     this.applyFilters();
   }
 
@@ -129,10 +134,47 @@ export class PaymentsComponent {
     return this.toDateInputValue(new Date());
   }
 
-  private getTodayDate(): Date {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
+  private getCurrentMonthRange(reference = new Date()): { startDate: Date; endDate: Date } {
+    const startDate = new Date(reference.getFullYear(), reference.getMonth(), 1);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(reference.getFullYear(), reference.getMonth() + 1, 0);
+    endDate.setHours(0, 0, 0, 0);
+    return { startDate, endDate };
+  }
+
+  private applyQueryDateSelection(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const month = Number(params.get('month'));
+    const year = Number(params.get('year'));
+
+    if (Number.isInteger(month) && month >= 1 && month <= 12 && Number.isInteger(year) && year > 1900) {
+      const range = this.getCurrentMonthRange(new Date(year, month - 1, 1));
+      this.filterForm.patchValue({ startDate: range.startDate, endDate: range.endDate });
+      return;
+    }
+
+    const start = this.parseDateParam(params.get('start'));
+    const end = this.parseDateParam(params.get('end'));
+    if (start || end) {
+      this.filterForm.patchValue({
+        startDate: start || end,
+        endDate: end || start
+      });
+    }
+  }
+
+  private parseDateParam(value: string | null): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    date.setHours(0, 0, 0, 0);
+    return date;
   }
 
   private getSelectedDateRange(): { start?: string; end?: string } {

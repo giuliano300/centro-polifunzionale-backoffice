@@ -60,6 +60,17 @@ export interface DashboardStats {
     pendingCourseBookings: number;
     paidRevenue: number;
     monthRevenue: number;
+    walletUsed: number;
+    monthWalletUsed: number;
+    bookingWalletUsed: number;
+    monthBookingWalletUsed: number;
+    courseWalletUsed: number;
+    monthCourseWalletUsed: number;
+    coursePaidRevenue: number;
+    monthCoursePaidRevenue: number;
+    monthCourseDatePaidRevenue: number;
+    monthCourseDateWalletUsed: number;
+    pendingCoursePayments: number;
     pendingPayments: number;
   };
   breakdowns: {

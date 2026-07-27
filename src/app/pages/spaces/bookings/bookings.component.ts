@@ -82,9 +82,10 @@ export class BookingsComponent {
       private paymentService: PaymentService
   ) 
   {
+     const currentMonthRange = this.getCurrentMonthRange();
      this.form = this.fb.group({
-        startDate: [this.getTodayDate()],
-        endDate: [this.getTodayDate()]
+        startDate: [currentMonthRange.startDate],
+        endDate: [currentMonthRange.endDate]
     });
   }
 
@@ -96,13 +97,13 @@ export class BookingsComponent {
   }
 
   resetFilters(): void {
-      const today = this.getTodayDate();
+      const currentMonthRange = this.getCurrentMonthRange();
       this.form.patchValue({
-        startDate: today,
-        endDate: today
+        startDate: currentMonthRange.startDate,
+        endDate: currentMonthRange.endDate
       });
-      this.year = today.getFullYear();
-      this.month = today.getMonth() + 1;
+      this.year = currentMonthRange.startDate.getFullYear();
+      this.month = currentMonthRange.startDate.getMonth() + 1;
       this.getBookings(this.id!);
   }
 
@@ -116,7 +117,7 @@ export class BookingsComponent {
 
     const initialRange = queryMonth && queryYear
       ? this.getMonthDateRange(queryYear, queryMonth)
-      : { startDate: this.getTodayDate(), endDate: this.getTodayDate() };
+      : this.getCurrentMonthRange();
 
     this.year = queryYear || initialRange.startDate.getFullYear();
     this.month = queryMonth || initialRange.startDate.getMonth() + 1;
@@ -313,9 +314,9 @@ export class BookingsComponent {
       }
 
       const dialogRef = this.dialog.open(CourseDialogComponent, {
-        width: '860px',
-        minWidth: 'min(800px, 94vw)',
-        maxWidth: '94vw',
+        width: '1180px',
+        minWidth: 'min(1040px, 96vw)',
+        maxWidth: '96vw',
         data: {
           bookingWithPayments: item,
           course
@@ -358,6 +359,11 @@ export class BookingsComponent {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       return today;
+    }
+
+    private getCurrentMonthRange(): { startDate: Date; endDate: Date } {
+      const today = this.getTodayDate();
+      return this.getMonthDateRange(today.getFullYear(), today.getMonth() + 1);
     }
 
     private getMonthDateRange(year: number, month: number): { startDate: Date; endDate: Date } {

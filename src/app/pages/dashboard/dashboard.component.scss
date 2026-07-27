@@ -155,7 +155,7 @@
 }
 
 .main-grid {
-  grid-template-columns: minmax(260px, .55fr) minmax(0, .95fr) minmax(0, 1.05fr);
+  grid-template-columns: minmax(240px, .7fr) repeat(2, minmax(260px, .9fr)) minmax(260px, 1fr);
 }
 
 .new-user-card {
@@ -270,6 +270,26 @@
     font-size: 15px;
     font-weight: 500;
   }
+}
+
+.wallet-used-item {
+  border: 1px solid var(--action-filter-border);
+  background: var(--action-filter-bg-soft);
+}
+
+.course-payment-item {
+  border: 1px solid var(--action-save-border);
+  background: var(--action-save-bg-soft);
+}
+
+.course-date-item {
+  border: 1px solid var(--tone-violet-border);
+  background: var(--tone-violet-bg);
+}
+
+.economy-actions {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 12px;
 }
 
 .usage-row {
@@ -395,6 +415,10 @@
 @media (max-width: 1399px) {
   .kpi-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .main-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .bottom-grid {

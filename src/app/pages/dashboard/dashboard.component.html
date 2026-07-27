@@ -61,14 +61,21 @@
           <div class="card-title-row">
             <div>
               <span>Economia</span>
-              <h2>Incassi e pagamenti</h2>
+              <h2>Pagamenti spazi</h2>
             </div>
             <i-feather name="trending-up"></i-feather>
           </div>
-          <div class="revenue-total">{{ formatCurrency(stats.period.paidRevenue) }}</div>
-          <p>Totale incassato registrato. Questo mese: <strong>{{ formatCurrency(stats.period.monthRevenue) }}</strong>.</p>
+          <div class="revenue-total">{{ formatCurrency(stats.period.monthRevenue) }}</div>
+          <p>Incassi spazi del mese corrente, escluso wallet. Totale storico: <strong>{{ formatCurrency(stats.period.paidRevenue) }}</strong>.</p>
 
           <div class="status-list">
+            <div class="status-item wallet-used-item">
+              <div>
+                <span>Wallet usati spazi</span>
+                <strong>{{ formatCurrency(stats.period.monthBookingWalletUsed) }}</strong>
+              </div>
+              <small>Totale storico {{ formatCurrency(stats.period.bookingWalletUsed) }}</small>
+            </div>
             <div *ngFor="let item of paymentStatusItems" class="status-item">
               <div>
                 <span>{{ getStatusLabel(item.status) }}</span>
@@ -76,6 +83,58 @@
               </div>
               <small>{{ formatNumber(item.count) }} movimenti</small>
             </div>
+          </div>
+
+          <div class="quick-actions economy-actions">
+            <a routerLink="/payments" mat-button class="action-filter">
+              <i class="ri-bank-card-line"></i>
+              <span>Vedi pagamenti spazi</span>
+            </a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="dashboard-card revenue-card course-revenue-card border-none">
+        <mat-card-content>
+          <div class="card-title-row">
+            <div>
+              <span>Economia</span>
+              <h2>Pagamenti corsi</h2>
+            </div>
+            <i-feather name="book-open"></i-feather>
+          </div>
+          <div class="revenue-total">{{ formatCurrency(stats.period.monthCoursePaidRevenue) }}</div>
+          <p>Pagamenti corsi incassati nel mese corrente, escluso wallet. Totale storico: <strong>{{ formatCurrency(stats.period.coursePaidRevenue) }}</strong>.</p>
+
+          <div class="status-list">
+            <div class="status-item course-date-item">
+              <div>
+                <span>Corsi del mese</span>
+                <strong>{{ formatCurrency(stats.period.monthCourseDatePaidRevenue) }}</strong>
+              </div>
+              <small>Wallet su corsi del mese {{ formatCurrency(stats.period.monthCourseDateWalletUsed) }}</small>
+            </div>
+            <div class="status-item course-payment-item">
+              <div>
+                <span>Da pagare</span>
+                <strong>{{ formatNumber(stats.period.pendingCoursePayments) }}</strong>
+              </div>
+              <small>Iscrizioni corso non ancora pagate</small>
+            </div>
+            <div class="status-item wallet-used-item">
+              <div>
+                <span>Wallet usati corsi</span>
+                <strong>{{ formatCurrency(stats.period.monthCourseWalletUsed) }}</strong>
+              </div>
+              <small>Totale storico {{ formatCurrency(stats.period.courseWalletUsed) }}</small>
+            </div>
+          </div>
+
+          <div class="quick-actions economy-actions">
+            <a routerLink="/course-payments" mat-button class="action-filter">
+              <i class="ri-graduation-cap-line"></i>
+              <span>Vedi pagamenti corsi</span>
+            </a>
           </div>
         </mat-card-content>
       </mat-card>

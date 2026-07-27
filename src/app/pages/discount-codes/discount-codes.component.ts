@@ -30,16 +30,20 @@ export class DiscountCodesComponent {
   private allRolesMode = true;
   discounts: DiscountCode[] = [];
   dataSource = new MatTableDataSource<DiscountCode>([]);
-  displayedColumns = ['code', 'value', 'target', 'spaces', 'users', 'rule', 'uses', 'status', 'actions'];
+  displayedColumns = ['promo', 'value', 'target', 'spaces', 'users', 'rule', 'uses', 'status', 'actions'];
   spaces: Spaces[] = [];
   selected: DiscountCode | null = null;
+  isFormOpen = false;
   isLoading = true;
   isSaving = false;
   message = '';
   messageType: 'success' | 'warning' | 'delete' = 'warning';
 
   form = this.fb.group({
-    code: ['', Validators.required],
+    title: ['', Validators.required],
+    description: [''],
+    code: [''],
+    isAutomatic: [true],
     type: ['percentage' as 'percentage' | 'fixed', Validators.required],
     value: [0, [Validators.required, Validators.min(0)]],
     target: ['all' as 'all' | 'booking' | 'course', Validators.required],
@@ -93,10 +97,14 @@ export class DiscountCodesComponent {
 
   edit(discount: DiscountCode): void {
     this.selected = discount;
+    this.isFormOpen = true;
     this.allSpacesMode = !this.spaceIds(discount).length;
     this.allRolesMode = !discount.userRoles?.length;
     this.form.patchValue({
+      title: discount.title || discount.code,
+      description: discount.description || '',
       code: discount.code,
+      isAutomatic: discount.isAutomatic === true,
       type: discount.type,
       value: discount.value,
       target: discount.target,
@@ -116,7 +124,17 @@ export class DiscountCodesComponent {
     this.selected = null;
     this.allSpacesMode = true;
     this.allRolesMode = true;
-    this.form.reset({ code: '', type: 'percentage', value: 0, target: 'all', spaceIds: [this.allOption], userRoles: [this.allOption], rule: 'manual', newUserDays: 30, monthlyPurchaseMin: 0, isActive: true, validFrom: null, validTo: null, maxUses: null });
+    this.form.reset({ title: '', description: '', code: '', isAutomatic: true, type: 'percentage', value: 0, target: 'all', spaceIds: [this.allOption], userRoles: [this.allOption], rule: 'manual', newUserDays: 30, monthlyPurchaseMin: 0, isActive: true, validFrom: null, validTo: null, maxUses: null });
+  }
+
+  openForm(): void {
+    this.reset();
+    this.isFormOpen = true;
+  }
+
+  closeForm(): void {
+    this.isFormOpen = false;
+    this.reset();
   }
 
   save(): void {
@@ -126,12 +144,21 @@ export class DiscountCodesComponent {
     }
     this.isSaving = true;
     const raw = this.form.getRawValue();
+    if (raw.isAutomatic !== true && !raw.code?.trim()) {
+      this.messageType = 'warning';
+      this.message = 'Inserisci un codice per le promo non automatiche.';
+      this.isSaving = false;
+      return;
+    }
     const rawSpaceValues = raw.spaceIds || [];
     const rawRoleValues = raw.userRoles || [];
     const selectedSpaces = this.cleanValues(rawSpaceValues);
     const selectedRoles = this.cleanValues(rawRoleValues);
     const payload: Partial<DiscountCode> = {
       code: raw.code || '',
+      title: raw.title || '',
+      description: raw.description || '',
+      isAutomatic: raw.isAutomatic === true,
       type: raw.type || 'percentage',
       value: Number(raw.value || 0),
       target: raw.target || 'all',
@@ -151,32 +178,32 @@ export class DiscountCodesComponent {
     request.subscribe({
       next: () => {
         this.messageType = 'success';
-        this.message = 'Sconto salvato.';
+        this.message = 'Promo salvata.';
         this.isSaving = false;
         this.reset();
         this.load();
       },
       error: (error) => {
         this.messageType = 'warning';
-        this.message = error?.error?.message || 'Sconto non salvato.';
+        this.message = error?.error?.message || 'Promo non salvata.';
         this.isSaving = false;
       }
     });
   }
 
   delete(discount: DiscountCode): void {
-    if (!confirm(`Eliminare il codice ${discount.code}?`)) {
+    if (!confirm(`Eliminare la promo ${discount.title || discount.code}?`)) {
       return;
     }
     this.discountService.delete(discount._id).subscribe({
       next: () => {
         this.messageType = 'delete';
-        this.message = 'Sconto eliminato.';
+        this.message = 'Promo eliminata.';
         this.load();
       },
       error: (error) => {
         this.messageType = 'warning';
-        this.message = error?.error?.message || 'Sconto non eliminato.';
+        this.message = error?.error?.message || 'Promo non eliminata.';
       }
     });
   }
@@ -215,6 +242,10 @@ export class DiscountCodesComponent {
     if (discount.rule === 'new_user') return `Nuovi registrati (${discount.newUserDays || 30} giorni)`;
     if (discount.rule === 'monthly_purchases') return `Da ${discount.monthlyPurchaseMin || 0} acquisti/mese`;
     return 'Manuale';
+  }
+
+  promoModeLabel(discount: DiscountCode): string {
+    return discount.isAutomatic ? 'Automatica' : 'Con codice';
   }
 
   private spaceIds(discount: DiscountCode): string[] {

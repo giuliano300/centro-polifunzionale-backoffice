@@ -41,6 +41,7 @@ export const routes: Routes = [
             { path: 'users', component: UsersComponent },
             { path: 'bookings', component: BookingsListComponent },
             { path: 'payments', component: PaymentsComponent },
+            { path: 'course-payments', component: CourseBookingsComponent, data: { mode: 'payments' } },
             { path: 'discount-codes', component: DiscountCodesComponent },
             { path: 'courses', component: CoursesComponent },
             { path: 'course-bookings', component: CourseBookingsComponent },

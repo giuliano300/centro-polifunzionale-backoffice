@@ -1,12 +1,12 @@
 import { Component, Inject } from '@angular/core';
-import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-event-detail-dialog',
   standalone: true,
-  imports: [NgIf, NgFor, CurrencyPipe, MatDialogModule, MatButtonModule],
+  imports: [NgIf, NgFor, MatDialogModule, MatButtonModule],
   templateUrl: './event-detail-dialog.component.html',
   styleUrl: './event-detail-dialog.component.scss'
 })
@@ -58,7 +58,69 @@ export class EventDetailDialogComponent {
   }
 
   paymentTotal(payment: any): number {
-    return payment?.totalAmount || ((payment?.amount || 0) + (payment?.walletAmount || 0));
+    const total = this.amountValue(payment?.totalAmount);
+    if (total > 0) {
+      return total;
+    }
+
+    return this.amountValue(payment?.amount) + this.amountValue(payment?.walletAmount);
+  }
+
+  paymentWallet(payment: any): number {
+    return this.amountValue(payment?.walletAmount);
+  }
+
+  paymentExternal(payment: any): number {
+    if (!payment) {
+      return 0;
+    }
+    const external = this.amountValue(payment.externalAmount);
+    if (external > 0 || payment.externalAmount === 0) {
+      return external;
+    }
+    return this.amountValue(payment.amount);
+  }
+
+  mainPayment(): any {
+    const payments = this.props.payments || [];
+    return payments.find((payment: any) => payment.status === 'PAID')
+      || payments.find((payment: any) => payment.status === 'PENDING')
+      || payments[0]
+      || null;
+  }
+
+  totalPaid(): number {
+    const payment = this.mainPayment();
+    return payment ? this.paymentTotal(payment) : 0;
+  }
+
+  formatAmount(value: unknown): string {
+    return new Intl.NumberFormat('it-IT', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(this.amountValue(value));
+  }
+
+  bookingStatusClass(status?: string): string {
+    const classes: Record<string, string> = {
+      pending: 'status-pending',
+      confirmed: 'status-confirmed',
+      cancellation_requested: 'status-warning',
+      cancelled: 'status-cancelled'
+    };
+
+    return status ? classes[status] || 'status-pending' : 'status-pending';
+  }
+
+  paymentStatusClass(status?: string): string {
+    const classes: Record<string, string> = {
+      PENDING: 'payment-pending',
+      PAID: 'payment-paid',
+      FAILED: 'payment-failed',
+      FREE: 'payment-free'
+    };
+
+    return status ? classes[status] || 'payment-pending' : 'payment-pending';
   }
 
   paymentMethodLabel(payment: any): string {
@@ -78,5 +140,30 @@ export class EventDetailDialogComponent {
     }
 
     return payment?.status === 'PAID' ? 'Pagamento registrato' : 'Pagamento da completare';
+  }
+
+  private amountValue(value: unknown): number {
+    if (value === null || value === undefined || value === '') {
+      return 0;
+    }
+    if (typeof value === 'number') {
+      return Number.isFinite(value) ? value : 0;
+    }
+    if (typeof value === 'string') {
+      const parsed = Number(value.replace(',', '.'));
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+    if (typeof value === 'object') {
+      const record = value as Record<string, unknown>;
+      const mongoValue = record['$numberDecimal'] || record['$numberInt'] || record['$numberLong'];
+      if (mongoValue !== undefined) {
+        return this.amountValue(mongoValue);
+      }
+      const valueOf = (value as { valueOf?: () => unknown }).valueOf?.();
+      if (valueOf !== value) {
+        return this.amountValue(valueOf);
+      }
+    }
+    return 0;
   }
 }

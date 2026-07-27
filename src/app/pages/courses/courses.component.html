@@ -43,6 +43,8 @@
                             <mat-label>Stato</mat-label>
                             <mat-select formControlName="status">
                                 <mat-option value="">Tutti</mat-option>
+                                <mat-option value="pending">In approvazione</mat-option>
+                                <mat-option value="approved">Approvato</mat-option>
                                 <mat-option value="published">Aperto</mat-option>
                                 <mat-option value="closed">Chiuso</mat-option>
                             </mat-select>
@@ -129,10 +131,46 @@
                     </ng-container>
 
                     <ng-container matColumnDef="isPublished">
-                        <th mat-header-cell *matHeaderCellDef class="pl-0">Stato</th>
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Pubblicazione</th>
                         <td mat-cell *matCellDef="let element" class="pl-0">
                             <div class="position-relative">
                                 <h6 class="mt-0 mb-0">{{element.isPublished ? 'Aperto' : 'Chiuso'}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="approval">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Approvazione</th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <div class="action approval-actions">
+                                <h6 class="mt-0 mb-0">{{approvalLabel(element)}}</h6>
+                                <button
+                                    *ngIf="canApprove(element)"
+                                    type="button"
+                                    mat-button
+                                    class="table-action-button action-new"
+                                    title="Approva"
+                                    (click)="approveItem(element)">
+                                    <i class="ri-check-line"></i>
+                                </button>
+                                <button
+                                    *ngIf="canClose(element)"
+                                    type="button"
+                                    mat-button
+                                    class="table-action-button action-cancel"
+                                    title="Chiudi"
+                                    (click)="closeItem(element)">
+                                    <i class="ri-close-circle-line"></i>
+                                </button>
+                                <button
+                                    *ngIf="canReject(element)"
+                                    type="button"
+                                    mat-button
+                                    class="table-action-button action-delete"
+                                    title="Disapprova"
+                                    (click)="rejectItem(element)">
+                                    <i class="ri-forbid-line"></i>
+                                </button>
                             </div>
                         </td>
                     </ng-container>

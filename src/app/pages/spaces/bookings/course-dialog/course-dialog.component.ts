@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, NgStyle } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +15,7 @@ import { CourseBooking } from '../../../../interfaces/course-bookings';
 import { CourseBookingService } from '../../../../services/CourseBooking.service';
 import { AddCourseSubscriberDialogComponent } from '../../../course-bookings/add-course-subscriber-dialog/add-course-subscriber-dialog.component';
 import { ConfirmDialogComponent } from '../../../../confirm-dialog/confirm-dialog.component';
+import { COURSE_TAG_OPTIONS } from '../../../../interfaces/course-tag.enum';
 
 export interface CourseDialogData {
   bookingWithPayments: BookingWithPayments;
@@ -27,6 +28,7 @@ export interface CourseDialogData {
   imports: [
     NgFor,
     NgIf,
+    NgStyle,
     ReactiveFormsModule,
     MatButtonModule,
     MatCheckboxModule,
@@ -41,8 +43,13 @@ export interface CourseDialogData {
 })
 export class CourseDialogComponent {
   form: FormGroup;
+  availableTags = COURSE_TAG_OPTIONS;
   isSaving = false;
   errorMessage = '';
+  imageUploadError = '';
+  imageUploadMessage = '';
+  isUploadingImage = false;
+  private cropDragStart: { type: 'banner' | 'card'; x: number; y: number; cropX: number; cropY: number; width: number; height: number } | null = null;
   subscribers: CourseBooking[] = [];
   isLoadingSubscribers = false;
 
@@ -60,6 +67,15 @@ export class CourseDialogComponent {
     this.form = this.fb.group({
       title: [course?.title || booking.name || '', [Validators.required, Validators.maxLength(140)]],
       description: [course?.description || '', [Validators.maxLength(600)]],
+      tags: [course?.tags || []],
+      bannerImageUrl: [course?.bannerImageUrl || course?.imageUrl || ''],
+      bannerImageCropX: [course?.bannerImageCrop?.x ?? course?.imageCrop?.x ?? 0],
+      bannerImageCropY: [course?.bannerImageCrop?.y ?? course?.imageCrop?.y ?? 0],
+      bannerImageCropScale: [course?.bannerImageCrop?.scale ?? course?.imageCrop?.scale ?? 1],
+      cardImageUrl: [course?.cardImageUrl || course?.imageUrl || ''],
+      cardImageCropX: [course?.cardImageCrop?.x ?? course?.imageCrop?.x ?? 0],
+      cardImageCropY: [course?.cardImageCrop?.y ?? course?.imageCrop?.y ?? 0],
+      cardImageCropScale: [course?.cardImageCrop?.scale ?? course?.imageCrop?.scale ?? 1],
       capacity: [course?.capacity || 10, [Validators.required, Validators.min(1)]],
       enrollmentType: [course?.enrollmentType || 'free', [Validators.required]],
       price: [course?.price || 0, [Validators.min(0)]],
@@ -211,6 +227,19 @@ export class CourseDialogComponent {
     const payload: CreateCourse = {
       title: this.form.value.title,
       description: this.form.value.description || '',
+      tags: this.form.value.tags || [],
+      bannerImageUrl: this.form.value.bannerImageUrl || '',
+      bannerImageCrop: {
+        x: Number(this.form.value.bannerImageCropX || 0),
+        y: Number(this.form.value.bannerImageCropY || 0),
+        scale: Number(this.form.value.bannerImageCropScale || 1),
+      },
+      cardImageUrl: this.form.value.cardImageUrl || '',
+      cardImageCrop: {
+        x: Number(this.form.value.cardImageCropX || 0),
+        y: Number(this.form.value.cardImageCropY || 0),
+        scale: Number(this.form.value.cardImageCropScale || 1),
+      },
       date: this.data.bookingWithPayments.booking.date,
       startTime: this.data.bookingWithPayments.booking.startTime,
       endTime: this.data.bookingWithPayments.booking.endTime,
@@ -236,5 +265,180 @@ export class CourseDialogComponent {
 
   cancel(): void {
     this.dialogRef.close(false);
+  }
+
+  onCourseImageSelected(event: Event, type: 'banner' | 'card'): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    this.imageUploadError = '';
+    this.imageUploadMessage = '';
+
+    if (!file) {
+      return;
+    }
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      this.imageUploadError = 'Formato immagine non valido. Usa JPG, PNG o WEBP.';
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = async () => {
+      const width = image.naturalWidth;
+      const height = image.naturalHeight;
+      URL.revokeObjectURL(objectUrl);
+
+      const minWidth = type === 'card' ? 600 : 1200;
+      const minHeight = 800;
+      if (width < minWidth || height < minHeight) {
+        this.imageUploadError = `Immagine troppo piccola. Carica una foto almeno ${minWidth}x${minHeight} px.`;
+        return;
+      }
+
+      try {
+        const optimized = await this.optimizeImageFile(image, file.name, type);
+        this.uploadCourseImage(optimized, width, height, type);
+      } catch {
+        this.imageUploadError = 'Immagine non ridimensionata.';
+      }
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      this.imageUploadError = 'Immagine non leggibile.';
+    };
+    image.src = objectUrl;
+  }
+
+  courseImagePreviewUrl(type: 'banner' | 'card'): string {
+    return this.courseService.mediaUrl(type === 'banner' ? this.form.value.bannerImageUrl : this.form.value.cardImageUrl);
+  }
+
+  cropImageStyle(type: 'banner' | 'card'): Record<string, string> {
+    const prefix = type === 'banner' ? 'bannerImage' : 'cardImage';
+    return {
+      transform: `translate(${Number(this.form.value[`${prefix}CropX`] || 0)}%, ${Number(this.form.value[`${prefix}CropY`] || 0)}%) scale(${Number(this.form.value[`${prefix}CropScale`] || 1)})`,
+    };
+  }
+
+  startImageCropDrag(event: PointerEvent, type: 'banner' | 'card'): void {
+    if (!this.courseImagePreviewUrl(type)) {
+      return;
+    }
+
+    const target = event.currentTarget as HTMLElement;
+    target.setPointerCapture(event.pointerId);
+    const prefix = type === 'banner' ? 'bannerImage' : 'cardImage';
+    this.cropDragStart = {
+      type,
+      x: event.clientX,
+      y: event.clientY,
+      cropX: Number(this.form.value[`${prefix}CropX`] || 0),
+      cropY: Number(this.form.value[`${prefix}CropY`] || 0),
+      width: target.clientWidth || 1,
+      height: target.clientHeight || 1,
+    };
+  }
+
+  moveImageCrop(event: PointerEvent): void {
+    if (!this.cropDragStart) {
+      return;
+    }
+
+    const deltaX = ((event.clientX - this.cropDragStart.x) / this.cropDragStart.width) * 100;
+    const deltaY = ((event.clientY - this.cropDragStart.y) / this.cropDragStart.height) * 100;
+    const prefix = this.cropDragStart.type === 'banner' ? 'bannerImage' : 'cardImage';
+    this.form.patchValue({
+      [`${prefix}CropX`]: this.clampCrop(this.cropDragStart.cropX + deltaX),
+      [`${prefix}CropY`]: this.clampCrop(this.cropDragStart.cropY + deltaY),
+    });
+  }
+
+  endImageCropDrag(): void {
+    this.cropDragStart = null;
+  }
+
+  setImageScale(event: Event, type: 'banner' | 'card'): void {
+    const prefix = type === 'banner' ? 'bannerImage' : 'cardImage';
+    this.form.patchValue({ [`${prefix}CropScale`]: Number((event.target as HTMLInputElement).value || 1) });
+  }
+
+  imageScaleValue(type: 'banner' | 'card'): number {
+    return Number(type === 'banner' ? this.form.value.bannerImageCropScale || 1 : this.form.value.cardImageCropScale || 1);
+  }
+
+  resetImageCrop(type: 'banner' | 'card'): void {
+    const url = type === 'banner' ? this.form.value.bannerImageUrl || '' : this.form.value.cardImageUrl || '';
+    this.patchImageControls(type, url, 0, 0, 1);
+  }
+
+  removeCourseImage(type: 'banner' | 'card'): void {
+    this.patchImageControls(type, '', 0, 0, 1);
+    this.imageUploadError = '';
+    this.imageUploadMessage = '';
+  }
+
+  private uploadCourseImage(file: File, width: number, height: number, type: 'banner' | 'card'): void {
+    this.isUploadingImage = true;
+    this.courseService.uploadCourseImage(file, type).subscribe({
+      next: (result) => {
+        this.patchImageControls(type, result.imageUrl, 0, 0, 1);
+        this.imageUploadMessage = `${type === 'banner' ? 'Banner' : 'Box'} caricato (${width}x${height}px).`;
+        this.isUploadingImage = false;
+      },
+      error: (error) => {
+        this.imageUploadError = error?.error?.message || 'Immagine non caricata.';
+        this.isUploadingImage = false;
+      },
+    });
+  }
+
+  private optimizeImageFile(image: HTMLImageElement, originalName: string, type: 'banner' | 'card'): Promise<File> {
+    const minWidth = type === 'banner' ? 1200 : 600;
+    const minHeight = 800;
+    const maxWidth = type === 'banner' ? 2400 : 1200;
+    const maxHeight = type === 'banner' ? 1600 : 1600;
+    const maxRatio = Math.min(maxWidth / image.naturalWidth, maxHeight / image.naturalHeight, 1);
+    const minRatio = Math.max(minWidth / image.naturalWidth, minHeight / image.naturalHeight);
+    const ratio = Math.min(1, Math.max(maxRatio, minRatio));
+    const width = Math.round(image.naturalWidth * ratio);
+    const height = Math.round(image.naturalHeight * ratio);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      return Promise.reject();
+    }
+
+    context.drawImage(image, 0, 0, width, height);
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject();
+          return;
+        }
+
+        const name = originalName.replace(/\.[^.]+$/, '') || 'course-image';
+        resolve(new File([blob], `${name}.jpg`, { type: 'image/jpeg' }));
+      }, 'image/jpeg', 0.86);
+    });
+  }
+
+  private patchImageControls(type: 'banner' | 'card', url: string, x: number, y: number, scale: number): void {
+    const prefix = type === 'banner' ? 'bannerImage' : 'cardImage';
+    this.form.patchValue({
+      [`${prefix}Url`]: url,
+      [`${prefix}CropX`]: x,
+      [`${prefix}CropY`]: y,
+      [`${prefix}CropScale`]: scale,
+    });
+  }
+
+  private clampCrop(value: number): number {
+    return Math.max(-50, Math.min(50, Math.round(value * 10) / 10));
   }
 }

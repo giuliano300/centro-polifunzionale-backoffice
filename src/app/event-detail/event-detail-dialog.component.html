@@ -1,47 +1,113 @@
-<h2 mat-dialog-title>Dettaglio prenotazione</h2>
+<div class="booking-detail-dialog">
+  <header class="dialog-hero">
+    <div>
+      <span>Dettaglio prenotazione</span>
+      <h2>{{ props.name || data?.title || 'Prenotazione' }}</h2>
+      <p>{{ props.space?.name || '-' }} / {{ formatDate(data?.date) }} / {{ props.startTime || '-' }} - {{ props.endTime || '-' }}</p>
+    </div>
+    <div class="hero-badges">
+      <span class="status-badge" [class]="bookingStatusClass(props.status)">
+        {{ bookingStatusLabel(props.status) }}
+      </span>
+      <span class="status-badge" [class]="paymentStatusClass(mainPayment()?.status)">
+        {{ paymentStatus() }}
+      </span>
+    </div>
+  </header>
 
-<mat-dialog-content>
-  <div class="detail-grid">
-    <div>
-      <span>Cliente</span>
-      <strong>{{ props.user?.name || data?.title || '-' }}</strong>
-    </div>
-    <div>
-      <span>Data</span>
-      <strong>{{ formatDate(data?.date) }}</strong>
-    </div>
-    <div>
-      <span>Spazio</span>
-      <strong>{{ props.space?.name || '-' }}</strong>
-    </div>
-    <div>
-      <span>Orario</span>
-      <strong>{{ props.startTime || '-' }} - {{ props.endTime || '-' }}</strong>
-    </div>
-    <div>
-      <span>Stato prenotazione</span>
-      <strong>{{ bookingStatusLabel(props.status) }}</strong>
-    </div>
-    <div>
-      <span>Pagamento</span>
-      <strong>{{ paymentStatus() }}</strong>
-    </div>
-  </div>
+  <mat-dialog-content>
+    <section class="summary-strip">
+      <div>
+        <span>Cliente</span>
+        <strong>{{ props.user?.name || data?.title || '-' }}</strong>
+        <small>{{ props.user?.email || '-' }}</small>
+      </div>
+      <div>
+        <span>Totale</span>
+        <strong>{{ formatAmount(totalPaid()) }}</strong>
+        <small>{{ paymentMethodLabel(mainPayment()) }}</small>
+      </div>
+      <div>
+        <span>Data</span>
+        <strong>{{ formatDate(data?.date) }}</strong>
+        <small>{{ props.startTime || '-' }} - {{ props.endTime || '-' }}</small>
+      </div>
+    </section>
 
-  <div class="payments" *ngIf="props.payments?.length">
-    <h3>Pagamenti</h3>
-    <div class="payment-row" *ngFor="let payment of props.payments">
-      <span>{{ paymentTotal(payment) | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</span>
-      <span>{{ paymentStatusLabel(payment.status) }}</span>
-      <small>
-        {{ paymentMethodLabel(payment) }}
-        <ng-container *ngIf="payment.walletAmount"> - Wallet {{ payment.walletAmount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</ng-container>
-        <ng-container *ngIf="payment.externalAmount"> - {{ paymentMethodLabel(payment) }} {{ payment.externalAmount | currency:'EUR':'symbol':'1.2-2':'it-IT' }}</ng-container>
-      </small>
-    </div>
-  </div>
-</mat-dialog-content>
+    <section class="detail-section">
+      <div class="section-heading">
+        <i class="ri-calendar-check-line"></i>
+        <h3>Dati prenotazione</h3>
+      </div>
+      <div class="detail-grid">
+        <div>
+          <span>Spazio</span>
+          <strong>{{ props.space?.name || '-' }}</strong>
+        </div>
+        <div>
+          <span>Cliente</span>
+          <strong>{{ props.user?.name || '-' }}</strong>
+        </div>
+        <div>
+          <span>Email</span>
+          <strong>{{ props.user?.email || '-' }}</strong>
+        </div>
+        <div>
+          <span>Telefono</span>
+          <strong>{{ props.user?.phone || '-' }}</strong>
+        </div>
+        <div>
+          <span>Stato prenotazione</span>
+          <strong>{{ bookingStatusLabel(props.status) }}</strong>
+        </div>
+        <div>
+          <span>Pagamento</span>
+          <strong>{{ paymentStatus() }}</strong>
+        </div>
+      </div>
+    </section>
 
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close class="action-cancel">Chiudi</button>
-</mat-dialog-actions>
+    <section class="detail-section">
+      <div class="section-heading">
+        <i class="ri-bank-card-line"></i>
+        <h3>Pagamenti</h3>
+      </div>
+      <div class="payments" *ngIf="props.payments?.length; else noPayments">
+        <div class="payment-row" *ngFor="let payment of props.payments">
+          <div>
+            <span>Totale</span>
+            <strong>{{ formatAmount(paymentTotal(payment)) }}</strong>
+          </div>
+          <div>
+            <span>Wallet</span>
+            <strong>{{ formatAmount(paymentWallet(payment)) }}</strong>
+          </div>
+          <div>
+            <span>Esterno</span>
+            <strong>{{ formatAmount(paymentExternal(payment)) }}</strong>
+          </div>
+          <div>
+            <span>Metodo</span>
+            <strong>{{ paymentMethodLabel(payment) }}</strong>
+          </div>
+          <span class="status-badge" [class]="paymentStatusClass(payment.status)">
+            {{ paymentStatusLabel(payment.status) }}
+          </span>
+        </div>
+      </div>
+      <ng-template #noPayments>
+        <div class="empty-payments">
+          <i class="ri-information-line"></i>
+          <span>Nessun pagamento registrato per questa prenotazione.</span>
+        </div>
+      </ng-template>
+    </section>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close class="action-cancel">
+      <i class="ri-close-line"></i>
+      <span>Chiudi</span>
+    </button>
+  </mat-dialog-actions>
+</div>

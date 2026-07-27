@@ -36,7 +36,126 @@
           <mat-label>Descrizione</mat-label>
           <textarea matInput formControlName="description" rows="4"></textarea>
         </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tag</mat-label>
+          <mat-select formControlName="tags" multiple>
+            <mat-option *ngFor="let tag of availableTags" [value]="tag.value">{{ tag.label }}</mat-option>
+          </mat-select>
+          <mat-hint>Scegli tag ampi per filtri e consigli nell'app cliente.</mat-hint>
+        </mat-form-field>
       </div>
+
+      <section class="image-section">
+        <div class="image-section-title">
+          <i class="ri-image-line"></i>
+          <div>
+            <strong>Immagini corso</strong>
+            <span>Banner per testate larghe e box per card/lista. Puoi trascinare e usare lo zoom.</span>
+          </div>
+        </div>
+
+        <div class="course-images-grid">
+          <div class="course-image-field">
+            <div class="image-card-head">
+              <div>
+                <strong>Banner</strong>
+                <span>Testata corso e sezioni larghe</span>
+              </div>
+              <small>16:9</small>
+            </div>
+            <div
+              class="course-image-preview banner-preview"
+              [class.empty]="!courseImagePreviewUrl('banner')"
+              [class.draggable]="courseImagePreviewUrl('banner')"
+              (pointerdown)="startImageCropDrag($event, 'banner')"
+              (pointermove)="moveImageCrop($event)"
+              (pointerup)="endImageCropDrag()"
+              (pointercancel)="endImageCropDrag()"
+              (pointerleave)="endImageCropDrag()">
+              <img *ngIf="courseImagePreviewUrl('banner')" [src]="courseImagePreviewUrl('banner')" [ngStyle]="cropImageStyle('banner')" alt="Banner corso" draggable="false">
+              <span *ngIf="courseImagePreviewUrl('banner')" class="crop-help">Trascina per centrare</span>
+              <div *ngIf="!courseImagePreviewUrl('banner')" class="course-image-empty">
+                <i class="ri-image-add-line"></i>
+                <strong>Banner corso</strong>
+                <span>Usato nella testata e nei box larghi.</span>
+              </div>
+            </div>
+            <div class="course-image-actions">
+              <div>
+                <label class="action-new image-upload-button">
+                  <i class="ri-upload-cloud-2-line"></i>
+                  <span>{{ isUploadingImage ? 'Caricamento...' : 'Carica' }}</span>
+                  <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isUploadingImage" (change)="onCourseImageSelected($event, 'banner')">
+                </label>
+                <button mat-button type="button" class="action-filter" *ngIf="courseImagePreviewUrl('banner')" (click)="resetImageCrop('banner')">
+                  <i class="ri-focus-3-line"></i>
+                  <span>Centra</span>
+                </button>
+                <button mat-button type="button" class="action-delete" *ngIf="courseImagePreviewUrl('banner')" (click)="removeCourseImage('banner')">
+                  <i class="ri-delete-bin-line"></i>
+                  <span>Elimina</span>
+                </button>
+              </div>
+              <label class="zoom-control" *ngIf="courseImagePreviewUrl('banner')">
+                <span>Zoom</span>
+                <input type="range" min="1" max="2.5" step="0.05" [value]="imageScaleValue('banner')" (input)="setImageScale($event, 'banner')">
+              </label>
+            </div>
+          </div>
+
+          <div class="course-image-field">
+            <div class="image-card-head">
+              <div>
+                <strong>Box</strong>
+                <span>Card corsi e liste</span>
+              </div>
+              <small>3:4</small>
+            </div>
+            <div
+              class="course-image-preview card-preview"
+              [class.empty]="!courseImagePreviewUrl('card')"
+              [class.draggable]="courseImagePreviewUrl('card')"
+              (pointerdown)="startImageCropDrag($event, 'card')"
+              (pointermove)="moveImageCrop($event)"
+              (pointerup)="endImageCropDrag()"
+              (pointercancel)="endImageCropDrag()"
+              (pointerleave)="endImageCropDrag()">
+              <img *ngIf="courseImagePreviewUrl('card')" [src]="courseImagePreviewUrl('card')" [ngStyle]="cropImageStyle('card')" alt="Box corso" draggable="false">
+              <span *ngIf="courseImagePreviewUrl('card')" class="crop-help">Trascina per centrare</span>
+              <div *ngIf="!courseImagePreviewUrl('card')" class="course-image-empty">
+                <i class="ri-gallery-line"></i>
+                <strong>Box corso</strong>
+                <span>Usato nelle card e nelle liste corsi.</span>
+              </div>
+            </div>
+            <div class="course-image-actions">
+              <div>
+                <label class="action-new image-upload-button">
+                  <i class="ri-upload-cloud-2-line"></i>
+                  <span>{{ isUploadingImage ? 'Caricamento...' : 'Carica' }}</span>
+                  <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isUploadingImage" (change)="onCourseImageSelected($event, 'card')">
+                </label>
+                <button mat-button type="button" class="action-filter" *ngIf="courseImagePreviewUrl('card')" (click)="resetImageCrop('card')">
+                  <i class="ri-focus-3-line"></i>
+                  <span>Centra</span>
+                </button>
+                <button mat-button type="button" class="action-delete" *ngIf="courseImagePreviewUrl('card')" (click)="removeCourseImage('card')">
+                  <i class="ri-delete-bin-line"></i>
+                  <span>Elimina</span>
+                </button>
+              </div>
+              <label class="zoom-control" *ngIf="courseImagePreviewUrl('card')">
+                <span>Zoom</span>
+                <input type="range" min="1" max="2.5" step="0.05" [value]="imageScaleValue('card')" (input)="setImageScale($event, 'card')">
+              </label>
+            </div>
+          </div>
+
+          <small class="image-success" *ngIf="imageUploadMessage">{{ imageUploadMessage }}</small>
+          <small class="image-error" *ngIf="imageUploadError">{{ imageUploadError }}</small>
+        </div>
+      </section>
 
       <div class="field-block form-grid">
         <mat-form-field appearance="outline">

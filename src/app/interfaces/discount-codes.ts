@@ -1,6 +1,9 @@
 export interface DiscountCode {
   _id: string;
   code: string;
+  title?: string;
+  description?: string;
+  isAutomatic?: boolean;
   type: 'percentage' | 'fixed';
   value: number;
   target: 'all' | 'booking' | 'course';

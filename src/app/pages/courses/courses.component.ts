@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,7 +11,7 @@ import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Bookings } from '../../interfaces/bookings';
 import { Course } from '../../interfaces/courses';
 import { CourseService } from '../../services/Course.service';
@@ -20,12 +21,12 @@ import { FeathericonsModule } from '../../icons/feathericons/feathericons.module
 
 @Component({
   selector: 'app-courses',
-  imports: [ReactiveFormsModule, MatCardModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MatOptionModule, MatPaginatorModule, MatSelectModule, MatTableModule, FeathericonsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MatOptionModule, MatPaginatorModule, MatSelectModule, MatTableModule, FeathericonsModule],
   templateUrl: './courses.component.html',
   styleUrl: './courses.component.scss'
 })
 export class CoursesComponent {
-  displayedColumns: string[] = ['title', 'space', 'date', 'time', 'capacity', 'enrollmentType', 'price', 'isPublished', 'subscribers', 'edit', 'delete'];
+  displayedColumns: string[] = ['title', 'space', 'date', 'time', 'capacity', 'enrollmentType', 'price', 'isPublished', 'approval', 'subscribers', 'edit', 'delete'];
   dataSource = new MatTableDataSource<Course>([]);
   courses: Course[] = [];
   filterForm: FormGroup;
@@ -36,17 +37,20 @@ export class CoursesComponent {
     private courseService: CourseService,
     private dialog: MatDialog,
     private router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
+    const defaultRange = this.getCurrentMonthRange();
     this.filterForm = this.fb.group({
-      startDate: [this.getTodayDate()],
-      endDate: [this.getTodayDate()],
+      startDate: [defaultRange.startDate],
+      endDate: [defaultRange.endDate],
       search: [''],
       status: ['']
     });
   }
 
   ngOnInit(): void {
+    this.applyQueryDateSelection();
     this.getCourses();
   }
 
@@ -69,7 +73,8 @@ export class CoursesComponent {
   }
 
   resetFilters(): void {
-    this.filterForm.patchValue({ startDate: this.getTodayDate(), endDate: this.getTodayDate(), search: '', status: '' });
+    const defaultRange = this.getCurrentMonthRange();
+    this.filterForm.patchValue({ startDate: defaultRange.startDate, endDate: defaultRange.endDate, search: '', status: '' });
     this.applyFilters();
   }
 
@@ -88,9 +93,9 @@ export class CoursesComponent {
     }
 
     const dialogRef = this.dialog.open(CourseDialogComponent, {
-      width: '860px',
-      minWidth: 'min(800px, 94vw)',
-      maxWidth: '94vw',
+      width: '1180px',
+      minWidth: 'min(1040px, 96vw)',
+      maxWidth: '96vw',
       data: {
         bookingWithPayments: { booking, payments: [] },
         course
@@ -118,6 +123,40 @@ export class CoursesComponent {
     });
   }
 
+  approveItem(course: Course): void {
+    this.courseService.approve(course._id).subscribe(() => this.getCourses());
+  }
+
+  closeItem(course: Course): void {
+    this.courseService.close(course._id).subscribe(() => this.getCourses());
+  }
+
+  rejectItem(course: Course): void {
+    this.courseService.reject(course._id).subscribe(() => this.getCourses());
+  }
+
+  approvalLabel(course: Course): string {
+    if (course.approvalStatus === 'pending') {
+      return 'In approvazione';
+    }
+    if (course.approvalStatus === 'rejected') {
+      return 'Respinto';
+    }
+    return course.isPublished ? 'Approvato' : 'Chiuso';
+  }
+
+  canApprove(course: Course): boolean {
+    return course.approvalStatus !== 'approved' || !course.isPublished;
+  }
+
+  canClose(course: Course): boolean {
+    return course.approvalStatus === 'approved' && course.isPublished;
+  }
+
+  canReject(course: Course): boolean {
+    return course.approvalStatus !== 'rejected';
+  }
+
   showSubscribers(course: Course): void {
     this.router.navigate(['/course-bookings'], {
       queryParams: { courseId: course._id, courseTitle: course.title }
@@ -128,10 +167,47 @@ export class CoursesComponent {
     return this.toDateInputValue(new Date());
   }
 
-  private getTodayDate(): Date {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
+  private getCurrentMonthRange(reference = new Date()): { startDate: Date; endDate: Date } {
+    const startDate = new Date(reference.getFullYear(), reference.getMonth(), 1);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(reference.getFullYear(), reference.getMonth() + 1, 0);
+    endDate.setHours(0, 0, 0, 0);
+    return { startDate, endDate };
+  }
+
+  private applyQueryDateSelection(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const month = Number(params.get('month'));
+    const year = Number(params.get('year'));
+
+    if (Number.isInteger(month) && month >= 1 && month <= 12 && Number.isInteger(year) && year > 1900) {
+      const range = this.getCurrentMonthRange(new Date(year, month - 1, 1));
+      this.filterForm.patchValue({ startDate: range.startDate, endDate: range.endDate });
+      return;
+    }
+
+    const start = this.parseDateParam(params.get('start'));
+    const end = this.parseDateParam(params.get('end'));
+    if (start || end) {
+      this.filterForm.patchValue({
+        startDate: start || end,
+        endDate: end || start
+      });
+    }
+  }
+
+  private parseDateParam(value: string | null): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    date.setHours(0, 0, 0, 0);
+    return date;
   }
 
   private getSelectedDateRange(): { start?: string; end?: string } {

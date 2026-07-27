@@ -77,7 +77,7 @@ export class DashboardComponent {
       {
         label: 'Incassi mese',
         value: this.formatCurrency(this.stats.period.monthRevenue),
-        detail: `${this.formatCurrency(this.stats.period.paidRevenue)} incassati totali`,
+        detail: `${this.formatCurrency(this.stats.period.paidRevenue)} incassati totali, escluso wallet`,
         icon: 'credit-card',
         tone: 'green',
         link: '/payments'
@@ -109,7 +109,7 @@ export class DashboardComponent {
       {
         label: 'Pagamenti pendenti',
         value: this.formatCurrency(this.stats.period.pendingPayments),
-        detail: `${this.formatNumber(this.pendingPaymentsCount)} movimenti da chiudere`,
+        detail: `${this.formatNumber(this.pendingPaymentsCount)} spazi / ${this.formatNumber(this.stats.period.pendingCoursePayments)} corsi`,
         icon: 'alert-circle',
         tone: 'red',
         link: '/payments'

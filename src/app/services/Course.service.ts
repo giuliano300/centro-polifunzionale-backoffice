@@ -56,6 +56,54 @@ export class CourseService {
     return this.http.patch<Course>(this.apiUrl + "/" + id, course, { headers });
   }
 
+  approve(id: string): Observable<Course>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.patch<Course>(this.apiUrl + "/" + id + "/approve", {}, { headers });
+  }
+
+  close(id: string): Observable<Course>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.patch<Course>(this.apiUrl + "/" + id + "/close", {}, { headers });
+  }
+
+  reject(id: string): Observable<Course>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.patch<Course>(this.apiUrl + "/" + id + "/reject", {}, { headers });
+  }
+
+  uploadCourseImage(file: File, type: 'banner' | 'card' = 'banner'): Observable<{ imageUrl: string; width: number; height: number; size: number; mimeType: string }>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const formData = new FormData();
+    formData.append('image', file);
+
+    return this.http.post<{ imageUrl: string; width: number; height: number; size: number; mimeType: string }>(this.apiUrl + `/upload-image?type=${type}`, formData, { headers });
+  }
+
+  mediaUrl(path?: string): string {
+    if (!path) {
+      return '';
+    }
+    if (/^https?:\/\//i.test(path)) {
+      return path;
+    }
+    return `${API_URL.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+  }
+
   delete(id: string): Observable<{ deleted: boolean }>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({

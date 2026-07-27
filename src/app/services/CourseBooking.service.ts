@@ -8,6 +8,9 @@ export interface CourseBookingFilters {
   courseId?: string;
   userId?: string;
   status?: string;
+  paymentStatus?: string;
+  start?: string;
+  end?: string;
 }
 
 export interface CreateCourseBooking {
