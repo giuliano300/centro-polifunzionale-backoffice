@@ -140,7 +140,7 @@ export class CourseBookingsComponent {
   pageDescription(): string {
     return this.isPaymentsMode
       ? 'Verifica i pagamenti delle iscrizioni ai corsi, con importi, wallet usato e metodo di pagamento.'
-      : 'Consulta gli iscritti ai corsi, i dati del partecipante, lo stato dell iscrizione e gli eventuali pagamenti.';
+      : "Consulta gli iscritti ai corsi, i dati del partecipante, lo stato dell'iscrizione e gli eventuali pagamenti.";
   }
 
   getUser(item: CourseBooking): AuthUser | null {

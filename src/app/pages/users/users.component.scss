@@ -1,5 +1,15 @@
 @use "../spaces/spaces.component.scss";
 
+.filters {
+  mat-form-field {
+    width: 100%;
+  }
+
+  .row {
+    align-items: center;
+  }
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -93,6 +103,18 @@
   color: var(--action-filter-text);
 }
 
+.user-message {
+  &.success {
+    background: var(--action-save-bg-soft);
+    color: var(--action-save-text-strong);
+  }
+
+  &.error {
+    background: var(--action-delete-bg-soft);
+    color: var(--action-delete-text-strong);
+  }
+}
+
 .complete-link {
   display: grid;
   gap: 4px;
@@ -107,8 +129,42 @@
   margin-top: 16px;
 }
 
+.wallet-credit-modal {
+  width: min(720px, 94vw);
+  min-width: min(640px, 94vw);
+}
+
+.wallet-credit-target {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius);
+  background: var(--ui-muted-bg);
+
+  span,
+  small {
+    color: var(--ui-text-muted);
+    font-size: 12px;
+  }
+
+  strong {
+    color: var(--ui-text);
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.wallet-credit-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 220px) 1fr;
+  gap: 12px;
+}
+
 @media (max-width: 767px) {
-  .user-form {
+  .user-form,
+  .wallet-credit-form {
     grid-template-columns: 1fr;
   }
 }

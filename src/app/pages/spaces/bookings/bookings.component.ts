@@ -245,7 +245,7 @@ export class BookingsComponent {
       if (item.payments?.some(payment => payment.status === 'FAILED')) {
         return 'Fallito';
       }
-      return 'N/A';
+      return 'Non disponibile';
     }
 
     formatCurrency(value?: number): string {

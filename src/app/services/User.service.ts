@@ -21,6 +21,12 @@ export interface InviteUserResponse {
   sent: boolean;
 }
 
+export interface ManualWalletCredit {
+  userId: string;
+  amount: number;
+  description?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,14 +40,15 @@ export class UsersService {
       return this.http.post<any>(this.apiUrl + "auth/login", login);
     }
 
-    getUsers(search = ''): Observable<AuthUser[]>{
+    getUsers(search = '', role = ''): Observable<AuthUser[]>{
       const token = localStorage.getItem('authToken');
       const headers = new HttpHeaders({
         'Authorization': `Bearer ${token}`
       });
 
       const query = search.trim() ? "&search=" + encodeURIComponent(search.trim()) : "";
-      return this.http.get<AuthUser[]>(this.apiUrl + "users?limit=500&excludeRole=" + UserRole.Admin + query, { headers });
+      const roleQuery = role ? "&role=" + encodeURIComponent(role) : "";
+      return this.http.get<AuthUser[]>(this.apiUrl + "users?limit=500&excludeRole=" + UserRole.Admin + query + roleQuery, { headers });
     }
 
     searchClients(search: string): Observable<AuthUser[]>{
@@ -80,6 +87,15 @@ export class UsersService {
       });
 
       return this.http.put<AuthUser>(this.apiUrl + "users/" + id, user, { headers });
+    }
+
+    creditWallet(payload: ManualWalletCredit): Observable<unknown>{
+      const token = localStorage.getItem('authToken');
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      return this.http.post<unknown>(this.apiUrl + "wallet/manual-credit", payload, { headers });
     }
 
     deleteUser(id: string): Observable<{ deleted: boolean }>{

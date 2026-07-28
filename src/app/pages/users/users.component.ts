@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -25,14 +25,20 @@ type UserRow = AuthUser & { action: { delete: string; toggle: string } };
   styleUrl: './users.component.scss'
 })
 export class UsersComponent {
-  displayedColumns: string[] = ['name', 'email', 'phone', 'taxCode', 'role', 'status', 'edit', 'toggle', 'delete'];
+  readonly UserRole = UserRole;
+  displayedColumns: string[] = ['name', 'email', 'phone', 'taxCode', 'role', 'status', 'wallet', 'edit', 'toggle', 'delete'];
   dataSource = new MatTableDataSource<UserRow>([]);
   users: UserRow[] = [];
   filterForm: FormGroup;
   userForm: FormGroup;
+  walletCreditForm: FormGroup;
   editingUser: UserRow | null = null;
+  walletCreditUser: UserRow | null = null;
   isUserModalOpen = false;
+  isWalletCreditModalOpen = false;
   userMessage = '';
+  walletCreditMessage = '';
+  walletCreditMessageType: 'success' | 'error' = 'success';
   completeUrl = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -40,10 +46,12 @@ export class UsersComponent {
   constructor(
     private usersService: UsersService,
     private dialog: MatDialog,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
     this.filterForm = this.fb.group({
-      search: ['']
+      search: [''],
+      role: ['']
     });
     this.userForm = this.fb.group({
       name: ['', Validators.required],
@@ -55,14 +63,24 @@ export class UsersComponent {
       sendCompletionLink: [true],
       isActive: [true]
     });
+    this.walletCreditForm = this.fb.group({
+      amount: [null, [Validators.required, Validators.min(0.01)]],
+      description: ['']
+    });
   }
 
   ngOnInit(): void {
-    this.getUsers();
+    this.route.queryParamMap.subscribe((params) => {
+      this.filterForm.patchValue({
+        search: params.get('search') || '',
+        role: params.get('role') || ''
+      }, { emitEvent: false });
+      this.getUsers();
+    });
   }
 
   getUsers(): void {
-    this.usersService.getUsers(this.filterForm.value.search).subscribe((data: AuthUser[]) => {
+    this.usersService.getUsers(this.filterForm.value.search, this.filterForm.value.role).subscribe((data: AuthUser[]) => {
       this.users = data.map((user) => ({
         ...user,
         action: {
@@ -80,7 +98,7 @@ export class UsersComponent {
   }
 
   resetFilters(): void {
-    this.filterForm.patchValue({ search: '' });
+    this.filterForm.patchValue({ search: '', role: '' });
     this.applyFilters();
   }
 
@@ -134,6 +152,50 @@ export class UsersComponent {
 
   CloseUserModal(): void {
     this.isUserModalOpen = false;
+  }
+
+  OpenWalletCredit(item: UserRow): void {
+    this.walletCreditUser = item;
+    this.walletCreditMessage = '';
+    this.walletCreditMessageType = 'success';
+    this.walletCreditForm.reset({
+      amount: null,
+      description: ''
+    });
+    this.isWalletCreditModalOpen = true;
+  }
+
+  CloseWalletCreditModal(): void {
+    this.isWalletCreditModalOpen = false;
+    this.walletCreditUser = null;
+  }
+
+  SaveWalletCredit(): void {
+    if (!this.walletCreditUser) {
+      return;
+    }
+
+    if (this.walletCreditForm.invalid) {
+      this.walletCreditForm.markAllAsTouched();
+      return;
+    }
+
+    const raw = this.walletCreditForm.getRawValue();
+    this.usersService.creditWallet({
+      userId: this.walletCreditUser._id,
+      amount: Number(raw.amount),
+      description: raw.description || undefined
+    }).subscribe({
+      next: () => {
+        this.walletCreditMessageType = 'success';
+        this.walletCreditMessage = 'Credito accreditato nel wallet.';
+        this.walletCreditForm.reset({ amount: null, description: '' });
+      },
+      error: (error) => {
+        this.walletCreditMessageType = 'error';
+        this.walletCreditMessage = error?.error?.message || 'Credito non accreditato.';
+      }
+    });
   }
 
   SaveUser(): void {
