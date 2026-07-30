@@ -8,12 +8,12 @@
 
   <div class="booking-summary">
     <div>
-      <span>Spazio</span>
+      <span>Stanza</span>
       <strong>{{data.space.name}}</strong>
     </div>
     <div>
       <span>Tipologia</span>
-      <strong>{{data.space.rentalUnit === 'workstation' ? 'Postazioni' : 'Stanza intera'}}</strong>
+      <strong>{{data.space.rentalUnit === 'workstation' ? 'Postazioni' : (isSectorSpace ? 'Stanza ad aree' : 'Stanza intera')}}</strong>
     </div>
     <div>
       <span>Modalita</span>
@@ -137,6 +137,17 @@
           <mat-label>Postazioni</mat-label>
           <input matInput type="number" formControlName="workstationQuantity" min="1" [max]="data.space.workstationCount">
         </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="isSectorSpace">
+          <mat-label>Aree stanza</mat-label>
+          <mat-select formControlName="sectorIndexes" multiple (selectionChange)="onSectorSelectionChange($event.value)">
+            <mat-select-trigger>{{sectorLabel(form.value.sectorIndexes || [])}}</mat-select-trigger>
+            <mat-option [value]="-1">Stanza intera</mat-option>
+            <mat-option *ngFor="let sector of sectorOptions()" [value]="sector.index">
+              {{sector.label}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="availability-actions">
@@ -185,6 +196,10 @@
         <div>
           <span>Fasce orarie selezionate</span>
           <strong>{{selectedStartTime}} - {{selectedEndTime}}</strong>
+        </div>
+        <div *ngIf="isSectorSpace">
+          <span>Aree</span>
+          <strong>{{sectorLabel(form.value.sectorIndexes || [])}}</strong>
         </div>
         <div class="amount-total">
           <span>Importo calcolato</span>

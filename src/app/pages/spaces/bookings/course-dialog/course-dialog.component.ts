@@ -15,7 +15,7 @@ import { CourseBooking } from '../../../../interfaces/course-bookings';
 import { CourseBookingService } from '../../../../services/CourseBooking.service';
 import { AddCourseSubscriberDialogComponent } from '../../../course-bookings/add-course-subscriber-dialog/add-course-subscriber-dialog.component';
 import { ConfirmDialogComponent } from '../../../../confirm-dialog/confirm-dialog.component';
-import { COURSE_TAG_OPTIONS } from '../../../../interfaces/course-tag.enum';
+import { CourseTagService } from '../../../../services/CourseTag.service';
 
 export interface CourseDialogData {
   bookingWithPayments: BookingWithPayments;
@@ -43,7 +43,7 @@ export interface CourseDialogData {
 })
 export class CourseDialogComponent {
   form: FormGroup;
-  availableTags = COURSE_TAG_OPTIONS;
+  availableTags: Array<{ value: string; label: string }> = [];
   isSaving = false;
   errorMessage = '';
   imageUploadError = '';
@@ -57,6 +57,7 @@ export class CourseDialogComponent {
     private fb: FormBuilder,
     private courseService: CourseService,
     private courseBookingService: CourseBookingService,
+    private courseTagService: CourseTagService,
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<CourseDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CourseDialogData
@@ -99,7 +100,7 @@ export class CourseDialogComponent {
   }
 
   get spaceName(): string {
-    return this.data.bookingWithPayments.booking.space?.name || 'Spazio';
+    return this.data.bookingWithPayments.booking.space?.name || 'Stanza';
   }
 
   get isPaidCourse(): boolean {
@@ -130,6 +131,19 @@ export class CourseDialogComponent {
         this.errorMessage = 'Caricamento iscritti non riuscito.';
         this.isLoadingSubscribers = false;
       }
+    });
+
+    this.loadTags();
+  }
+
+  private loadTags(): void {
+    this.courseTagService.getTags().subscribe({
+      next: (tags) => {
+        this.availableTags = tags.map((tag) => ({ value: tag.value, label: tag.label }));
+      },
+      error: () => {
+        this.availableTags = [];
+      },
     });
   }
 

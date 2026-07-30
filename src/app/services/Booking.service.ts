@@ -32,6 +32,8 @@ export interface CreateBooking {
   rentalUnit?: 'whole_room' | 'workstation';
   rentalMode?: 'time' | 'full_day';
   workstationQuantity?: number;
+  sectorQuantity?: number;
+  sectorIndexes?: number[];
 }
 
 export interface AvailabilitySlot {
@@ -122,14 +124,14 @@ export class BookingService {
     return this.http.get<BookingWithPayments[]>(url, { headers });    
   }  
 
-  getAvailability(spaceId: string, date: string, rentalMode: string, workstationQuantity = 1): Observable<BookingAvailability>{
+  getAvailability(spaceId: string, date: string, rentalMode: string, workstationQuantity = 1, sectorQuantity = 0, sectorIndexes: number[] = []): Observable<BookingAvailability>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
 
     return this.http.get<BookingAvailability>(
-      `${this.apiUrl}/availability?spaceId=${spaceId}&date=${date}&rentalMode=${rentalMode}&workstationQuantity=${workstationQuantity}`,
+      `${this.apiUrl}/availability?spaceId=${spaceId}&date=${date}&rentalMode=${rentalMode}&workstationQuantity=${workstationQuantity}&sectorQuantity=${sectorQuantity}&sectorIndexes=${sectorIndexes.join(',')}`,
       { headers }
     );
   }

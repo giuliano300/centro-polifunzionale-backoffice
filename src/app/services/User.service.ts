@@ -13,6 +13,7 @@ export interface CreateClientUser {
   taxCode?: string;
   password?: string;
   role: UserRole.Cliente | UserRole.Gestore;
+  interestedTags?: string[];
 }
 
 export interface InviteUserResponse {

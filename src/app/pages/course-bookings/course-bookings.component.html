@@ -115,7 +115,7 @@
                 <strong>{{formatAmount(courseDetails.price)}}</strong>
             </div>
             <div>
-                <span>Prenotazione spazio</span>
+                <span>Prenotazione stanza</span>
                 <strong>{{getSummaryBooking()?.name || '-'}}</strong>
             </div>
         </div>
@@ -146,7 +146,7 @@
                     </ng-container>
 
                     <ng-container matColumnDef="space">
-                        <th mat-header-cell *matHeaderCellDef class="pl-0">Spazio</th>
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Stanza</th>
                         <td mat-cell *matCellDef="let element" class="pl-0">
                             <div class="position-relative">
                                 <h6 class="mt-0 mb-0">{{getBooking(element)?.space?.name || '-'}}</h6>

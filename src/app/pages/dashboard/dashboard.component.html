@@ -61,17 +61,17 @@
           <div class="card-title-row">
             <div>
               <span>Economia</span>
-              <h2>Pagamenti spazi</h2>
+              <h2>Pagamenti stanze</h2>
             </div>
             <i-feather name="trending-up"></i-feather>
           </div>
           <div class="revenue-total">{{ formatCurrency(stats.period.monthRevenue) }}</div>
-          <p>Incassi spazi del mese corrente, escluso wallet. Totale storico: <strong>{{ formatCurrency(stats.period.paidRevenue) }}</strong>.</p>
+          <p>Incassi stanze del mese corrente, escluso wallet. Totale storico: <strong>{{ formatCurrency(stats.period.paidRevenue) }}</strong>.</p>
 
           <div class="status-list">
             <div class="status-item wallet-used-item">
               <div>
-                <span>Wallet usati spazi</span>
+                <span>Wallet usati stanze</span>
                 <strong>{{ formatCurrency(stats.period.monthBookingWalletUsed) }}</strong>
               </div>
               <small>Totale storico {{ formatCurrency(stats.period.bookingWalletUsed) }}</small>
@@ -88,7 +88,7 @@
           <div class="quick-actions economy-actions">
             <a routerLink="/payments" mat-button class="action-filter">
               <i class="ri-bank-card-line"></i>
-              <span>Vedi pagamenti spazi</span>
+              <span>Vedi pagamenti stanze</span>
             </a>
           </div>
         </mat-card-content>
@@ -144,7 +144,7 @@
           <div class="card-title-row">
             <div>
               <span>Utilizzo</span>
-              <h2>Spazi piu richiesti</h2>
+              <h2>Stanze piu richiesti</h2>
             </div>
             <i-feather name="bar-chart-2"></i-feather>
           </div>
@@ -162,7 +162,7 @@
           </div>
 
           <ng-template #noSpaceUsage>
-            <div class="empty-panel">Nessun utilizzo recente degli spazi.</div>
+            <div class="empty-panel">Nessun utilizzo recente dele stanze.</div>
           </ng-template>
         </mat-card-content>
       </mat-card>
@@ -179,13 +179,13 @@
             <a routerLink="/users" mat-button class="action-filter">Vedi</a>
           </div>
           <div class="activity-list">
-            <div *ngFor="let user of stats.recent.users" class="activity-row">
+            <button *ngFor="let user of stats.recent.users" type="button" class="activity-row detail-trigger" (click)="openUserDetail(user)">
               <span class="avatar">{{ (user.name || user.email || '?').charAt(0).toUpperCase() }}</span>
               <div>
                 <strong>{{ user.name || '-' }}</strong>
                 <small>{{ user.email || '-' }}</small>
               </div>
-            </div>
+            </button>
           </div>
         </mat-card-content>
       </mat-card>
@@ -200,13 +200,13 @@
             <a routerLink="/bookings" mat-button class="action-filter">Vedi</a>
           </div>
           <div class="activity-list">
-            <div *ngFor="let booking of stats.recent.bookings" class="activity-row">
+            <button *ngFor="let booking of stats.recent.bookings" type="button" class="activity-row detail-trigger" (click)="openBookingDetail(booking)">
               <span class="avatar blue"><i-feather name="calendar"></i-feather></span>
               <div>
                 <strong>{{ booking.name || getBookingUser(booking) }}</strong>
                 <small>{{ getBookingSpace(booking) }} - {{ formatDate(booking.date) }}</small>
               </div>
-            </div>
+            </button>
           </div>
         </mat-card-content>
       </mat-card>
@@ -221,13 +221,13 @@
             <a routerLink="/courses" mat-button class="action-filter">Vedi</a>
           </div>
           <div class="activity-list">
-            <div *ngFor="let course of stats.recent.courses" class="activity-row">
+            <button *ngFor="let course of stats.recent.courses" type="button" class="activity-row detail-trigger" (click)="openCourseDetail(course)">
               <span class="avatar violet"><i-feather name="book-open"></i-feather></span>
               <div>
                 <strong>{{ course.title }}</strong>
                 <small>{{ getCourseSpace(course) }} - {{ formatDate(course.date) }}</small>
               </div>
-            </div>
+            </button>
           </div>
         </mat-card-content>
       </mat-card>
@@ -244,13 +244,13 @@
             <i-feather name="clock"></i-feather>
           </div>
           <div class="timeline-list">
-            <div *ngFor="let booking of stats.upcoming.bookings" class="timeline-row">
+            <button *ngFor="let booking of stats.upcoming.bookings" type="button" class="timeline-row detail-trigger" (click)="openBookingDetail(booking)">
               <span></span>
               <div>
                 <strong>{{ formatDate(booking.date) }} - {{ booking.startTime }}</strong>
                 <small>{{ getBookingUser(booking) }} / {{ getBookingSpace(booking) }}</small>
               </div>
-            </div>
+            </button>
           </div>
         </mat-card-content>
       </mat-card>
@@ -265,13 +265,13 @@
             <i-feather name="star"></i-feather>
           </div>
           <div class="timeline-list">
-            <div *ngFor="let course of stats.upcoming.courses" class="timeline-row course">
+            <button *ngFor="let course of stats.upcoming.courses" type="button" class="timeline-row course detail-trigger" (click)="openCourseDetail(course)">
               <span></span>
               <div>
                 <strong>{{ formatDate(course.date) }} - {{ course.startTime }}</strong>
                 <small>{{ course.title }} / {{ getCourseManager(course) }}</small>
               </div>
-            </div>
+            </button>
           </div>
         </mat-card-content>
       </mat-card>
@@ -304,16 +304,47 @@
             </div>
           </div>
           <div class="activity-list dense">
-            <div *ngFor="let item of stats.recent.courseBookings" class="activity-row">
+            <button *ngFor="let item of stats.recent.courseBookings" type="button" class="activity-row detail-trigger" (click)="openCourseBookingDetail(item)">
               <span class="avatar green"><i-feather name="user-plus"></i-feather></span>
               <div>
                 <strong>{{ getCourseBookingUser(item) }}</strong>
                 <small>{{ getCourseBookingTitle(item) }} - {{ getStatusLabel(item.status) }}</small>
               </div>
-            </div>
+            </button>
           </div>
         </mat-card-content>
       </mat-card>
     </section>
   </ng-container>
+</div>
+
+<div class="dashboard-detail-backdrop" *ngIf="selectedDetailTitle" (click)="closeDetail()">
+  <section class="dashboard-detail-modal" (click)="$event.stopPropagation()">
+    <div class="detail-modal-head">
+      <span class="detail-modal-icon"><i [class]="selectedDetailIcon"></i></span>
+      <div>
+        <span>Dettaglio</span>
+        <h2>{{ selectedDetailTitle }}</h2>
+        <p>{{ selectedDetailSubtitle }}</p>
+      </div>
+      <button mat-button class="action-cancel" type="button" (click)="closeDetail()">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+
+    <div class="detail-modal-grid">
+      <div *ngFor="let row of selectedDetailRows" class="detail-modal-item">
+        <span>{{ row.label }}</span>
+        <strong>{{ row.value }}</strong>
+      </div>
+    </div>
+
+    <div class="detail-modal-actions">
+      <button mat-button class="action-cancel" type="button" (click)="closeDetail()">Chiudi</button>
+      <a *ngIf="selectedDetailLink" mat-button class="action-filter" [routerLink]="selectedDetailLink" [queryParams]="selectedDetailQueryParams" (click)="closeDetail()">
+        <i class="ri-arrow-right-line"></i>
+        <span>Vai al dettaglio</span>
+      </a>
+    </div>
+  </section>
 </div>

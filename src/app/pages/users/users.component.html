@@ -212,10 +212,21 @@
                     <mat-option *ngFor="let role of userRoles" [value]="role">{{ roleLabel(role) }}</mat-option>
                 </mat-select>
             </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Interessi cliente</mat-label>
+                <mat-select formControlName="interestedTags" multiple>
+                    <mat-option *ngFor="let tag of courseTagOptions" [value]="tag.value">{{ tag.label }}</mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field appearance="outline" *ngIf="editingUser || !userForm.value.sendCompletionLink">
                 <mat-label>Password</mat-label>
                 <input matInput type="password" formControlName="password" placeholder="Lascia vuoto per non modificarla">
             </mat-form-field>
+
+            <div class="readonly-field" *ngIf="editingUser">
+                <span>Stato registrazione</span>
+                <strong>{{ registrationStatusLabel(editingUser.registrationStatus) }}</strong>
+            </div>
 
             <label class="modal-check" *ngIf="!editingUser">
                 <input type="checkbox" formControlName="sendCompletionLink">

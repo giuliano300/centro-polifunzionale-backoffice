@@ -226,9 +226,9 @@ export class DiscountCodesComponent {
   spaceName(discount: DiscountCode): string {
     const ids = this.spaceIds(discount);
     if (!ids.length) {
-      return 'Tutti gli spazi';
+      return 'Tutti le stanze';
     }
-    return ids.map((id) => this.spaces.find((space) => space._id === id)?.name || 'Spazio selezionato').join(', ');
+    return ids.map((id) => this.spaces.find((space) => space._id === id)?.name || 'Stanza selezionato').join(', ');
   }
 
   roleLabel(discount: DiscountCode): string {

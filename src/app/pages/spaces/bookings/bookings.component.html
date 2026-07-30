@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
     <div class="flex">
         <ol class="breadcrumb">
-            <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Spazi </li>
+            <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Stanze </li>
             <li aria-current="page" class="breadcrumb-item active">Prenotazioni {{spaceName}}</li>
         </ol>
     </div>
@@ -9,7 +9,7 @@
 <section class="page-head-card">
     <div>
         <h1>Prenotazioni {{spaceName}}</h1>
-        <p>Gestisci le prenotazioni dello spazio, filtra per periodo e crea nuove prenotazioni per i clienti.</p>
+        <p>Gestisci le prenotazioni della stanza, filtra per periodo e crea nuove prenotazioni per i clienti.</p>
     </div>
     <div class="page-head-actions">
         <button mat-button class="action-new" (click)="CreateBooking()">
@@ -213,7 +213,7 @@
 
                     <tr class="mat-row" *matNoDataRow>
                         <td class="mat-cell text-center no-data" [attr.colspan]="displayedColumns.length">
-                            Nessuna prenotazione per questo spazio
+                            Nessuna prenotazione per questa stanza
                         </td>
                     </tr>
                 </table>

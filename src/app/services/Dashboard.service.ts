@@ -7,6 +7,14 @@ export interface DashboardUser {
   _id?: string;
   name?: string;
   email?: string;
+  phone?: string;
+  taxCode?: string;
+  role?: string;
+  isActive?: boolean;
+  registrationStatus?: string;
+  interestedTags?: string[];
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface DashboardSpace {
@@ -19,7 +27,13 @@ export interface DashboardBooking {
   name?: string;
   date?: string | Date;
   startTime?: string;
+  endTime?: string;
+  rentalUnit?: string;
+  rentalMode?: string;
+  workstationQuantity?: number;
   status?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
   user?: string | DashboardUser;
   space?: string | DashboardSpace;
 }
@@ -27,14 +41,35 @@ export interface DashboardBooking {
 export interface DashboardCourse {
   _id?: string;
   title?: string;
+  description?: string;
+  tags?: string[];
   date?: string | Date;
   startTime?: string;
+  endTime?: string;
+  capacity?: number;
+  enrollmentType?: string;
+  price?: number;
+  isPublished?: boolean;
+  approvalStatus?: string;
+  participants?: string[];
   booking?: string | DashboardBooking;
 }
 
 export interface DashboardCourseBooking {
   _id?: string;
   status?: string;
+  enrollmentType?: string;
+  amount?: number;
+  totalAmount?: number;
+  walletAmount?: number;
+  externalAmount?: number;
+  originalAmount?: number;
+  discountAmount?: number;
+  discountCode?: string;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
   user?: string | DashboardUser;
   course?: string | DashboardCourse;
 }

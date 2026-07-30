@@ -15,6 +15,7 @@ import { AuthUser } from '../../interfaces/auth-user';
 import { UsersService } from '../../services/User.service';
 import { UserRole } from '../../interfaces/roles/roles';
 import { FeathericonsModule } from '../../icons/feathericons/feathericons.module';
+import { CourseTagService } from '../../services/CourseTag.service';
 
 type UserRow = AuthUser & { action: { delete: string; toggle: string } };
 
@@ -40,6 +41,7 @@ export class UsersComponent {
   walletCreditMessage = '';
   walletCreditMessageType: 'success' | 'error' = 'success';
   completeUrl = '';
+  courseTagOptions: Array<{ value: string; label: string }> = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -47,7 +49,8 @@ export class UsersComponent {
     private usersService: UsersService,
     private dialog: MatDialog,
     private fb: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private courseTagService: CourseTagService
   ) {
     this.filterForm = this.fb.group({
       search: [''],
@@ -59,6 +62,7 @@ export class UsersComponent {
       phone: [''],
       taxCode: [''],
       role: [UserRole.Cliente, Validators.required],
+      interestedTags: [[] as string[]],
       password: [''],
       sendCompletionLink: [true],
       isActive: [true]
@@ -70,12 +74,24 @@ export class UsersComponent {
   }
 
   ngOnInit(): void {
+    this.loadTags();
     this.route.queryParamMap.subscribe((params) => {
       this.filterForm.patchValue({
         search: params.get('search') || '',
         role: params.get('role') || ''
       }, { emitEvent: false });
       this.getUsers();
+    });
+  }
+
+  private loadTags(): void {
+    this.courseTagService.getTags().subscribe({
+      next: (tags) => {
+        this.courseTagOptions = tags.map((tag) => ({ value: tag.value, label: tag.label }));
+      },
+      error: () => {
+        this.courseTagOptions = [];
+      },
     });
   }
 
@@ -126,6 +142,7 @@ export class UsersComponent {
       phone: '',
       taxCode: '',
       role: UserRole.Cliente,
+      interestedTags: [],
       password: '',
       sendCompletionLink: true,
       isActive: true
@@ -143,6 +160,7 @@ export class UsersComponent {
       phone: item.phone || '',
       taxCode: item.taxCode || '',
       role: item.role,
+      interestedTags: item.interestedTags || [],
       password: '',
       sendCompletionLink: false,
       isActive: item.isActive !== false
@@ -211,6 +229,7 @@ export class UsersComponent {
       phone: raw.phone || undefined,
       taxCode: raw.taxCode || undefined,
       role: raw.role,
+      interestedTags: raw.interestedTags || [],
       isActive: raw.isActive !== false,
       password: raw.password || 'Utente123!'
     };
@@ -270,6 +289,14 @@ export class UsersComponent {
       [UserRole.Cliente]: 'Cliente'
     };
     return labels[role] || role;
+  }
+
+  registrationStatusLabel(status?: string): string {
+    const labels: Record<string, string> = {
+      complete: 'Completa',
+      invited: 'Invitato'
+    };
+    return status ? labels[status] || status : '-';
   }
 
   get userRoles(): UserRole[] {

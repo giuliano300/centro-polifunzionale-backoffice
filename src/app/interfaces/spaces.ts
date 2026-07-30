@@ -27,6 +27,13 @@ export interface Spaces {
   timeSlotMinutes: number;
   maxConsecutiveTimeSlots?: number;
   workstationCount: number;
+  sectorEnabled?: boolean;
+  sectorCount?: number;
+  sectorNames?: string[];
+  calendarColor?: string;
+  sectorColors?: string[];
+  sectorRate?: number;
+  sectorDailyRate?: number;
   courseCreationAdvanceHours?: number;
   paymentMethods?: SpacePaymentMethod[];
   openingHours: SpaceOpeningSlot[];

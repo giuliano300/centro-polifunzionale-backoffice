@@ -61,6 +61,7 @@ export class BookingDialogComponent {
   isAvailabilityEmpty = false;
   availabilityMaxConsecutiveTimeSlots = 1;
   readonly UserRole = UserRole;
+  private sectorSelectionBeforeChange: number[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -83,13 +84,16 @@ export class BookingDialogComponent {
     });
     this.form = this.fb.group({
       userId: ['', [Validators.required]],
-      name: ['Prenotazione spazio', [Validators.required, Validators.maxLength(140)]],
+      name: ['Prenotazione stanza', [Validators.required, Validators.maxLength(140)]],
       date: ['', [Validators.required]],
       rentalMode: [this.data.space.rentalModes?.[0] || 'time', [Validators.required]],
       workstationQuantity: [1, [Validators.required, Validators.min(1)]],
+      sectorQuantity: [this.defaultSectorQuantity(), [Validators.min(0)]],
+      sectorIndexes: [this.defaultSectorIndexes()],
       slotKey: ['', [Validators.required]],
       paymentAction: ['none', [Validators.required]]
     });
+    this.sectorSelectionBeforeChange = this.form.value.sectorIndexes || [];
 
     this.form.valueChanges.subscribe(() => {
       this.errorMessage = '';
@@ -99,6 +103,12 @@ export class BookingDialogComponent {
 
   get isWorkstation(): boolean {
     return this.data.space.rentalUnit === 'workstation';
+  }
+
+  get isSectorSpace(): boolean {
+    return this.data.space.rentalUnit === 'whole_room'
+      && !!this.data.space.sectorEnabled
+      && Number(this.data.space.sectorCount || 1) > 1;
   }
 
   get rentalModesLabel(): string {
@@ -239,7 +249,9 @@ export class BookingDialogComponent {
       this.data.space._id,
       bookingDate,
       this.form.value.rentalMode,
-      Number(this.form.value.workstationQuantity || 1)
+      Number(this.form.value.workstationQuantity || 1),
+      this.selectedSectorIndexes().length,
+      this.selectedSectorIndexes()
     ).subscribe({
       next: (result) => {
 
@@ -332,7 +344,9 @@ export class BookingDialogComponent {
       endTime: this.selectedEndTime,
       rentalUnit: this.data.space.rentalUnit,
       rentalMode: this.form.value.rentalMode,
-      workstationQuantity: this.isWorkstation ? Number(this.form.value.workstationQuantity) : 1
+      workstationQuantity: this.isWorkstation ? Number(this.form.value.workstationQuantity) : 1,
+      sectorQuantity: this.isSectorSpace ? this.selectedSectorIndexes().length : 0,
+      sectorIndexes: this.isSectorSpace ? this.selectedSectorIndexes() : []
     }).subscribe({
       next: (booking) => this.afterBookingCreated(booking),
       error: (error) => {
@@ -354,10 +368,76 @@ export class BookingDialogComponent {
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(amount || 0);
   }
 
+  sectorOptions(): Array<{ index: number; label: string }> {
+    const count = Math.max(Number(this.data.space.sectorCount || 1), 1);
+    return Array.from({ length: count }, (_, index) => ({
+      index,
+      label: this.data.space.sectorNames?.[index] || `Area ${index + 1}`,
+    }));
+  }
+
+  sectorLabel(indexesOrQuantity: number[] | number): string {
+    const indexes = Array.isArray(indexesOrQuantity)
+      ? indexesOrQuantity
+      : this.selectedSectorIndexes();
+    if (indexes.includes(-1)) {
+      return 'Stanza intera';
+    }
+
+    if (!indexes.length || indexes.length >= Number(this.data.space.sectorCount || 1)) {
+      return 'Stanza intera';
+    }
+
+    return indexes.map((index) => this.data.space.sectorNames?.[index] || `Area ${index + 1}`).join(', ');
+  }
+
+  onSectorSelectionChange(values: number[]): void {
+    const selected = Array.isArray(values) ? values.map((value) => Number(value)) : [];
+    const realSelected = selected.filter((value) => value !== -1);
+    let nextValue = selected;
+
+    if (selected.includes(-1)) {
+      nextValue = this.sectorSelectionBeforeChange.includes(-1) && realSelected.length
+        ? realSelected
+        : [-1];
+    } else if (realSelected.length >= this.sectorOptions().length) {
+      nextValue = [-1];
+    }
+
+    this.form.patchValue({ sectorIndexes: nextValue }, { emitEvent: false });
+    this.sectorSelectionBeforeChange = nextValue;
+  }
+
   private syncSelectedSlots(): void {
     this.errorMessage = '';
     const key = this.selectedSlots.length ? `${this.selectedStartTime}-${this.selectedEndTime}` : '';
     this.form.patchValue({ slotKey: key }, { emitEvent: false });
+  }
+
+  private defaultSectorQuantity(): number {
+    return this.data.space.sectorEnabled && Number(this.data.space.sectorCount || 1) > 1
+      ? Number(this.data.space.sectorCount || 1)
+      : 0;
+  }
+
+  private defaultSectorIndexes(): number[] {
+    return this.data.space.sectorEnabled && Number(this.data.space.sectorCount || 1) > 1
+      ? [-1]
+      : [];
+  }
+
+  private selectedSectorIndexes(): number[] {
+    const indexes: unknown[] = Array.isArray(this.form.value.sectorIndexes) ? this.form.value.sectorIndexes : [];
+    const normalized = indexes
+      .map((value: unknown) => Number(value))
+      .filter((value: number) => Number.isInteger(value));
+    if (normalized.includes(-1)) {
+      return this.sectorOptions().map((sector) => sector.index);
+    }
+
+    return normalized
+      .filter((value: number) => value !== -1)
+      .sort((a: number, b: number) => a - b);
   }
 
   private isConsecutive(candidate: AvailabilitySlot[]): boolean {

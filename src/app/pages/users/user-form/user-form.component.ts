@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { UserRole } from '../../../interfaces/roles/roles';
 import { CreateClientUser, UsersService } from '../../../services/User.service';
+import { CourseTagService } from '../../../services/CourseTag.service';
 
 @Component({
   selector: 'app-user-form',
@@ -23,6 +24,7 @@ export class UserFormComponent {
   userMessageType: 'success' | 'error' = 'success';
   completeUrl = '';
   isSaving = false;
+  courseTagOptions: Array<{ value: string; label: string }> = [];
 
   userForm = this.fb.group({
     name: ['', Validators.required],
@@ -30,6 +32,7 @@ export class UserFormComponent {
     phone: [''],
     taxCode: [''],
     role: [UserRole.Cliente, Validators.required],
+    interestedTags: [[] as string[]],
     password: [''],
     sendCompletionLink: [true],
     isActive: [true]
@@ -37,8 +40,22 @@ export class UserFormComponent {
 
   constructor(
     private usersService: UsersService,
+    private courseTagService: CourseTagService,
     private router: Router
-  ) {}
+  ) {
+    this.loadTags();
+  }
+
+  private loadTags(): void {
+    this.courseTagService.getTags().subscribe({
+      next: (tags) => {
+        this.courseTagOptions = tags.map((tag) => ({ value: tag.value, label: tag.label }));
+      },
+      error: () => {
+        this.courseTagOptions = [];
+      },
+    });
+  }
 
   SaveUser(): void {
     this.userMessage = '';
@@ -59,6 +76,7 @@ export class UserFormComponent {
       phone: raw.phone || undefined,
       taxCode: raw.taxCode || undefined,
       role,
+      interestedTags: raw.interestedTags || [],
       isActive: raw.isActive !== false,
       password: raw.password || 'Utente123!'
     };
@@ -79,6 +97,7 @@ export class UserFormComponent {
             phone: '',
             taxCode: '',
             role: UserRole.Cliente,
+            interestedTags: [],
             password: '',
             sendCompletionLink: true,
             isActive: true

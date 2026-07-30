@@ -12,5 +12,7 @@ export interface Bookings {
   rentalUnit: 'whole_room' | 'workstation';
   rentalMode: 'time' | 'full_day';
   workstationQuantity: number;
+  sectorQuantity?: number;
+  sectorIndexes?: number[];
   status: string;
 }

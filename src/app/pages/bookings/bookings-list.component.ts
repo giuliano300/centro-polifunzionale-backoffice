@@ -10,7 +10,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { BookingWithPayments } from '../../interfaces/BookingWithPayments';
 import { CustomDateFormatPipe } from '../../services/custom-date-format.pipe';
@@ -18,14 +18,23 @@ import { BookingService } from '../../services/Booking.service';
 import { Course } from '../../interfaces/courses';
 import { CourseService } from '../../services/Course.service';
 import { CourseDialogComponent } from '../spaces/bookings/course-dialog/course-dialog.component';
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { FeathericonsModule } from '../../icons/feathericons/feathericons.module';
 
 type BookingRow = BookingWithPayments & { action: { delete: string } };
+const NEUTRAL_BOOKING_COLOR = '#f3f4f6';
+
+type CalendarDay = {
+  date: Date;
+  dayNumber: number;
+  inMonth: boolean;
+  isToday: boolean;
+  bookings: BookingRow[];
+};
 
 @Component({
   selector: 'app-bookings-list',
-  imports: [NgIf, ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MatOptionModule, MatSelectModule, MatPaginatorModule, MatTableModule, CustomDateFormatPipe, FeathericonsModule],
+  imports: [NgIf, NgFor, RouterLink, ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MatOptionModule, MatSelectModule, MatPaginatorModule, MatTableModule, CustomDateFormatPipe, FeathericonsModule],
   templateUrl: './bookings-list.component.html',
   styleUrl: './bookings-list.component.scss'
 })
@@ -33,6 +42,21 @@ export class BookingsListComponent {
   displayedColumns: string[] = ['name', 'user', 'space', 'date', 'startTime', 'endTime', 'status', 'amount', 'course', 'delete'];
   dataSource = new MatTableDataSource<BookingRow>([]);
   bookings: BookingRow[] = [];
+  calendarDays: CalendarDay[] = [];
+  viewMode: 'list' | 'calendar' = 'calendar';
+  weekDays = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+  selectedDetailTitle = '';
+  selectedDetailSubtitle = '';
+  selectedDetailRows: Array<{ label: string; value: string }> = [];
+  selectedDetailClientRows: Array<{ label: string; value: string }> = [];
+  selectedDetailSpaceRows: Array<{ label: string; value: string }> = [];
+  selectedDetailPaymentRows: Array<{ label: string; value: string }> = [];
+  selectedDetailStatus = '';
+  selectedDetailStatusClass = '';
+  selectedDetailColor = NEUTRAL_BOOKING_COLOR;
+  selectedDetailTextColor = '#111827';
+  selectedDetailLink = '';
+  selectedDetailQueryParams: Record<string, string> | null = null;
   courses: Course[] = [];
   filterForm: FormGroup;
 
@@ -75,6 +99,7 @@ export class BookingsListComponent {
         }));
       this.dataSource = new MatTableDataSource<BookingRow>(this.bookings);
       this.dataSource.paginator = this.paginator;
+      this.buildCalendarDays();
     });
   }
 
@@ -86,6 +111,149 @@ export class BookingsListComponent {
     const defaultRange = this.getCurrentMonthRange();
     this.filterForm.patchValue({ startDate: defaultRange.startDate, endDate: defaultRange.endDate, search: '', status: '' });
     this.applyFilters();
+  }
+
+  setViewMode(mode: 'list' | 'calendar'): void {
+    this.viewMode = mode;
+  }
+
+  previousMonth(): void {
+    const current = this.getCalendarReferenceDate();
+    const range = this.getCurrentMonthRange(new Date(current.getFullYear(), current.getMonth() - 1, 1));
+    this.filterForm.patchValue({ startDate: range.startDate, endDate: range.endDate });
+    this.getBookings();
+  }
+
+  nextMonth(): void {
+    const current = this.getCalendarReferenceDate();
+    const range = this.getCurrentMonthRange(new Date(current.getFullYear(), current.getMonth() + 1, 1));
+    this.filterForm.patchValue({ startDate: range.startDate, endDate: range.endDate });
+    this.getBookings();
+  }
+
+  calendarMonthLabel(): string {
+    return new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(this.getCalendarReferenceDate());
+  }
+
+  getCalendarLegend(): Array<{ id: string; name: string; color: string }> {
+    const map = new Map<string, { id: string; name: string; color: string }>();
+    this.bookings.forEach((item) => {
+      const space = item.booking.space;
+      if (space?._id && !map.has(space._id)) {
+        map.set(space._id, {
+          id: space._id,
+          name: space.name,
+          color: this.getSpaceColor(item),
+        });
+      }
+    });
+    return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  getSpaceColor(item: BookingWithPayments): string {
+    return this.normalizedColor(item.booking.space?.calendarColor) || NEUTRAL_BOOKING_COLOR;
+  }
+
+  getBookingColor(item: BookingWithPayments): string {
+    const space = item.booking.space;
+    const indexes = item.booking.sectorIndexes || [];
+    const sectorCount = Number(space?.sectorCount || 1);
+    const isPartialSectorBooking = !!space?.sectorEnabled && indexes.length > 0 && indexes.length < sectorCount;
+
+    if (isPartialSectorBooking) {
+      return this.normalizedColor(space?.sectorColors?.[indexes[0]]) || NEUTRAL_BOOKING_COLOR;
+    }
+
+    return this.normalizedColor(space?.calendarColor) || NEUTRAL_BOOKING_COLOR;
+  }
+
+  getBookingTextColor(item: BookingWithPayments): string {
+    const color = this.getBookingColor(item).replace('#', '');
+    if (color.length !== 6) {
+      return '#111827';
+    }
+
+    const red = parseInt(color.slice(0, 2), 16);
+    const green = parseInt(color.slice(2, 4), 16);
+    const blue = parseInt(color.slice(4, 6), 16);
+    const luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
+    return luminance > 0.62 ? '#111827' : '#ffffff';
+  }
+
+  getSectorLabel(item: BookingWithPayments): string {
+    const space = item.booking.space;
+    const indexes = item.booking.sectorIndexes || [];
+    if (!space?.sectorEnabled || !indexes.length) {
+      return '';
+    }
+
+    if (indexes.length >= Number(space.sectorCount || 1)) {
+      return 'Stanza intera';
+    }
+
+    return indexes.map((index) => {
+      const name = space.sectorNames?.[index] || `${index + 1}`;
+      return name.toLowerCase().startsWith('area ') ? name : `Area ${name}`;
+    }).join(', ');
+  }
+
+  openBookingDetail(item: BookingRow): void {
+    const booking = item.booking;
+    const date = this.formatDate(booking.date);
+    const payment = item.payments?.find((payment) => payment.status === 'PAID')
+      || item.payments?.find((payment) => payment.status === 'PENDING')
+      || item.payments?.[0];
+    this.selectedDetailTitle = booking.name || 'Prenotazione';
+    this.selectedDetailSubtitle = `${booking.space?.name || 'Stanza'} - ${date}`;
+    this.selectedDetailStatus = this.getBookingStatusLabel(booking.status);
+    this.selectedDetailStatusClass = booking.status || 'pending';
+    this.selectedDetailColor = this.getBookingColor(item);
+    this.selectedDetailTextColor = this.getBookingTextColor(item);
+    this.selectedDetailClientRows = [
+      { label: 'Cliente', value: booking.user?.name || '-' },
+      { label: 'Email', value: booking.user?.email || '-' },
+      { label: 'Telefono', value: booking.user?.phone || '-' },
+    ];
+    this.selectedDetailSpaceRows = [
+      { label: 'Stanza', value: booking.space?.name || '-' },
+      { label: 'Aree', value: this.getSectorLabel(item) || 'Stanza intera' },
+      { label: 'Tipo stanza', value: this.getRentalUnitLabel(booking.rentalUnit) },
+      { label: 'Modalita acquisto', value: this.getRentalModeLabel(booking.rentalMode) },
+      { label: 'Postazioni', value: String(booking.workstationQuantity || 1) },
+    ];
+    this.selectedDetailPaymentRows = [
+      { label: 'Totale', value: this.formatCurrency(this.GetTotalAmount(item)) },
+      { label: 'Wallet usato', value: this.formatCurrency(this.GetWalletAmount(item)) },
+      { label: 'Da metodo pagamento', value: this.formatCurrency(this.GetExternalAmount(item)) },
+      { label: 'Metodo', value: this.GetPaymentMethodLabel(item) },
+      { label: 'Stato', value: payment ? this.getPaymentStatusLabel(payment.status) : '-' },
+    ];
+    this.selectedDetailRows = [
+      { label: 'Nome prenotazione', value: booking.name || '-' },
+      { label: 'Data', value: date },
+      { label: 'Orario', value: this.formatTimeRange(booking.startTime, booking.endTime) },
+      { label: 'Stato prenotazione', value: this.getBookingStatusLabel(booking.status) },
+    ];
+    this.selectedDetailLink = booking.space?._id ? `/space/bookings/${booking.space._id}` : '/bookings';
+    const dateValue = booking.date ? new Date(booking.date) : null;
+    this.selectedDetailQueryParams = dateValue && !Number.isNaN(dateValue.getTime())
+      ? { month: String(dateValue.getMonth() + 1), year: String(dateValue.getFullYear()) }
+      : null;
+  }
+
+  closeDetail(): void {
+    this.selectedDetailTitle = '';
+    this.selectedDetailSubtitle = '';
+    this.selectedDetailRows = [];
+    this.selectedDetailClientRows = [];
+    this.selectedDetailSpaceRows = [];
+    this.selectedDetailPaymentRows = [];
+    this.selectedDetailStatus = '';
+    this.selectedDetailStatusClass = '';
+    this.selectedDetailColor = NEUTRAL_BOOKING_COLOR;
+    this.selectedDetailTextColor = '#111827';
+    this.selectedDetailLink = '';
+    this.selectedDetailQueryParams = null;
   }
 
   getCourses(): void {
@@ -167,7 +335,7 @@ export class BookingsListComponent {
     const end = endDate instanceof Date ? new Date(endDate) : new Date(`${endDate}T00:00:00`);
     end.setHours(0, 0, 0, 0);
     end.setDate(end.getDate() + 1);
-    return { start: start.toISOString(), end: end.toISOString() };
+    return { start: this.toDateKey(start), end: this.toDateKey(end) };
   }
 
   private toDateInputValue(value: string | Date): string {
@@ -266,6 +434,100 @@ export class BookingsListComponent {
 
   formatCurrency(value?: number): string {
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(value || 0);
+  }
+
+  private formatDate(value?: string | Date): string {
+    if (!value) {
+      return '-';
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '-';
+    }
+
+    return new Intl.DateTimeFormat('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date);
+  }
+
+  private formatTimeRange(start?: string, end?: string): string {
+    if (!start && !end) {
+      return '-';
+    }
+
+    return `${start || '-'} - ${end || '-'}`;
+  }
+
+  private getRentalUnitLabel(value?: string): string {
+    const labels: Record<string, string> = {
+      whole_room: 'Stanza intera',
+      workstation: 'Postazione'
+    };
+    return value ? labels[value] || value : '-';
+  }
+
+  private getRentalModeLabel(value?: string): string {
+    const labels: Record<string, string> = {
+      time: 'A tempo',
+      full_day: 'Tutta la giornata'
+    };
+    return value ? labels[value] || value : '-';
+  }
+
+  private getPaymentStatusLabel(value?: string): string {
+    const labels: Record<string, string> = {
+      PAID: 'Pagato',
+      PENDING: 'In attesa',
+      FAILED: 'Non riuscito',
+      FREE: 'Gratuito'
+    };
+    return value ? labels[value] || value : '-';
+  }
+
+  private buildCalendarDays(): void {
+    const reference = this.getCalendarReferenceDate();
+    const firstOfMonth = new Date(reference.getFullYear(), reference.getMonth(), 1);
+    const start = new Date(firstOfMonth);
+    const startOffset = (start.getDay() + 6) % 7;
+    start.setDate(start.getDate() - startOffset);
+
+    const todayKey = this.toDateKey(new Date());
+    this.calendarDays = Array.from({ length: 42 }, (_, index) => {
+      const date = new Date(start);
+      date.setDate(start.getDate() + index);
+      return {
+        date,
+        dayNumber: date.getDate(),
+        inMonth: date.getMonth() === reference.getMonth(),
+        isToday: this.toDateKey(date) === todayKey,
+        bookings: this.getBookingsByDate(date),
+      };
+    });
+  }
+
+  private getBookingsByDate(date: Date): BookingRow[] {
+    const key = this.toDateKey(date);
+    return this.bookings
+      .filter((item) => this.toDateKey(item.booking.date) === key)
+      .sort((a, b) => `${a.booking.startTime}-${a.booking.space?.name || ''}`.localeCompare(`${b.booking.startTime}-${b.booking.space?.name || ''}`));
+  }
+
+  private getCalendarReferenceDate(): Date {
+    const startDate = this.filterForm.value.startDate;
+    const date = startDate instanceof Date ? startDate : new Date(startDate || new Date());
+    return Number.isNaN(date.getTime()) ? new Date() : date;
+  }
+
+  private toDateKey(value: string | Date): string {
+    const date = new Date(value);
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private normalizedColor(value?: string): string {
+    const color = String(value || '').trim();
+    return /^#[0-9a-fA-F]{6}$/.test(color) ? color : '';
   }
 
   CreateCourse(item: BookingWithPayments): void {

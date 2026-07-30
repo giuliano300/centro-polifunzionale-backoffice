@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
     <div class="flex">
         <ol class="breadcrumb">
-            <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Spazi </li>
+            <li aria-current="page" class="breadcrumb-item pointer" (click)="gotoSpaces()">Stanze </li>
             <li aria-current="page" class="breadcrumb-item active">Prenotazioni {{spaceName}}</li>
         </ol>
     </div>
@@ -9,7 +9,7 @@
 <section class="page-head-card">
     <div>
         <h1>Calendario prenotazioni {{spaceName}}</h1>
-        <p>Visualizza le prenotazioni dello spazio su calendario e apri il dettaglio selezionando un giorno o un evento.</p>
+        <p>Visualizza le prenotazioni della stanza su calendario e apri il dettaglio selezionando un giorno o un evento.</p>
     </div>
     <div class="page-head-actions">
         <button mat-button class="action-new" (click)="CreateBooking()">

@@ -121,6 +121,7 @@ export class BookingsComponent {
 
     this.year = queryYear || initialRange.startDate.getFullYear();
     this.month = queryMonth || initialRange.startDate.getMonth() + 1;
+    this.form.patchValue(initialRange);
 
     this.route.paramMap.subscribe(params => {
       this.id = params.get('id')!;
@@ -128,8 +129,6 @@ export class BookingsComponent {
       this.getBookings(this.id!);
       this.getCourses();
     });
-
-    this.form.patchValue(initialRange);
   }
 
    getSpace(id: string){

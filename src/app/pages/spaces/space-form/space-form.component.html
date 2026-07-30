@@ -1,17 +1,17 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item">
-      <a  class="action-back" (click)="cancel()">Spazi</a>
+      <a  class="action-back" (click)="cancel()">Stanze</a>
     </li>
     <li aria-current="page" class="breadcrumb-item active">
-      {{ id ? 'Modifica spazio' : 'Aggiungi spazio' }}
+      {{ id ? 'Modifica stanza' : 'Aggiungi stanza' }}
     </li>
   </ol>
 </nav>
 
 <section class="page-head-card">
   <div>
-    <h1>{{ id ? 'Modifica spazio' : 'Aggiungi spazio' }}</h1>
+    <h1>{{ id ? 'Modifica stanza' : 'Aggiungi stanza' }}</h1>
     <p>Configura dati, disponibilita, prezzi, orari settimanali, chiusure eccezionali e metodi di pagamento.</p>
   </div>
 </section>
@@ -20,7 +20,7 @@
   <mat-card-content>
     <form [formGroup]="form" (ngSubmit)="submit()" class="space-form">
       <section class="form-section">
-        <h3>Dati spazio</h3>
+        <h3>Dati stanza</h3>
         <div class="form-grid">
           <mat-form-field appearance="outline">
             <mat-label>Nome</mat-label>
@@ -36,12 +36,20 @@
             </mat-select>
             <mat-hint>Scegli se vendere l'intera stanza o singole postazioni.</mat-hint>
           </mat-form-field>
+
+          <div class="color-field">
+            <label>
+              <span>Colore calendario stanza</span>
+              <input type="color" formControlName="calendarColor">
+            </label>
+            <small>Usato nella visualizzazione calendario delle prenotazioni.</small>
+          </div>
         </div>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Descrizione</mat-label>
           <textarea matInput formControlName="description" rows="4"></textarea>
-          <mat-hint>Spiega uso, capienza e caratteristiche principali dello spazio.</mat-hint>
+          <mat-hint>Spiega uso, capienza e caratteristiche principali della stanza.</mat-hint>
         </mat-form-field>
       </section>
 
@@ -56,7 +64,7 @@
           <strong>{{ form.value.isAvailable ? 'Attivo' : 'Disattivo' }}</strong>
         </span>
         <small>
-          {{ form.value.isAvailable ? 'Lo spazio e acquistabile dai gestori.' : 'Lo spazio non sara acquistabile dai gestori.' }}
+          {{ form.value.isAvailable ? 'La stanza e acquistabile dai gestori.' : 'La stanza non sara acquistabile dai gestori.' }}
         </small>
       </button>
 
@@ -83,6 +91,45 @@
             <input matInput type="number" formControlName="workstationCount" min="1">
             <mat-hint>Numero massimo di postazioni acquistabili nello stesso orario.</mat-hint>
           </mat-form-field>
+
+          <div class="sector-toggle" *ngIf="form.value.rentalUnit === 'whole_room'">
+            <mat-checkbox formControlName="sectorEnabled">Stanza vendibile per aree</mat-checkbox>
+            <small>Permette al gestore di acquistare una porzione della stanza o tutta la stanza.</small>
+          </div>
+
+          <mat-form-field appearance="outline" *ngIf="form.value.rentalUnit === 'whole_room' && form.value.sectorEnabled">
+            <mat-label>Numero aree</mat-label>
+            <input matInput type="number" formControlName="sectorCount" min="2" step="1">
+            <mat-hint>Quante porzioni indipendenti compongono la stanza.</mat-hint>
+          </mat-form-field>
+
+          <div class="sector-names" *ngIf="form.value.rentalUnit === 'whole_room' && form.value.sectorEnabled">
+            <strong>Nomi aree</strong>
+            <div class="sector-name-row" *ngFor="let control of sectorNames.controls; let i = index">
+              <mat-form-field appearance="outline">
+                <mat-label>Area {{ i + 1 }}</mat-label>
+                <input matInput [formControl]="sectorNameControl(i)" autocomplete="off">
+                <mat-hint>Nome visibile al gestore in fase di acquisto.</mat-hint>
+              </mat-form-field>
+
+              <label class="sector-color">
+                <span>Colore</span>
+                <input type="color" [formControl]="sectorColorControl(i)">
+              </label>
+            </div>
+          </div>
+
+          <mat-form-field appearance="outline" *ngIf="hasTimeRental && form.value.rentalUnit === 'whole_room' && form.value.sectorEnabled">
+            <mat-label>Costo frazione per area</mat-label>
+            <input matInput type="number" formControlName="sectorRate" min="0">
+            <mat-hint>Prezzo di una frazione per una singola area.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="hasFullDayRental && form.value.rentalUnit === 'whole_room' && form.value.sectorEnabled">
+            <mat-label>Costo giornata per area</mat-label>
+            <input matInput type="number" formControlName="sectorDailyRate" min="0">
+            <mat-hint>Prezzo giornata per una singola area.</mat-hint>
+          </mat-form-field>
           
           <mat-form-field appearance="outline" *ngIf="hasTimeRental">
             <mat-label>Costo frazione</mat-label>
@@ -107,7 +154,7 @@
             <mat-select formControlName="paymentMethods" multiple>
               <mat-option *ngFor="let method of paymentMethods" [value]="method.value">{{ method.label }}</mat-option>
             </mat-select>
-            <mat-hint>Seleziona i metodi disponibili per acquistare questo spazio.</mat-hint>
+            <mat-hint>Seleziona i metodi disponibili per acquistare questa stanza.</mat-hint>
           </mat-form-field>
         </div>
       </section>

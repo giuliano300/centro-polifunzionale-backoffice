@@ -57,6 +57,14 @@
                         <mat-hint>Scegli se creare un cliente o un gestore.</mat-hint>
                     </mat-form-field>
 
+                    <mat-form-field appearance="outline">
+                        <mat-label>Interessi cliente</mat-label>
+                        <mat-select formControlName="interestedTags" multiple>
+                            <mat-option *ngFor="let tag of courseTagOptions" [value]="tag.value">{{ tag.label }}</mat-option>
+                        </mat-select>
+                        <mat-hint>Usati dall'app cliente per suggerire corsi più pertinenti.</mat-hint>
+                    </mat-form-field>
+
                     <mat-form-field appearance="outline" *ngIf="!userForm.value.sendCompletionLink">
                         <mat-label>Password</mat-label>
                         <input matInput type="password" formControlName="password" placeholder="Password provvisoria">

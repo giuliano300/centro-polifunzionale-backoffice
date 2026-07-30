@@ -99,7 +99,13 @@ export class SpacesComponent {
     }
 
     getRentalUnitLabel(item: Spaces): string {
-      return item.rentalUnit === 'workstation' ? 'Postazioni' : 'Stanza intera';
+      if (item.rentalUnit === 'workstation') {
+        return 'Postazioni';
+      }
+
+      return item.sectorEnabled && Number(item.sectorCount || 1) > 1
+        ? `Stanza ad aree (${item.sectorCount})`
+        : 'Stanza intera';
     }
 
     getRentalModesLabel(item: Spaces): string {
@@ -115,10 +121,16 @@ export class SpacesComponent {
       const rates: string[] = [];
       if ((item.rentalModes || ['time']).includes('time')) {
         rates.push(`${item.hourlyRate || 0}/frazione`);
+        if (item.sectorEnabled && Number(item.sectorCount || 1) > 1) {
+          rates.push(`${item.sectorRate || item.hourlyRate || 0}/area`);
+        }
       }
       const daily = item.dailyRate ? `${item.dailyRate}/giorno` : null;
       if ((item.rentalModes || []).includes('full_day') && daily) {
         rates.push(daily);
+        if (item.sectorEnabled && Number(item.sectorCount || 1) > 1) {
+          rates.push(`${item.sectorDailyRate || item.dailyRate || 0}/area giorno`);
+        }
       }
       return rates.length ? rates.join(' - ') : '-';
     }

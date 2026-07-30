@@ -9,4 +9,6 @@ export interface AuthUser {
   password: string;
   role: UserRole;
   isActive?: boolean;
+  registrationStatus?: 'complete' | 'invited';
+  interestedTags?: string[];
 }

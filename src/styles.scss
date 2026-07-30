@@ -619,6 +619,12 @@ button.table-action-button.action-delete.mat-mdc-button {
     padding-top: 0 !important;
 }
 
+.mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field .mat-mdc-text-field-wrapper {
+    border-radius: var(--radius) !important;
+    padding: 0 15px 0 50px !important;
+    border: 1px solid #f5f7fa !important;
+}
+
 .mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field .mat-mdc-form-field-hint,
 .mat-mdc-card.trinta-card .mat-mdc-card-content .mat-mdc-form-field mat-hint {
     color: var(--ui-text-muted) !important;
