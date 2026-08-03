@@ -1,0 +1,17 @@
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Impostazioni</li><li class="breadcrumb-item active">Tag corsi</li></ol></nav>
+<section class="page-head-card"><div><h1>Tag corsi</h1><p>Crea e gestisci le categorie usate per interessi, corsi e notifiche mirate.</p></div></section>
+<mat-card class="trinta-card mb-25 bg-white border-none d-block"><mat-card-content>
+  <p class="feedback" *ngIf="message">{{ message }}</p>
+  <form [formGroup]="form" (ngSubmit)="save()" class="tag-form">
+    <mat-form-field><mat-label>Codice</mat-label><input matInput formControlName="value" placeholder="es. fotografia" [readonly]="!!editingId"><mat-hint>Minuscole, numeri e trattini.</mat-hint></mat-form-field>
+    <mat-form-field><mat-label>Etichetta</mat-label><input matInput formControlName="label" placeholder="Fotografia"></mat-form-field>
+    <mat-form-field><mat-label>Ordine</mat-label><input matInput type="number" min="0" formControlName="sortOrder"></mat-form-field>
+    <mat-slide-toggle formControlName="isActive">Attivo</mat-slide-toggle>
+    <div class="form-actions"><button mat-button class="action-save" type="submit" [disabled]="isSaving">{{ editingId ? 'Salva modifiche' : 'Aggiungi tag' }}</button><button *ngIf="editingId" mat-button type="button" class="action-cancel" (click)="cancel()">Annulla</button></div>
+  </form>
+</mat-card-content></mat-card>
+<mat-card class="trinta-card bg-white border-none d-block"><mat-card-content><div class="tag-list">
+  <div class="tag-row tag-head"><span>Etichetta</span><span>Codice</span><span>Ordine</span><span>Stato</span><span>Azioni</span></div>
+  <div class="tag-row" *ngFor="let tag of tags"><strong>{{ tag.label }}</strong><code>{{ tag.value }}</code><span>{{ tag.sortOrder || 0 }}</span><span>{{ tag.isActive !== false ? 'Attivo' : 'Disattivato' }}</span><div><button mat-button class="action-filter" type="button" (click)="edit(tag)">Modifica</button><button mat-button class="action-delete" type="button" (click)="remove(tag)">Elimina</button></div></div>
+  <p *ngIf="!tags.length">Nessun tag presente.</p>
+</div></mat-card-content></mat-card>

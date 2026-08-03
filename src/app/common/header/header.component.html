@@ -12,7 +12,7 @@
                     <span *ngIf="notifications.unread$ | async as unread">{{ unread }}</span>
                 </button>
                 <div class="notification-panel" *ngIf="isNotificationsOpen">
-                    <button class="notification-item" type="button" *ngFor="let item of notifications.notifications$ | async" (click)="openNotification(item.link)">
+                    <button class="notification-item" type="button" *ngFor="let item of notifications.notifications$ | async" (click)="openNotification(item)">
                         <strong>{{ item.title }}</strong>
                         <span>{{ item.message }}</span>
                     </button>

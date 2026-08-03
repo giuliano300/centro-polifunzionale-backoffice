@@ -17,6 +17,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { CancellationRequestsComponent } from './pages/cancellation-requests/cancellation-requests.component';
 import { SystemSettingsComponent } from './pages/system-settings/system-settings.component';
 import { DiscountCodesComponent } from './pages/discount-codes/discount-codes.component';
+import { CourseTagsComponent } from './pages/course-tags/course-tags.component';
 
 export const routes: Routes = [
     { path: '', redirectTo : '/dashboard', pathMatch: 'full' },
@@ -48,6 +49,7 @@ export const routes: Routes = [
             { path: 'cancellation-requests', component: CancellationRequestsComponent },
             { path: 'wallet-client-settings', component: SystemSettingsComponent, data: { walletRole: 'cliente' } },
             { path: 'wallet-manager-settings', component: SystemSettingsComponent, data: { walletRole: 'gestore' } },
+            { path: 'course-tag-settings', component: CourseTagsComponent },
             { path: 'wallet-settings', redirectTo: 'wallet-client-settings', pathMatch: 'full' },
             { path: 'system-settings', redirectTo: 'wallet-client-settings', pathMatch: 'full' }
         ]

@@ -18,6 +18,9 @@ import { CourseService } from '../../services/Course.service';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { CourseDialogComponent } from '../spaces/bookings/course-dialog/course-dialog.component';
 import { FeathericonsModule } from '../../icons/feathericons/feathericons.module';
+import { UsersService } from '../../services/User.service';
+import { AuthUser } from '../../interfaces/auth-user';
+import { UserRole } from '../../interfaces/roles/roles';
 
 @Component({
   selector: 'app-courses',
@@ -26,9 +29,10 @@ import { FeathericonsModule } from '../../icons/feathericons/feathericons.module
   styleUrl: './courses.component.scss'
 })
 export class CoursesComponent {
-  displayedColumns: string[] = ['title', 'space', 'date', 'time', 'capacity', 'enrollmentType', 'price', 'isPublished', 'approval', 'subscribers', 'edit', 'delete'];
+  displayedColumns: string[] = ['title', 'manager', 'space', 'date', 'time', 'capacity', 'enrollmentType', 'price', 'isPublished', 'approval', 'subscribers', 'edit', 'delete'];
   dataSource = new MatTableDataSource<Course>([]);
   courses: Course[] = [];
+  managers: AuthUser[] = [];
   filterForm: FormGroup;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -38,20 +42,23 @@ export class CoursesComponent {
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private usersService: UsersService
   ) {
     const defaultRange = this.getCurrentMonthRange();
     this.filterForm = this.fb.group({
       startDate: [defaultRange.startDate],
       endDate: [defaultRange.endDate],
       search: [''],
-      status: ['']
+      status: [''],
+      managerId: ['']
     });
   }
 
   ngOnInit(): void {
     this.applyQueryDateSelection();
     this.getCourses();
+    this.usersService.getUsers('', UserRole.Gestore).subscribe((users) => this.managers = users);
   }
 
   getCourses(): void {
@@ -60,7 +67,8 @@ export class CoursesComponent {
       start: dateRange.start,
       end: dateRange.end,
       status: this.filterForm.value.status,
-      search: this.filterForm.value.search
+      search: this.filterForm.value.search,
+      managerId: this.filterForm.value.managerId
     }).subscribe((data: Course[]) => {
       this.courses = data;
       this.dataSource = new MatTableDataSource<Course>(this.courses);
@@ -74,12 +82,17 @@ export class CoursesComponent {
 
   resetFilters(): void {
     const defaultRange = this.getCurrentMonthRange();
-    this.filterForm.patchValue({ startDate: defaultRange.startDate, endDate: defaultRange.endDate, search: '', status: '' });
+    this.filterForm.patchValue({ startDate: defaultRange.startDate, endDate: defaultRange.endDate, search: '', status: '', managerId: '' });
     this.applyFilters();
   }
 
   getBooking(course: Course): Bookings | null {
     return typeof course.booking === 'string' ? null : course.booking;
+  }
+
+  getManagerName(course: Course): string {
+    const user = this.getBooking(course)?.user;
+    return user?.name || user?.email || '-';
   }
 
   getDate(course: Course): string {

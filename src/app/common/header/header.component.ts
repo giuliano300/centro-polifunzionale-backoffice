@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { FeathericonsModule } from '../../icons/feathericons/feathericons.module';
 import { ToggleService } from './toggle.service';
 import { AuthService } from '../../services/auth.service';
-import { NotificationService } from '../../services/Notification.service';
+import { AppNotification, NotificationService } from '../../services/Notification.service';
 
 @Component({
     selector: 'app-header',
@@ -61,12 +61,15 @@ export class HeaderComponent {
         }
     }
 
-    openNotification(link?: string) {
-        if (!link) {
+    openNotification(item: AppNotification) {
+        if (!item.link) {
             return;
         }
+        if (item.type === 'course_chat_moderation') {
+            sessionStorage.setItem('moderationNotification', JSON.stringify(item));
+        }
         this.isNotificationsOpen = false;
-        this.router.navigateByUrl(link);
+        this.router.navigateByUrl(item.link);
     }
 
 }

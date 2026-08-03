@@ -9,6 +9,7 @@ export interface CourseFilters {
   end?: string;
   status?: string;
   search?: string;
+  managerId?: string;
 }
 
 @Injectable({

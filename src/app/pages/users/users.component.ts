@@ -41,6 +41,8 @@ export class UsersComponent {
   walletCreditMessage = '';
   walletCreditMessageType: 'success' | 'error' = 'success';
   completeUrl = '';
+  moderationTarget: UserRow | null = null;
+  moderationMessage = '';
   courseTagOptions: Array<{ value: string; label: string }> = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -76,11 +78,14 @@ export class UsersComponent {
   ngOnInit(): void {
     this.loadTags();
     this.route.queryParamMap.subscribe((params) => {
+      const moderationUserId = params.get('moderation') === '1' ? params.get('userId') : null;
+      const storedModeration = sessionStorage.getItem('moderationNotification');
+      this.moderationMessage = storedModeration ? JSON.parse(storedModeration)?.message || '' : '';
       this.filterForm.patchValue({
         search: params.get('search') || '',
         role: params.get('role') || ''
       }, { emitEvent: false });
-      this.getUsers();
+      this.getUsers(moderationUserId);
     });
   }
 
@@ -95,7 +100,7 @@ export class UsersComponent {
     });
   }
 
-  getUsers(): void {
+  getUsers(moderationUserId?: string | null): void {
     this.usersService.getUsers(this.filterForm.value.search, this.filterForm.value.role).subscribe((data: AuthUser[]) => {
       this.users = data.map((user) => ({
         ...user,
@@ -106,6 +111,7 @@ export class UsersComponent {
       }));
       this.dataSource = new MatTableDataSource<UserRow>(this.users);
       this.dataSource.paginator = this.paginator;
+      if (moderationUserId) this.moderationTarget = this.users.find((user) => user._id === moderationUserId) || null;
     });
   }
 
@@ -272,6 +278,24 @@ export class UsersComponent {
 
   ToggleActive(item: UserRow): void {
     this.usersService.updateUser(item._id, { isActive: item.isActive === false }).subscribe(() => this.getUsers());
+  }
+
+  BlockModerationUser(): void {
+    if (!this.moderationTarget || this.moderationTarget.isActive === false) return;
+    this.usersService.updateUser(this.moderationTarget._id, { isActive: false }).subscribe({
+      next: () => {
+        this.moderationTarget = { ...this.moderationTarget!, isActive: false };
+        this.userMessage = 'Account bloccato. L’utente è stato disconnesso immediatamente.';
+        this.getUsers();
+      },
+      error: (error) => this.userMessage = error?.error?.message || 'Account non bloccato.'
+    });
+  }
+
+  CloseModerationReview(): void {
+    this.moderationTarget = null;
+    this.moderationMessage = '';
+    sessionStorage.removeItem('moderationNotification');
   }
 
   getStatusLabel(item: UserRow): string {
