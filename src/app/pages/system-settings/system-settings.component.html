@@ -46,6 +46,21 @@
         </div>
       </div>
 
+      <div class="amount-editor">
+        <div class="amount-icon"><i class="ri-timer-line"></i></div>
+        <div class="amount-field">
+          <label for="bookingHoldMinutes">Priorità prenotazione</label>
+          <div class="amount-input">
+            <span>MIN</span>
+            <input id="bookingHoldMinutes" type="number" min="1" max="120" step="1" formControlName="bookingHoldMinutes">
+          </div>
+          <small>Tempo concesso per completare il pagamento prima di liberare automaticamente fascia o posto.</small>
+          <small class="error" *ngIf="form.controls.bookingHoldMinutes.invalid && form.controls.bookingHoldMinutes.touched">
+            Inserisci un valore tra 1 e 120 minuti.
+          </small>
+        </div>
+      </div>
+
       <button mat-button class="action-primary" type="submit" [disabled]="form.invalid || isSaving">
         <i class="ri-save-3-line"></i>
         <span>{{ isSaving ? 'Salvataggio...' : 'Salva' }}</span>

@@ -4,4 +4,5 @@ export interface SystemSettings {
   newUserWalletCredit: number;
   newClientWalletCredit?: number;
   newManagerWalletCredit?: number;
+  bookingHoldMinutes?: number;
 }

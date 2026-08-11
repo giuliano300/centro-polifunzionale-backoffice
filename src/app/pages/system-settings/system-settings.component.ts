@@ -20,10 +20,12 @@ export class SystemSettingsComponent {
   messageType: 'success' | 'warning' = 'warning';
   savedClientCredit = 0;
   savedManagerCredit = 0;
+  savedHoldMinutes = 15;
   mode: 'cliente' | 'gestore' = 'cliente';
 
   form = this.fb.group({
-    amount: [0, [Validators.required, Validators.min(0)]]
+    amount: [0, [Validators.required, Validators.min(0)]],
+    bookingHoldMinutes: [15, [Validators.required, Validators.min(1), Validators.max(120)]]
   });
 
   constructor(private systemSettingsService: SystemSettingsService, private route: ActivatedRoute) {}
@@ -40,10 +42,12 @@ export class SystemSettingsComponent {
         const clientCredit = settings.newClientWalletCredit ?? settings.newUserWalletCredit ?? 0;
         const managerCredit = settings.newManagerWalletCredit ?? settings.newUserWalletCredit ?? 0;
         this.form.patchValue({
-          amount: this.mode === 'cliente' ? clientCredit : managerCredit
+          amount: this.mode === 'cliente' ? clientCredit : managerCredit,
+          bookingHoldMinutes: settings.bookingHoldMinutes || 15
         });
         this.savedClientCredit = clientCredit;
         this.savedManagerCredit = managerCredit;
+        this.savedHoldMinutes = settings.bookingHoldMinutes || 15;
         this.isLoading = false;
       },
       error: () => {
@@ -69,11 +73,13 @@ export class SystemSettingsComponent {
     this.systemSettingsService.updateSettings({
       newUserWalletCredit: newClientWalletCredit,
       newClientWalletCredit,
-      newManagerWalletCredit
+      newManagerWalletCredit,
+      bookingHoldMinutes: Number(this.form.value.bookingHoldMinutes || 15)
     }).subscribe({
       next: () => {
         this.savedClientCredit = newClientWalletCredit;
         this.savedManagerCredit = newManagerWalletCredit;
+        this.savedHoldMinutes = Number(this.form.value.bookingHoldMinutes || 15);
         this.messageType = 'success';
         this.message = 'Impostazioni salvate.';
         this.isSaving = false;
