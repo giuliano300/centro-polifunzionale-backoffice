@@ -10,12 +10,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
+import { NgFor } from '@angular/common';
 
 type SpaceRow = Spaces & { action: { viewDetails: string; edit: string; delete: string; toggle: string } };
 
 @Component({
   selector: 'app-spaces',
-  imports: [RouterLink, MatCardModule, MatButtonModule, MatMenuModule, MatPaginatorModule, MatTableModule, MatCheckboxModule],
+  imports: [NgFor, RouterLink, MatCardModule, MatButtonModule, MatMenuModule, MatPaginatorModule, MatTableModule, MatCheckboxModule],
   templateUrl: './spaces.component.html',
   styleUrl: './spaces.component.scss'
 })
@@ -65,9 +66,9 @@ export class SpacesComponent {
     DeleteItem(item:Spaces){
 
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        width: '860px',
-        minWidth: 'min(800px, 94vw)',
-        maxWidth: '94vw'
+        width: '480px',
+        maxWidth: '92vw',
+        data: { title: 'Eliminare questa stanza?', message: 'La stanza non sarà più disponibile nel backoffice.', detail: item.name }
       });
 
       dialogRef.afterClosed().subscribe((result: any) => {
@@ -115,6 +116,42 @@ export class SpacesComponent {
       };
 
       return (item.rentalModes || ['time']).map((mode) => labels[mode] || mode).join(', ');
+    }
+
+    getRentalModesRows(item: Spaces): string[] {
+      const labels: Record<string, string> = {
+        time: 'A tempo',
+        full_day: 'A giornata'
+      };
+
+      return (item.rentalModes || ['time']).map((mode) => labels[mode] || mode);
+    }
+
+    getRateRows(item: Spaces): Array<{ label: string; value: string }> {
+      const rates: Array<{ label: string; value: string }> = [];
+      if ((item.rentalModes || ['time']).includes('time')) {
+        rates.push({ label: 'Frazione', value: this.formatRate(item.hourlyRate) });
+        if (item.sectorEnabled && Number(item.sectorCount || 1) > 1) {
+          rates.push({ label: 'Area', value: this.formatRate(item.sectorRate || item.hourlyRate) });
+        }
+      }
+      if ((item.rentalModes || []).includes('full_day')) {
+        rates.push({ label: 'Giorno', value: this.formatRate(item.dailyRate) });
+        if (item.sectorEnabled && Number(item.sectorCount || 1) > 1) {
+          rates.push({ label: 'Area/giorno', value: this.formatRate(item.sectorDailyRate || item.dailyRate) });
+        }
+      }
+
+      return rates.length ? rates : [{ label: 'Prezzo', value: 'Non configurato' }];
+    }
+
+    private formatRate(value?: number): string {
+      return new Intl.NumberFormat('it-IT', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }).format(Number(value || 0));
     }
 
     getRatesLabel(item: Spaces): string {

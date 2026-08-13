@@ -1,21 +1,5 @@
 @use "../spaces/spaces.component.scss";
 
-.cancellation-summary {
-  h1 {
-    margin: 0;
-    color: var(--ui-text-strong);
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 1.2;
-  }
-
-  p {
-    margin: 4px 0 0;
-    color: var(--ui-text-muted);
-    line-height: 1.45;
-  }
-}
-
 .summary-value {
   display: inline-flex;
   align-items: center;
@@ -149,7 +133,6 @@
 }
 
 @media (max-width: 768px) {
-  .cancellation-summary mat-card-content,
   .mini-pagination {
     align-items: flex-start;
     flex-direction: column;

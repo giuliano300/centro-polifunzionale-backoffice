@@ -175,9 +175,9 @@ export class BookingsComponent {
 
     DeleteItem(item: BookingWithPayments){
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        width: '860px',
-        minWidth: 'min(800px, 94vw)',
-        maxWidth: '94vw'
+        width: '480px',
+        maxWidth: '92vw',
+        data: { title: 'Eliminare questa prenotazione?', message: 'La prenotazione verrà rimossa definitivamente.' }
       });
 
       dialogRef.afterClosed().subscribe((result: boolean) => {

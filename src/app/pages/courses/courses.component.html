@@ -13,11 +13,15 @@
 
 <mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
     <mat-card-content>
+        <div class="filters-head">
+            <span class="filters-head-icon"><i class="ri-filter-3-line"></i></span>
+            <div><small>FILTRI</small><h2>Filtra corsi</h2><p>Trova rapidamente i corsi per periodo, titolo, gestore e stato.</p></div>
+        </div>
         <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3">
-                        <mat-form-field class="date-range-field">
+                        <mat-form-field appearance="outline" class="date-range-field">
                             <i-feather name="calendar"></i-feather>
                             <mat-label>Intervallo date</mat-label>
                             <mat-date-range-input [rangePicker]="courseRangePicker">
@@ -31,14 +35,14 @@
                         </mat-form-field>
                     </div>
                     <div class="col-lg-2">
-                        <mat-form-field>
-                            <i-feather name="search"></i-feather>
+                        <mat-form-field appearance="outline">
                             <mat-label>Cerca</mat-label>
                             <input matInput formControlName="search" placeholder="Corso, stanza, gestore">
                         </mat-form-field>
                     </div>
                     <div class="col-lg-2">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <i-feather name="user"></i-feather>
                             <mat-label>Gestore</mat-label>
                             <mat-select formControlName="managerId">
                                 <mat-option value="">Tutti i gestori</mat-option>
@@ -47,7 +51,7 @@
                         </mat-form-field>
                     </div>
                     <div class="col-lg-2">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <i-feather name="filter"></i-feather>
                             <mat-label>Stato</mat-label>
                             <mat-select formControlName="status">
@@ -59,11 +63,11 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-1">
                         <button mat-button type="submit" class="action-filter">Filtra</button>
                     </div>
-                    <div class="col-lg-1">
-                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Oggi</button>
+                    <div class="col-lg-2">
+                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Rimuovi filtri</button>
                     </div>
                 </div>
             </div>

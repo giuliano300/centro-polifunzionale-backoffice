@@ -19,6 +19,7 @@ import { UserRole } from '../../../../interfaces/roles/roles';
 
 export interface BookingDialogData {
   space: Spaces;
+  date?: Date;
 }
 
 @Component({
@@ -60,6 +61,7 @@ export class BookingDialogComponent {
   isClientsEmpty = false;
   isAvailabilityEmpty = false;
   availabilityMaxConsecutiveTimeSlots = 1;
+  readonly sectorOptionList: Array<{ index: number; label: string }>;
   readonly UserRole = UserRole;
   private sectorSelectionBeforeChange: number[] = [];
 
@@ -71,6 +73,12 @@ export class BookingDialogComponent {
     private dialogRef: MatDialogRef<BookingDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BookingDialogData
   ) {
+    const sectorCount = Math.max(Number(this.data.space.sectorCount || 1), 1);
+    this.sectorOptionList = Array.from({ length: sectorCount }, (_, index) => ({
+      index,
+      label: this.data.space.sectorNames?.[index] || `Area ${index + 1}`,
+    }));
+
     this.searchForm = this.fb.group({
       search: ['', [Validators.required, Validators.minLength(2)]]
     });
@@ -85,7 +93,7 @@ export class BookingDialogComponent {
     this.form = this.fb.group({
       userId: ['', [Validators.required]],
       name: ['Prenotazione stanza', [Validators.required, Validators.maxLength(140)]],
-      date: ['', [Validators.required]],
+      date: [this.data.date || '', [Validators.required]],
       rentalMode: [this.data.space.rentalModes?.[0] || 'time', [Validators.required]],
       workstationQuantity: [1, [Validators.required, Validators.min(1)]],
       sectorQuantity: [this.defaultSectorQuantity(), [Validators.min(0)]],
@@ -368,14 +376,6 @@ export class BookingDialogComponent {
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(amount || 0);
   }
 
-  sectorOptions(): Array<{ index: number; label: string }> {
-    const count = Math.max(Number(this.data.space.sectorCount || 1), 1);
-    return Array.from({ length: count }, (_, index) => ({
-      index,
-      label: this.data.space.sectorNames?.[index] || `Area ${index + 1}`,
-    }));
-  }
-
   sectorLabel(indexesOrQuantity: number[] | number): string {
     const indexes = Array.isArray(indexesOrQuantity)
       ? indexesOrQuantity
@@ -400,7 +400,7 @@ export class BookingDialogComponent {
       nextValue = this.sectorSelectionBeforeChange.includes(-1) && realSelected.length
         ? realSelected
         : [-1];
-    } else if (realSelected.length >= this.sectorOptions().length) {
+    } else if (realSelected.length >= this.sectorOptionList.length) {
       nextValue = [-1];
     }
 
@@ -432,7 +432,7 @@ export class BookingDialogComponent {
       .map((value: unknown) => Number(value))
       .filter((value: number) => Number.isInteger(value));
     if (normalized.includes(-1)) {
-      return this.sectorOptions().map((sector) => sector.index);
+      return this.sectorOptionList.map((sector) => sector.index);
     }
 
     return normalized

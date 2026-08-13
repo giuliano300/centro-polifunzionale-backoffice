@@ -1,0 +1,57 @@
+<div class="sign-in-area">
+  <div class="login-shell">
+    <div class="login-shell-inner">
+      <aside class="login-brand-panel">
+        <span class="login-logo">
+          <app-nagora-logo class="login-logo-compact" [negative]="true" ariaLabel="NAgorà"></app-nagora-logo>
+          <app-nagora-logo class="login-logo-wordmark" [negative]="true" [withText]="true" ariaLabel="NAgorà"></app-nagora-logo>
+        </span>
+        <div>
+          <span class="login-edition">AMMINISTRAZIONE</span>
+          <h1>Tutto il centro.<br>Sotto controllo.</h1>
+          <p>Utenti, spazi, prenotazioni, corsi e pagamenti in un unico ambiente operativo.</p>
+        </div>
+        <div class="login-benefits">
+          <span><i class="ri-check-line"></i> Dati sempre aggiornati</span>
+          <span><i class="ri-check-line"></i> Perfetto anche da mobile</span>
+        </div>
+      </aside>
+
+      <div class="trinta-form ml-auto mr-auto">
+        <div class="login-head">
+          <span>ACCESSO RISERVATO</span>
+          <h3>NAgorà Backoffice</h3>
+          <p>Usa le credenziali del tuo profilo amministratore.</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+          <div class="form-group">
+            <label class="label d-block fw-medium mt-10">Email</label>
+            <mat-form-field>
+              <i class="ri-mail-line field-icon"></i>
+              <mat-label>Inserisci email</mat-label>
+              <input matInput formControlName="email" type="email" autocomplete="username">
+            </mat-form-field>
+          </div>
+
+          <div class="form-group">
+            <label class="label d-block fw-medium mt-10">Password</label>
+            <mat-form-field>
+              <i class="ri-lock-line field-icon"></i>
+              <mat-label>Inserisci password</mat-label>
+              <input matInput formControlName="password" [type]="hideLoginPassword ? 'password' : 'text'" autocomplete="current-password">
+              <button mat-button matSuffix class="password-toggle" type="button" (click)="hideLoginPassword = !hideLoginPassword" [attr.aria-label]="hideLoginPassword ? 'Mostra password' : 'Nascondi password'">
+                <i [class]="hideLoginPassword ? 'ri-eye-line' : 'ri-eye-off-line'"></i>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div *ngIf="errorMessage" class="login-error">{{ errorMessage }}</div>
+          <button mat-button class="action-primary" type="submit" [disabled]="form.invalid || isLoading">
+            {{ isLoading ? 'Accesso...' : 'Accedi al backoffice' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

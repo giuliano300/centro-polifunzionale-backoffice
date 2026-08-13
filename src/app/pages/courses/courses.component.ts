@@ -124,9 +124,9 @@ export class CoursesComponent {
 
   deleteItem(course: Course): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '860px',
-      minWidth: 'min(800px, 94vw)',
-      maxWidth: '94vw'
+      width: '480px',
+      maxWidth: '92vw',
+      data: { title: 'Eliminare questo corso?', message: 'Il corso non sarà più disponibile nel backoffice.', detail: course.title }
     });
 
     dialogRef.afterClosed().subscribe((result: boolean) => {

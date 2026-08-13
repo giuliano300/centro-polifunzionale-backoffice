@@ -12,7 +12,7 @@
         <p>Visualizza le prenotazioni della stanza su calendario e apri il dettaglio selezionando un giorno o un evento.</p>
     </div>
     <div class="page-head-actions">
-        <button mat-button class="action-new" (click)="CreateBooking()">
+        <button mat-button class="action-new" type="button" (click)="CreateBooking()">
             <i class="ri-add-line"></i>
             <span>Nuova prenotazione</span>
         </button>
@@ -22,21 +22,59 @@
         </button>
     </div>
 </section>
-<div class="row">
-    <div class="col-xxxl-8">
+<div class="calendar-layout">
+    <div class="calendar-period-toolbar">
+        <div class="area-filter-group" *ngIf="areaFilterOptions.length">
+          <small>AREE</small>
+          <div class="area-filter-list">
+            <button type="button" class="area-filter-option all-areas" [class.active]="!selectedAreaFilter" (click)="onAreaFilterChange('')">
+              <i class="ri-layout-grid-line"></i>
+              <span>Tutte</span>
+            </button>
+            <button
+              *ngFor="let area of areaFilterOptions"
+              type="button"
+              class="area-filter-option"
+              [class.active]="selectedAreaFilter === area.value"
+              [class.muted]="selectedAreaFilter && selectedAreaFilter !== area.value"
+              [style.--area-filter-color]="area.color"
+              (click)="onAreaFilterChange(area.value)">
+              <i></i>
+              <span>{{area.label}}</span>
+            </button>
+          </div>
+        </div>
+        <div class="period-filter-group">
+          <small>PERIODO</small>
+          <div class="calendar-controls">
+            <button mat-button type="button" class="action-filter" (click)="previousMonth()" aria-label="Mese precedente">
+                <i class="ri-arrow-left-s-line"></i>
+            </button>
+            <input class="calendar-period-input" [matDatepicker]="spaceCalendarPeriodPicker" tabindex="-1" aria-hidden="true">
+            <mat-datepicker
+                #spaceCalendarPeriodPicker
+                startView="multi-year"
+                panelClass="calendar-period-picker"
+                (monthSelected)="selectCalendarMonth($event, spaceCalendarPeriodPicker)">
+            </mat-datepicker>
+            <button mat-button type="button" class="calendar-period-label" (click)="spaceCalendarPeriodPicker.open()" aria-label="Scegli mese e anno">
+                <span>{{calendarMonthLabel()}}</span>
+                <i class="ri-calendar-2-line"></i>
+            </button>
+            <button mat-button type="button" class="action-filter" (click)="nextMonth()" aria-label="Mese successivo">
+                <i class="ri-arrow-right-s-line"></i>
+            </button>
+          </div>
+        </div>
+    </div>
+
+    <div>
         <mat-card class="trinta-card full-calendar-card mb-25 bg-white border-none d-block">
             <mat-card-content>
-                <full-calendar [options]="calendarOptions"></full-calendar>
+                <full-calendar #fullCalendar [options]="calendarOptions"></full-calendar>
             </mat-card-content>
         </mat-card>
     </div>
-    <div class="col-xxxl-4 col-lg-5 col-md-12">
-        <app-working-schedule
-            [month]="month"
-            [year]="year"
-            [selectedDate]="selectedDate"
-            [bookings]="bookingWithPayments"
-            (bookingSelected)="openBookingDetail($event)"
-        />
-    </div>
 </div>
+
+<app-booking-detail-modal [booking]="selectedBookingDetail" (closed)="closeBookingDetail()"></app-booking-detail-modal>

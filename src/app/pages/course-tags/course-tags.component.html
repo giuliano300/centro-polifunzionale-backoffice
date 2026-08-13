@@ -1,17 +1,120 @@
-<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Impostazioni</li><li class="breadcrumb-item active">Tag corsi</li></ol></nav>
-<section class="page-head-card"><div><h1>Tag corsi</h1><p>Crea e gestisci le categorie usate per interessi, corsi e notifiche mirate.</p></div></section>
-<mat-card class="trinta-card mb-25 bg-white border-none d-block"><mat-card-content>
-  <p class="feedback" *ngIf="message">{{ message }}</p>
-  <form [formGroup]="form" (ngSubmit)="save()" class="tag-form">
-    <mat-form-field><mat-label>Codice</mat-label><input matInput formControlName="value" placeholder="es. fotografia" [readonly]="!!editingId"><mat-hint>Minuscole, numeri e trattini.</mat-hint></mat-form-field>
-    <mat-form-field><mat-label>Etichetta</mat-label><input matInput formControlName="label" placeholder="Fotografia"></mat-form-field>
-    <mat-form-field><mat-label>Ordine</mat-label><input matInput type="number" min="0" formControlName="sortOrder"></mat-form-field>
-    <mat-slide-toggle formControlName="isActive">Attivo</mat-slide-toggle>
-    <div class="form-actions"><button mat-button class="action-save" type="submit" [disabled]="isSaving">{{ editingId ? 'Salva modifiche' : 'Aggiungi tag' }}</button><button *ngIf="editingId" mat-button type="button" class="action-cancel" (click)="cancel()">Annulla</button></div>
-  </form>
-</mat-card-content></mat-card>
-<mat-card class="trinta-card bg-white border-none d-block"><mat-card-content><div class="tag-list">
-  <div class="tag-row tag-head"><span>Etichetta</span><span>Codice</span><span>Ordine</span><span>Stato</span><span>Azioni</span></div>
-  <div class="tag-row" *ngFor="let tag of tags"><strong>{{ tag.label }}</strong><code>{{ tag.value }}</code><span>{{ tag.sortOrder || 0 }}</span><span>{{ tag.isActive !== false ? 'Attivo' : 'Disattivato' }}</span><div><button mat-button class="action-filter" type="button" (click)="edit(tag)">Modifica</button><button mat-button class="action-delete" type="button" (click)="remove(tag)">Elimina</button></div></div>
-  <p *ngIf="!tags.length">Nessun tag presente.</p>
-</div></mat-card-content></mat-card>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb"><li class="breadcrumb-item">Impostazioni</li><li class="breadcrumb-item active">Tag corsi</li></ol>
+</nav>
+
+<section class="page-head-card">
+  <div>
+    <h1>Tag corsi</h1>
+    <p>Crea e gestisci le categorie usate per interessi, corsi e notifiche mirate.</p>
+  </div>
+  <button *ngIf="!editorOpen" mat-button type="button" class="action-new" (click)="add()">
+    <i class="ri-add-line"></i>
+    <span>Aggiungi tag</span>
+  </button>
+</section>
+
+<p class="feedback" *ngIf="message"><i class="ri-checkbox-circle-line"></i><span>{{ message }}</span></p>
+
+<mat-card *ngIf="editorOpen" class="trinta-card tag-editor-card mb-25 bg-white border-none d-block">
+  <mat-card-content>
+    <div class="tag-editor-head">
+      <span class="tag-editor-icon"><i [class]="editingId ? 'ri-edit-line' : 'ri-price-tag-3-line'"></i></span>
+      <div>
+        <small>{{ editingId ? 'MODIFICA' : 'NUOVO TAG' }}</small>
+        <h2>{{ editingId ? 'Aggiorna il tag selezionato' : 'Aggiungi una nuova categoria' }}</h2>
+        <p>Definisci un codice tecnico, un’etichetta leggibile e l’ordine di visualizzazione.</p>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="tag-form">
+      <div class="tag-fields">
+        <mat-form-field appearance="outline">
+          <mat-label>Codice</mat-label>
+          <input matInput formControlName="value" placeholder="es. fotografia" [readonly]="!!editingId">
+          <mat-hint>Minuscole, numeri e trattini.</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Etichetta</mat-label>
+          <input matInput formControlName="label" placeholder="Fotografia">
+          <mat-hint>Nome mostrato agli utenti.</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ordine</mat-label>
+          <input matInput type="number" min="0" formControlName="sortOrder">
+          <mat-hint>Priorità nell’elenco.</mat-hint>
+        </mat-form-field>
+
+      </div>
+
+      <div class="tag-form-footer">
+        <div class="tag-active-control">
+          <span class="tag-active-icon"><i class="ri-eye-line"></i></span>
+          <div><strong>Tag attivo</strong><small>Rendilo disponibile nei corsi e negli interessi.</small></div>
+          <mat-slide-toggle formControlName="isActive" aria-label="Tag attivo"></mat-slide-toggle>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" class="action-cancel" (click)="cancel()">
+            <i class="ri-close-line"></i><span>Annulla</span>
+          </button>
+          <button mat-button type="submit" [class.action-new]="!editingId" [class.action-save]="!!editingId" [disabled]="isSaving">
+            <i [class]="editingId ? 'ri-save-line' : 'ri-add-line'"></i>
+            <span>{{ editingId ? 'Salva modifiche' : 'Aggiungi tag' }}</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="trinta-card to-do-list-card tag-table-card bg-white border-none d-block">
+  <mat-card-content>
+    <div class="to-do-list-table">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="tags">
+          <ng-container matColumnDef="label">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Etichetta</th>
+            <td mat-cell *matCellDef="let tag" class="pl-0"><h6 class="mt-0 mb-0">{{ tag.label }}</h6></td>
+          </ng-container>
+
+          <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Codice</th>
+            <td mat-cell *matCellDef="let tag" class="pl-0"><code>{{ tag.value }}</code></td>
+          </ng-container>
+
+          <ng-container matColumnDef="sortOrder">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Ordine</th>
+            <td mat-cell *matCellDef="let tag" class="pl-0"><h6 class="mt-0 mb-0">{{ tag.sortOrder || 0 }}</h6></td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="pl-0">Stato</th>
+            <td mat-cell *matCellDef="let tag" class="pl-0">
+              <span class="status-badge" [class.inactive]="tag.isActive === false">{{ tag.isActive !== false ? 'Attivo' : 'Disattivato' }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="edit">
+            <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Modifica</th>
+            <td mat-cell *matCellDef="let tag" class="text-center pr-0">
+              <div class="action"><button mat-button class="table-action-button action-filter" type="button" (click)="edit(tag)" title="Modifica tag" aria-label="Modifica tag"><i class="ri-edit-line"></i></button></div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="delete">
+            <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Elimina</th>
+            <td mat-cell *matCellDef="let tag" class="text-center pr-0">
+              <div class="action"><button mat-button class="table-action-button action-delete" type="button" (click)="remove(tag)" title="Elimina tag" aria-label="Elimina tag"><i class="ri-delete-bin-line"></i></button></div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['label', 'value', 'sortOrder', 'status', 'edit', 'delete']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['label', 'value', 'sortOrder', 'status', 'edit', 'delete'];"></tr>
+          <tr class="mat-row" *matNoDataRow><td class="mat-cell text-center no-data" colspan="6">Nessun tag presente</td></tr>
+        </table>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

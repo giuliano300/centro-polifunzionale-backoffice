@@ -13,8 +13,8 @@
     --mdc-plain-tooltip-supporting-text-font: var(--fontFamily);
     --mdc-filled-text-field-caret-color: var(--primaryColor);
     --mdc-filled-text-field-focus-active-indicator-color: var(--primaryColor);
-    --mat-divider-color: rgba(0, 0, 0, .12);
-    --mat-tab-header-divider-color: rgba(0, 0, 0, .12);
+    --mat-divider-color: color-mix(in srgb, var(--color-shadow) 12%, transparent);
+    --mat-tab-header-divider-color: color-mix(in srgb, var(--color-shadow) 12%, transparent);
     --mdc-filled-text-field-focus-label-text-color: var(--primaryColor);
     --mdc-filled-text-field-label-text-font: var(--fontFamily);
     --mdc-filled-text-field-label-text-size: var(--fontSize);
@@ -158,40 +158,40 @@
     --mdc-text-button-container-shape: 5px;
     --mat-card-subtitle-text-line-height: 1.2;
     --mat-select-panel-background-color: var(--whiteColor);
-    --mat-option-focus-state-layer-color: rgba(0, 0, 0, .04);
-    --mat-option-selected-state-layer-color: rgba(0, 0, 0, .06);
+    --mat-option-focus-state-layer-color: color-mix(in srgb, var(--color-shadow) 4%, transparent);
+    --mat-option-selected-state-layer-color: color-mix(in srgb, var(--color-shadow) 6%, transparent);
     --mat-option-selected-state-label-text-color: var(--primaryColor);
     --mat-datepicker-calendar-container-background-color: var(--whiteColor);
-    --mat-datepicker-calendar-container-elevation-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    --mat-datepicker-calendar-container-elevation-shadow: color-mix(in srgb, var(--color-shadow) 20%, transparent) 0px 8px 24px;
     --mat-datepicker-calendar-container-shape: 5px;
     --mat-autocomplete-background-color: var(--whiteColor);
     --mdc-protected-button-container-shape: 5px;
-    --mat-standard-button-toggle-divider-color: #e0e0e0;
+    --mat-standard-button-toggle-divider-color: var(--color-border);
     --mat-bottom-sheet-container-background-color: var(--whiteColor);
     --mat-bottom-sheet-container-shape: 5px;
     --mat-list-active-indicator-shape: 5px;
     --mdc-protected-button-container-color: var(--whiteColor);
     --mdc-fab-container-color: var(--whiteColor);
-    --mdc-fab-focus-container-elevation-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    --mdc-fab-focus-container-elevation-shadow: color-mix(in srgb, var(--color-shadow) 20%, transparent) 0px 7px 29px 0px;
     --mdc-extended-fab-container-shape: 5px;
-    --mdc-extended-fab-container-elevation-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    --mdc-fab-small-container-elevation-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    --mdc-fab-hover-container-elevation-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    --mdc-fab-container-elevation-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    --mdc-extended-fab-container-elevation-shadow: color-mix(in srgb, var(--color-shadow) 20%, transparent) 0px 7px 29px 0px;
+    --mdc-fab-small-container-elevation-shadow: color-mix(in srgb, var(--color-shadow) 20%, transparent) 0px 7px 29px 0px;
+    --mdc-fab-hover-container-elevation-shadow: color-mix(in srgb, var(--color-shadow) 20%, transparent) 0px 7px 29px 0px;
+    --mdc-fab-container-elevation-shadow: color-mix(in srgb, var(--color-shadow) 20%, transparent) 0px 7px 29px 0px;
     --mat-fab-hover-state-layer-opacity: 0.03;
     --mdc-outlined-button-container-shape: 5px;
     --mdc-filled-button-container-shape: 5px;
-    --mdc-outlined-button-outline-color: rgba(0, 0, 0, .12);
+    --mdc-outlined-button-outline-color: color-mix(in srgb, var(--color-shadow) 12%, transparent);
     --mdc-fab-small-container-color: var(--whiteColor);
     --mdc-fab-small-container-shape: 5px;
     --mdc-fab-container-shape: 5px;
-    --mdc-chip-outline-color: rgba(0, 0, 0, .12);
-    --mdc-chip-elevated-selected-container-color: #f5f7fa;
-    --mdc-chip-focus-outline-color: rgba(0, 0, 0, .20);
+    --mdc-chip-outline-color: color-mix(in srgb, var(--color-shadow) 12%, transparent);
+    --mdc-chip-elevated-selected-container-color: var(--color-bg);
+    --mdc-chip-focus-outline-color: color-mix(in srgb, var(--color-shadow) 20%, transparent);
     --mat-expansion-container-background-color: var(--whiteColor);
     --mat-expansion-container-shape: 5px;
-    --mat-expansion-actions-divider-color: rgba(0, 0, 0, .12);
-    --mat-stepper-line-color: rgba(0, 0, 0, .12);
+    --mat-expansion-actions-divider-color: color-mix(in srgb, var(--color-shadow) 12%, transparent);
+    --mat-stepper-line-color: color-mix(in srgb, var(--color-shadow) 12%, transparent);
 }
 html {
     --mat-stepper-header-selected-state-icon-background-color: var(--primaryColor);
@@ -217,32 +217,32 @@ html {
     --mdc-outlined-text-field-caret-color: var(--primaryColor);
     --mdc-outlined-text-field-focus-outline-color: var(--primaryColor);
     --mat-option-selected-state-label-text-color: var(--primaryColor);
-    --mat-datepicker-calendar-date-selected-disabled-state-background-color: rgba(55, 97, 238, 0.4);
-    --mat-datepicker-calendar-date-focus-state-background-color: rgba(55, 97, 238, 0.3);
-    --mat-datepicker-calendar-date-hover-state-background-color: rgba(55, 97, 238, 0.3);
-    --mat-datepicker-calendar-date-in-range-state-background-color: rgba(55, 97, 238, 0.2);
-    --mat-slider-hover-state-layer-color: rgba(55, 97, 238, 0.05);
-    --mat-slider-focus-state-layer-color: rgba(55, 97, 238, 0.2);
-    --mat-select-focused-arrow-color: rgba(55, 97, 238, 0.87);
-    --mdc-filled-text-field-focus-label-text-color: rgba(55, 97, 238, 0.87);
-    --mdc-outlined-text-field-focus-label-text-color: rgba(55, 97, 238, 0.87);
-    --mat-form-field-focus-select-arrow-color: rgba(55, 97, 238, 0.87);
-    --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.08);
-    --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.08);
+    --mat-datepicker-calendar-date-selected-disabled-state-background-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+    --mat-datepicker-calendar-date-focus-state-background-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
+    --mat-datepicker-calendar-date-hover-state-background-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
+    --mat-datepicker-calendar-date-in-range-state-background-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+    --mat-slider-hover-state-layer-color: color-mix(in srgb, var(--color-brand) 5%, transparent);
+    --mat-slider-focus-state-layer-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+    --mat-select-focused-arrow-color: color-mix(in srgb, var(--color-brand) 87%, transparent);
+    --mdc-filled-text-field-focus-label-text-color: color-mix(in srgb, var(--color-brand) 87%, transparent);
+    --mdc-outlined-text-field-focus-label-text-color: color-mix(in srgb, var(--color-brand) 87%, transparent);
+    --mat-form-field-focus-select-arrow-color: color-mix(in srgb, var(--color-brand) 87%, transparent);
+    --mdc-checkbox-disabled-selected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+    --mdc-checkbox-disabled-unselected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
     --mdc-checkbox-unselected-pressed-state-layer-opacity: 0.04;
     --mdc-checkbox-unselected-focus-state-layer-color: transparent;
     --mdc-checkbox-unselected-hover-state-layer-color: transparent;
-    --mdc-checkbox-unselected-hover-icon-color: rgba(55, 97, 238, 0.40);
-    --mdc-checkbox-unselected-focus-icon-color: rgba(55, 97, 238, 0.20);
-    --mdc-checkbox-unselected-icon-color: rgba(55, 97, 238, 0.20);
-    --mdc-checkbox-unselected-pressed-icon-color: rgba(55, 97, 238, 0.20);
+    --mdc-checkbox-unselected-hover-icon-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+    --mdc-checkbox-unselected-focus-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+    --mdc-checkbox-unselected-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+    --mdc-checkbox-unselected-pressed-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
     --mdc-switch-selected-focus-handle-color: var(--primaryColor);
     --mdc-switch-selected-hover-handle-color: var(--primaryColor);
     --mdc-switch-selected-pressed-handle-color: var(--primaryColor);
-    --mdc-switch-selected-focus-track-color: #f4f6fc;
-    --mdc-switch-selected-hover-track-color: #f4f6fc;
-    --mdc-switch-selected-pressed-track-color: #f4f6fc;
-    --mdc-switch-selected-track-color: #f4f6fc;
+    --mdc-switch-selected-focus-track-color: var(--manager-soft);
+    --mdc-switch-selected-hover-track-color: var(--manager-soft);
+    --mdc-switch-selected-pressed-track-color: var(--manager-soft);
+    --mdc-switch-selected-track-color: var(--manager-soft);
 
     .mat-mdc-fab {
         &.mat-primary {
@@ -271,7 +271,7 @@ html {
 }
 .mat-mdc-progress-bar {
     --mdc-linear-progress-active-indicator-color: var(--primaryColor);
-    --mdc-linear-progress-track-color: #e9effc;
+    --mdc-linear-progress-track-color: var(--action-filter-bg-soft);
 }
 .mat-mdc-radio-button {
     &.mat-accent {
@@ -280,14 +280,14 @@ html {
         --mdc-radio-selected-icon-color: var(--primaryColor);
         --mdc-radio-selected-pressed-icon-color: var(--primaryColor);
         --mat-radio-checked-ripple-color: var(--primaryColor);
-        --mdc-radio-unselected-icon-color: rgba(55, 97, 238, 0.20);
+        --mdc-radio-unselected-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
     }
     &.secondary {
-        --mdc-radio-selected-pressed-icon-color: #6c757d;
-        --mdc-radio-selected-focus-icon-color: #6c757d;
-        --mdc-radio-selected-hover-icon-color: #6c757d;
-        --mat-radio-checked-ripple-color: #6c757d;
-        --mdc-radio-selected-icon-color: #6c757d;
+        --mdc-radio-selected-pressed-icon-color: var(--color-muted);
+        --mdc-radio-selected-focus-icon-color: var(--color-muted);
+        --mdc-radio-selected-hover-icon-color: var(--color-muted);
+        --mat-radio-checked-ripple-color: var(--color-muted);
+        --mdc-radio-selected-icon-color: var(--color-muted);
     }
     &.success {
         --mdc-radio-selected-pressed-icon-color: var(--successColor);
@@ -318,18 +318,18 @@ html {
         --mdc-radio-selected-icon-color: var(--dangerColor);
     }
     &.light {
-        --mdc-radio-selected-pressed-icon-color: #6c757d;
-        --mdc-radio-selected-focus-icon-color: #6c757d;
-        --mdc-radio-selected-hover-icon-color: #6c757d;
-        --mat-radio-checked-ripple-color: #6c757d;
-        --mdc-radio-selected-icon-color: #6c757d;
+        --mdc-radio-selected-pressed-icon-color: var(--color-muted);
+        --mdc-radio-selected-focus-icon-color: var(--color-muted);
+        --mdc-radio-selected-hover-icon-color: var(--color-muted);
+        --mat-radio-checked-ripple-color: var(--color-muted);
+        --mdc-radio-selected-icon-color: var(--color-muted);
     }
     &.dark {
-        --mdc-radio-selected-pressed-icon-color: #000000;
-        --mdc-radio-selected-focus-icon-color: #000000;
-        --mdc-radio-selected-hover-icon-color: #000000;
-        --mat-radio-checked-ripple-color: #000000;
-        --mdc-radio-selected-icon-color: #000000;
+        --mdc-radio-selected-pressed-icon-color: var(--color-text);
+        --mdc-radio-selected-focus-icon-color: var(--color-text);
+        --mdc-radio-selected-hover-icon-color: var(--color-text);
+        --mat-radio-checked-ripple-color: var(--color-text);
+        --mdc-radio-selected-icon-color: var(--color-text);
     }
     .mdc-form-field {
         color: var(--blackColor);
@@ -341,12 +341,12 @@ html {
     --mdc-checkbox-unselected-hover-state-layer-color: transparent;
 
     &.mat-primary {
-        --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-unselected-hover-icon-color: rgba(55, 97, 238, 0.40);
-        --mdc-checkbox-unselected-focus-icon-color: rgba(55, 97, 238, 0.20);
-        --mdc-checkbox-unselected-icon-color: rgba(55, 97, 238, 0.20);
-        --mdc-checkbox-unselected-pressed-icon-color: rgba(55, 97, 238, 0.20);
+        --mdc-checkbox-disabled-selected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-disabled-unselected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-unselected-hover-icon-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+        --mdc-checkbox-unselected-focus-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+        --mdc-checkbox-unselected-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+        --mdc-checkbox-unselected-pressed-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
         --mdc-checkbox-selected-focus-icon-color: var(--primaryColor);
         --mdc-checkbox-selected-hover-icon-color: var(--primaryColor);
         --mdc-checkbox-selected-icon-color: var(--primaryColor);
@@ -356,27 +356,27 @@ html {
         --mdc-checkbox-selected-pressed-state-layer-color: var(--primaryColor);
     }
     &.mat-warn {
-        --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-unselected-hover-icon-color: rgba(55, 97, 238, 0.40);
-        --mdc-checkbox-unselected-focus-icon-color: rgba(55, 97, 238, 0.20);
-        --mdc-checkbox-unselected-icon-color: rgba(55, 97, 238, 0.20);
-        --mdc-checkbox-unselected-pressed-icon-color: rgba(55, 97, 238, 0.20);
+        --mdc-checkbox-disabled-selected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-disabled-unselected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-unselected-hover-icon-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+        --mdc-checkbox-unselected-focus-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+        --mdc-checkbox-unselected-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+        --mdc-checkbox-unselected-pressed-icon-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
     }
     &.secondary {
-        --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-selected-focus-icon-color: #6c757d;
-        --mdc-checkbox-selected-hover-icon-color: #6c757d;
-        --mdc-checkbox-selected-icon-color: #6c757d;
-        --mdc-checkbox-selected-pressed-icon-color: #6c757d;
-        --mdc-checkbox-selected-focus-state-layer-color: #6c757d;
-        --mdc-checkbox-selected-hover-state-layer-color: #6c757d;
-        --mdc-checkbox-selected-pressed-state-layer-color: #6c757d;
+        --mdc-checkbox-disabled-selected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-disabled-unselected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-selected-focus-icon-color: var(--color-muted);
+        --mdc-checkbox-selected-hover-icon-color: var(--color-muted);
+        --mdc-checkbox-selected-icon-color: var(--color-muted);
+        --mdc-checkbox-selected-pressed-icon-color: var(--color-muted);
+        --mdc-checkbox-selected-focus-state-layer-color: var(--color-muted);
+        --mdc-checkbox-selected-hover-state-layer-color: var(--color-muted);
+        --mdc-checkbox-selected-pressed-state-layer-color: var(--color-muted);
     }
     &.success {
-        --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.08);
+        --mdc-checkbox-disabled-selected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-disabled-unselected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
         --mdc-checkbox-selected-focus-icon-color: var(--successColor);
         --mdc-checkbox-selected-hover-icon-color: var(--successColor);
         --mdc-checkbox-selected-icon-color: var(--successColor);
@@ -386,8 +386,8 @@ html {
         --mdc-checkbox-selected-pressed-state-layer-color: var(--successColor);
     }
     &.info {
-        --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.08);
+        --mdc-checkbox-disabled-selected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-disabled-unselected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
         --mdc-checkbox-selected-focus-icon-color: var(--infoColor);
         --mdc-checkbox-selected-hover-icon-color: var(--infoColor);
         --mdc-checkbox-selected-icon-color: var(--infoColor);
@@ -397,8 +397,8 @@ html {
         --mdc-checkbox-selected-pressed-state-layer-color: var(--infoColor);
     }
     &.danger {
-        --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.08);
+        --mdc-checkbox-disabled-selected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-disabled-unselected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
         --mdc-checkbox-selected-focus-icon-color: var(--dangerColor);
         --mdc-checkbox-selected-hover-icon-color: var(--dangerColor);
         --mdc-checkbox-selected-icon-color: var(--dangerColor);
@@ -408,26 +408,26 @@ html {
         --mdc-checkbox-selected-pressed-state-layer-color: var(--dangerColor);
     }
     &.light {
-        --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-selected-focus-icon-color: #6c757d;
-        --mdc-checkbox-selected-hover-icon-color: #6c757d;
-        --mdc-checkbox-selected-icon-color: #6c757d;
-        --mdc-checkbox-selected-pressed-icon-color: #6c757d;
-        --mdc-checkbox-selected-focus-state-layer-color: #6c757d;
-        --mdc-checkbox-selected-hover-state-layer-color: #6c757d;
-        --mdc-checkbox-selected-pressed-state-layer-color: #6c757d;
+        --mdc-checkbox-disabled-selected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-disabled-unselected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-selected-focus-icon-color: var(--color-muted);
+        --mdc-checkbox-selected-hover-icon-color: var(--color-muted);
+        --mdc-checkbox-selected-icon-color: var(--color-muted);
+        --mdc-checkbox-selected-pressed-icon-color: var(--color-muted);
+        --mdc-checkbox-selected-focus-state-layer-color: var(--color-muted);
+        --mdc-checkbox-selected-hover-state-layer-color: var(--color-muted);
+        --mdc-checkbox-selected-pressed-state-layer-color: var(--color-muted);
     }
     &.dark {
-        --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.08);
-        --mdc-checkbox-selected-focus-icon-color: #000000;
-        --mdc-checkbox-selected-hover-icon-color: #000000;
-        --mdc-checkbox-selected-icon-color: #000000;
-        --mdc-checkbox-selected-pressed-icon-color: #000000;
-        --mdc-checkbox-selected-focus-state-layer-color: #000000;
-        --mdc-checkbox-selected-hover-state-layer-color: #000000;
-        --mdc-checkbox-selected-pressed-state-layer-color: #000000;
+        --mdc-checkbox-disabled-selected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-disabled-unselected-icon-color: color-mix(in srgb, var(--color-shadow) 8%, transparent);
+        --mdc-checkbox-selected-focus-icon-color: var(--color-text);
+        --mdc-checkbox-selected-hover-icon-color: var(--color-text);
+        --mdc-checkbox-selected-icon-color: var(--color-text);
+        --mdc-checkbox-selected-pressed-icon-color: var(--color-text);
+        --mdc-checkbox-selected-focus-state-layer-color: var(--color-text);
+        --mdc-checkbox-selected-hover-state-layer-color: var(--color-text);
+        --mdc-checkbox-selected-pressed-state-layer-color: var(--color-text);
     }
     .mdc-form-field>label {
         padding-left: 0;

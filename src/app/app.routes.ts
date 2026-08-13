@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
-import { NotFoundComponent } from './common/not-found/not-found.component';
-import { SignInComponent } from './authentication/sign-in/sign-in.component';
-import { AuthenticationComponent } from './authentication/authentication.component';
-import { AuthGuard } from './authGuard/AuthGuard';
+import { authGuard } from './core/auth.guard';
+import { LoginComponent } from './pages/login/login.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { SpacesComponent } from './pages/spaces/spaces.component';
 import { BookingsComponent } from './pages/spaces/bookings/bookings.component';
 import { CalendarComponent } from './pages/spaces/booking-calendar/calendar.component';
@@ -13,46 +12,39 @@ import { BookingsListComponent } from './pages/bookings/bookings-list.component'
 import { PaymentsComponent } from './pages/payments/payments.component';
 import { CoursesComponent } from './pages/courses/courses.component';
 import { CourseBookingsComponent } from './pages/course-bookings/course-bookings.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { CancellationRequestsComponent } from './pages/cancellation-requests/cancellation-requests.component';
 import { SystemSettingsComponent } from './pages/system-settings/system-settings.component';
 import { DiscountCodesComponent } from './pages/discount-codes/discount-codes.component';
 import { CourseTagsComponent } from './pages/course-tags/course-tags.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo : '/dashboard', pathMatch: 'full' },
-    {
-        path: 'authentication',
-        component: AuthenticationComponent,
-        children: [
-            {path: '', component: SignInComponent},
-        ]
-    },
-    {
-        path: '',
-        canActivate: [AuthGuard],
-        children: [
-            { path: 'dashboard', component: DashboardComponent },
-            { path: 'spaces', component: SpacesComponent },
-            { path: 'spaces/add', component: SpaceFormComponent },
-            { path: 'spaces/add/:id', component: SpaceFormComponent },
-            { path: 'space/bookings/:id', component: BookingsComponent },
-            { path: 'space/bookings-calendar/:id/:month/:year', component: CalendarComponent },
-            { path: 'users/add', component: UserFormComponent },
-            { path: 'users', component: UsersComponent },
-            { path: 'bookings', component: BookingsListComponent },
-            { path: 'payments', component: PaymentsComponent },
-            { path: 'course-payments', component: CourseBookingsComponent, data: { mode: 'payments' } },
-            { path: 'discount-codes', component: DiscountCodesComponent },
-            { path: 'courses', component: CoursesComponent },
-            { path: 'course-bookings', component: CourseBookingsComponent },
-            { path: 'cancellation-requests', component: CancellationRequestsComponent },
-            { path: 'wallet-client-settings', component: SystemSettingsComponent, data: { walletRole: 'cliente' } },
-            { path: 'wallet-manager-settings', component: SystemSettingsComponent, data: { walletRole: 'gestore' } },
-            { path: 'course-tag-settings', component: CourseTagsComponent },
-            { path: 'wallet-settings', redirectTo: 'wallet-client-settings', pathMatch: 'full' },
-            { path: 'system-settings', redirectTo: 'wallet-client-settings', pathMatch: 'full' }
-        ]
-    },
-    { path: '**', component: NotFoundComponent},
+  { path: 'login', component: LoginComponent },
+  {
+    path: '',
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'spaces', component: SpacesComponent },
+      { path: 'spaces/add', component: SpaceFormComponent },
+      { path: 'spaces/add/:id', component: SpaceFormComponent },
+      { path: 'space/bookings/:id', component: BookingsComponent },
+      { path: 'space/bookings-calendar/:id/:month/:year', component: CalendarComponent },
+      { path: 'users', component: UsersComponent },
+      { path: 'users/add', component: UserFormComponent },
+      { path: 'bookings', component: BookingsListComponent },
+      { path: 'payments', component: PaymentsComponent },
+      { path: 'course-payments', component: CourseBookingsComponent, data: { mode: 'payments' } },
+      { path: 'discount-codes', component: DiscountCodesComponent },
+      { path: 'courses', component: CoursesComponent },
+      { path: 'course-bookings', component: CourseBookingsComponent },
+      { path: 'cancellation-requests', component: CancellationRequestsComponent },
+      { path: 'wallet-client-settings', component: SystemSettingsComponent, data: { walletRole: 'cliente' } },
+      { path: 'wallet-manager-settings', component: SystemSettingsComponent, data: { walletRole: 'gestore' } },
+      { path: 'course-tag-settings', component: CourseTagsComponent },
+      { path: 'wallet-settings', redirectTo: 'wallet-client-settings', pathMatch: 'full' },
+      { path: 'system-settings', redirectTo: 'wallet-client-settings', pathMatch: 'full' },
+    ],
+  },
+  { path: '**', redirectTo: 'dashboard' },
 ];

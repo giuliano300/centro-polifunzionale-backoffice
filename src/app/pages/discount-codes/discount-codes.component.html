@@ -1,28 +1,33 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li aria-current="page" class="breadcrumb-item active">Promo</li>
+    <li aria-current="page" class="breadcrumb-item active">Codici promozionali</li>
   </ol>
 </nav>
 
 <section class="page-head-card">
   <div>
-    <h1>Promo</h1>
+    <h1>Codici promozionali</h1>
     <p>Gestisci promozioni automatiche o con codice per prenotazioni e corsi, limitandole per stanza, periodo, ruolo o regola.</p>
   </div>
   <button mat-button class="action-new" type="button" (click)="openForm()" *ngIf="!isFormOpen">
     <i class="ri-add-line"></i>
     <span>Nuova promo</span>
   </button>
-  <button mat-button class="action-cancel" type="button" (click)="closeForm()" *ngIf="isFormOpen">
-    <i class="ri-close-line"></i>
-    <span>Chiudi</span>
-  </button>
 </section>
 
-<mat-card *ngIf="isFormOpen" class="trinta-card to-do-list-card mb-25 bg-white border-none d-block discount-card">
+<div *ngIf="message" class="page-message" [class.success]="messageType === 'success'" [class.delete]="messageType === 'delete'">
+  {{ message }}
+</div>
+
+<mat-card *ngIf="isFormOpen" class="trinta-card tag-editor-card mb-25 bg-white border-none d-block discount-card">
   <mat-card-content>
-    <div *ngIf="message" class="page-message" [class.success]="messageType === 'success'" [class.delete]="messageType === 'delete'">
-      {{ message }}
+    <div class="tag-editor-head">
+      <span class="tag-editor-icon"><i [class]="selected ? 'ri-edit-line' : 'ri-coupon-3-line'"></i></span>
+      <div>
+        <small>{{ selected ? 'MODIFICA' : 'NUOVA PROMO' }}</small>
+        <h2>{{ selected ? 'Aggiorna la promozione selezionata' : 'Aggiungi una nuova promozione' }}</h2>
+        <p>Configura valore, destinatari, condizioni e periodo di validità della promozione.</p>
+      </div>
     </div>
 
     <form [formGroup]="form" class="discount-form">
@@ -32,16 +37,11 @@
         <mat-hint>Nome interno e descrittivo della promozione.</mat-hint>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="description-field">
         <mat-label>Descrizione</mat-label>
         <input matInput formControlName="description" placeholder="Sconto per nuovi iscritti">
         <mat-hint>Testo utile per riconoscere lo scopo della promo.</mat-hint>
       </mat-form-field>
-
-      <div class="active-box">
-        <mat-slide-toggle formControlName="isAutomatic">Automatica</mat-slide-toggle>
-        <small>Se attiva, la promo viene applicata automaticamente quando valida. Se disattiva, serve il codice.</small>
-      </div>
 
       <mat-form-field appearance="outline">
         <mat-label>Codice</mat-label>
@@ -143,17 +143,33 @@
         <mat-hint>Lascia vuoto per utilizzi illimitati.</mat-hint>
       </mat-form-field>
 
-      <div class="active-box">
-        <mat-slide-toggle formControlName="isActive">Attivo</mat-slide-toggle>
-        <small>Se disattiva, la promo resta salvata ma non puo essere usata.</small>
+      <div class="tag-active-control promo-toggle-control">
+        <span class="tag-active-icon"><i class="ri-magic-line"></i></span>
+        <div>
+          <strong>Promozione automatica</strong>
+          <small>Se attiva viene applicata automaticamente; altrimenti è necessario il codice.</small>
+        </div>
+        <mat-slide-toggle formControlName="isAutomatic" aria-label="Promozione automatica"></mat-slide-toggle>
+      </div>
+
+      <div class="tag-active-control promo-toggle-control">
+        <span class="tag-active-icon"><i class="ri-eye-line"></i></span>
+        <div>
+          <strong>Promozione attiva</strong>
+          <small>Se disattiva, la promo resta salvata ma non può essere utilizzata.</small>
+        </div>
+        <mat-slide-toggle formControlName="isActive" aria-label="Promozione attiva"></mat-slide-toggle>
       </div>
 
       <div class="discount-actions">
-        <button mat-button class="action-save" type="button" (click)="save()" [disabled]="isSaving">
-          <i class="ri-save-3-line"></i>
-          <span>{{ isSaving ? 'Salvataggio...' : 'Salva' }}</span>
+        <button mat-button class="action-cancel" type="button" (click)="closeForm()">
+          <i class="ri-close-line"></i>
+          <span>Annulla</span>
         </button>
-        <button mat-button class="action-cancel" type="button" (click)="reset()">Annulla</button>
+        <button mat-button type="button" (click)="save()" [class.action-new]="!selected" [class.action-save]="!!selected" [disabled]="isSaving">
+          <i [class]="selected ? 'ri-save-line' : 'ri-add-line'"></i>
+          <span>{{ isSaving ? 'Salvataggio...' : (selected ? 'Salva modifiche' : 'Aggiungi promo') }}</span>
+        </button>
       </div>
     </form>
   </mat-card-content>

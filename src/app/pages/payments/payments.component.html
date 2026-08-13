@@ -1,23 +1,27 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li aria-current="page" class="breadcrumb-item active">Pagamenti</li>
+        <li aria-current="page" class="breadcrumb-item active">Incassi stanze</li>
     </ol>
 </nav>
 
 <section class="page-head-card">
     <div>
-        <h1>Pagamenti</h1>
-        <p>Verifica incassi, stati di pagamento, metodo utilizzato e ripartizione tra wallet e pagamento esterno.</p>
+        <h1>Incassi stanze</h1>
+        <p>Controlla gli incassi delle prenotazioni, gli stati, i metodi utilizzati e la ripartizione tra wallet e pagamento esterno.</p>
     </div>
 </section>
 
 <mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
     <mat-card-content>
+        <div class="filters-head">
+            <span class="filters-head-icon"><i class="ri-money-euro-circle-line"></i></span>
+            <div><small>FILTRI</small><h2>Filtra incassi stanze</h2><p>Analizza gli incassi per periodo, prenotazione, utente, stanza e stato.</p></div>
+        </div>
         <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4">
-                        <mat-form-field class="date-range-field">
+                        <mat-form-field appearance="outline" class="date-range-field">
                             <i-feather name="calendar"></i-feather>
                             <mat-label>Intervallo date</mat-label>
                             <mat-date-range-input [rangePicker]="paymentRangePicker">
@@ -31,14 +35,13 @@
                         </mat-form-field>
                     </div>
                     <div class="col-lg-3">
-                        <mat-form-field>
-                            <i-feather name="search"></i-feather>
+                        <mat-form-field appearance="outline">
                             <mat-label>Cerca</mat-label>
                             <input matInput formControlName="search" placeholder="Prenotazione, utente, stanza">
                         </mat-form-field>
                     </div>
                     <div class="col-lg-2">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <i-feather name="filter"></i-feather>
                             <mat-label>Stato</mat-label>
                             <mat-select formControlName="status">
@@ -50,17 +53,36 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-1">
                         <button mat-button type="submit" class="action-filter">Filtra</button>
                     </div>
-                    <div class="col-lg-1">
-                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Oggi</button>
+                    <div class="col-lg-2">
+                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Rimuovi filtri</button>
                     </div>
                 </div>
             </div>
         </form>
     </mat-card-content>
 </mat-card>
+
+<section class="payment-overview">
+    <article>
+        <span class="overview-icon"><i class="ri-money-euro-circle-line"></i></span>
+        <div><small>Incassato</small><strong>{{formatCurrency(totalCollected)}}</strong><span>Totale pagamenti completati</span></div>
+    </article>
+    <article>
+        <span class="overview-icon"><i class="ri-wallet-3-line"></i></span>
+        <div><small>Credito wallet</small><strong>{{formatCurrency(totalWallet)}}</strong><span>Credito utilizzato nelle prenotazioni</span></div>
+    </article>
+    <article>
+        <span class="overview-icon"><i class="ri-bank-card-line"></i></span>
+        <div><small>Incasso esterno</small><strong>{{formatCurrency(totalExternal)}}</strong><span>Carte, contanti e altri metodi</span></div>
+    </article>
+    <article class="pending">
+        <span class="overview-icon"><i class="ri-time-line"></i></span>
+        <div><small>Da incassare</small><strong>{{formatCurrency(pendingAmount)}}</strong><span>Pagamenti ancora in attesa</span></div>
+    </article>
+</section>
 
 <mat-card class="trinta-card to-do-list-card mb-25 bg-white border-none d-block">
     <mat-card-content>
@@ -108,8 +130,9 @@
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
                                 <h6 class="mt-0 mb-0">{{formatCurrency(getTotalAmount(element))}}</h6>
-                                <small *ngIf="getWalletAmount(element) > 0">
-                                    Wallet {{formatCurrency(getWalletAmount(element))}} / {{getPaymentMethodLabel(element)}} {{formatCurrency(getExternalAmount(element))}}
+                                <small *ngIf="getWalletAmount(element) > 0" class="payment-breakdown">
+                                    <span>Wallet {{formatCurrency(getWalletAmount(element))}}</span>
+                                    <span>{{getPaymentMethodLabel(element)}} {{formatCurrency(getExternalAmount(element))}}</span>
                                 </small>
                             </div>
                         </td>

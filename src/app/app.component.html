@@ -1,27 +1,104 @@
-<div
-    [ngClass]="{'blank-page': router.url === '/authentication'}"
-    [class.dark-theme]="toggleService.isDark()"
->
+<ng-container *ngIf="auth.isAuthenticated(); else publicPage">
+  <div class="app-shell" [class.sidebar-collapsed]="isSidebarCollapsed">
+    <aside class="side" [class.mobile-open]="isMobileMenuOpen" aria-label="Navigazione amministrativa">
+      <a routerLink="/" class="brand" aria-label="NAgorà Backoffice">
+        <span class="brand-mark"><app-nagora-logo [negative]="true" ariaLabel="NAgorà"></app-nagora-logo></span>
+        <span class="brand-copy"><small>Centro di controllo</small><strong>Backoffice</strong></span>
+      </a>
+      <button type="button" class="mobile-drawer-close" aria-label="Chiudi menu" (click)="closeMobileMenu()">
+        <i class="ri-close-line"></i>
+      </button>
 
-    <!-- Sidebar -->
-    <app-sidebar />
-    <button
-        type="button"
-        class="sidebar-backdrop"
-        aria-label="Chiudi menu"
-        *ngIf="isToggled"
-        (click)="toggle()">
-    </button>
+      <div class="manager-card">
+        <span class="manager-avatar">{{ managerName.charAt(0).toUpperCase() }}</span>
+        <span class="manager-copy"><small>AMMINISTRAZIONE</small><strong>{{ managerName }}</strong></span>
+      </div>
 
-    <!-- Main Content -->
-    <div
-        class="main-content transition d-flex flex-column"
-        [ngClass]="{'active': isToggled}"
-    >
-        <app-header />
-        <router-outlet />
-        <div class="flex-grow-1"></div>
-        <app-footer />
-    </div>
+      <nav>
+        <a routerLink="/dashboard" routerLinkActive="active" matTooltip="Dashboard" matTooltipPosition="right" [matTooltipDisabled]="!isSidebarCollapsed">
+          <i class="ri-dashboard-line"></i><span>Dashboard</span>
+        </a>
+        <a routerLink="/users" routerLinkActive="active" matTooltip="Utenti" matTooltipPosition="right" [matTooltipDisabled]="!isSidebarCollapsed">
+          <i class="ri-group-line"></i><span>Utenti</span>
+        </a>
+        <a routerLink="/spaces" routerLinkActive="active" matTooltip="Stanze" matTooltipPosition="right" [matTooltipDisabled]="!isSidebarCollapsed">
+          <i class="ri-building-4-line"></i><span>Stanze</span>
+        </a>
+        <a routerLink="/bookings" routerLinkActive="active" matTooltip="Prenotazioni" matTooltipPosition="right" [matTooltipDisabled]="!isSidebarCollapsed">
+          <i class="ri-calendar-check-line"></i><span>Prenotazioni</span>
+        </a>
+        <a routerLink="/courses" routerLinkActive="active" matTooltip="Corsi" matTooltipPosition="right" [matTooltipDisabled]="!isSidebarCollapsed">
+          <i class="ri-presentation-line"></i><span>Corsi</span>
+        </a>
+        <a routerLink="/payments" routerLinkActive="active" matTooltip="Incassi stanze" matTooltipPosition="right" [matTooltipDisabled]="!isSidebarCollapsed">
+          <i class="ri-bank-card-line"></i><span>Incassi stanze</span>
+        </a>
+        <a routerLink="/course-payments" routerLinkActive="active" matTooltip="Incassi corsi" matTooltipPosition="right" [matTooltipDisabled]="!isSidebarCollapsed">
+          <i class="ri-money-euro-circle-line"></i><span>Incassi corsi</span>
+        </a>
+        <a routerLink="/discount-codes" routerLinkActive="active" matTooltip="Codici promozionali" matTooltipPosition="right" [matTooltipDisabled]="!isSidebarCollapsed">
+          <i class="ri-percent-line"></i><span>Codici promozionali</span>
+        </a>
+        <a routerLink="/cancellation-requests" routerLinkActive="active" matTooltip="Richieste annullamento" matTooltipPosition="right" [matTooltipDisabled]="!isSidebarCollapsed">
+          <i class="ri-error-warning-line"></i><span>Richieste annullamento</span>
+        </a>
+      </nav>
 
-</div>
+      <div class="side-bottom">
+        <div class="side-settings" [class.open]="isSettingsMenuOpen">
+          <button type="button" class="side-settings-toggle" (click)="toggleSettingsMenu()" [attr.aria-expanded]="isSettingsMenuOpen">
+            <i class="ri-settings-3-line"></i><span>Impostazioni</span><i class="ri-arrow-down-s-line settings-chevron"></i>
+          </button>
+          <div class="side-settings-menu" *ngIf="isSettingsMenuOpen">
+            <a routerLink="/wallet-client-settings" routerLinkActive="active"><i class="ri-wallet-3-line"></i><span>Wallet clienti</span></a>
+            <a routerLink="/wallet-manager-settings" routerLinkActive="active"><i class="ri-wallet-2-line"></i><span>Wallet gestori</span></a>
+            <a routerLink="/course-tag-settings" routerLinkActive="active"><i class="ri-price-tag-3-line"></i><span>Tag corsi</span></a>
+          </div>
+        </div>
+        <button type="button" (click)="logout()"><i class="ri-logout-box-r-line"></i><span>Esci</span></button>
+      </div>
+    </aside>
+    <button type="button" class="mobile-menu-backdrop" *ngIf="isMobileMenuOpen" aria-label="Chiudi menu" (click)="closeMobileMenu()"></button>
+
+    <header class="app-header">
+      <button mat-button class="header-icon mobile-menu-toggle" type="button" (click)="toggleMobileMenu()" [attr.aria-expanded]="isMobileMenuOpen" aria-label="Apri menu">
+        <i [class]="isMobileMenuOpen ? 'ri-close-line' : 'ri-menu-line'"></i>
+      </button>
+      <a routerLink="/" class="mobile-header-logo" aria-label="NAgorà Backoffice">
+        <app-nagora-logo ariaLabel="NAgorà"></app-nagora-logo>
+      </a>
+      <button mat-button class="header-icon menu-toggle" type="button" (click)="toggleSidebar()" aria-label="Apri o chiudi il menu">
+        <i [class]="isSidebarCollapsed ? 'ri-menu-unfold-line' : 'ri-menu-fold-line'"></i>
+      </button>
+      <div class="header-welcome"><small>Area Amministrazione</small><strong>Ciao, {{ managerName }}</strong></div>
+      <div class="operation-box">
+        <button mat-button class="header-cta operation-toggle" type="button" (click)="toggleOperationsMenu()" [attr.aria-expanded]="isOperationsMenuOpen">
+          <i class="ri-add-circle-line"></i><span>Nuova operazione</span><i class="ri-arrow-down-s-line"></i>
+        </button>
+        <div class="operation-menu" *ngIf="isOperationsMenuOpen">
+          <a routerLink="/users/add" (click)="closeOperationsMenu()"><i class="ri-user-add-line"></i><span><strong>Nuovo utente</strong><small>Inserisci un cliente o un gestore</small></span></a>
+          <a routerLink="/spaces/add" (click)="closeOperationsMenu()"><i class="ri-building-4-line"></i><span><strong>Nuova stanza</strong><small>Crea uno spazio prenotabile</small></span></a>
+        </div>
+      </div>
+      <div class="notification-box">
+        <button mat-button class="header-icon notification-toggle" type="button" (click)="toggleNotifications()" aria-label="Notifiche" matTooltip="Notifiche">
+          <i class="ri-notification-3-line"></i>
+          <strong *ngIf="notifications.unread$ | async as unread">{{ unread }}</strong>
+        </button>
+        <div class="notification-list" *ngIf="isNotificationsOpen">
+          <div class="notification-head"><strong>Notifiche</strong><span>Tutto sotto controllo</span></div>
+          <button class="notification-item" type="button" *ngFor="let item of notifications.notifications$ | async" (click)="openNotification(item.link)">
+            <span><strong>{{ item.title }}</strong><small>{{ item.message }}</small></span><i class="ri-arrow-right-s-line"></i>
+          </button>
+          <div class="notification-empty" *ngIf="(notifications.notifications$ | async)?.length === 0">Sei aggiornato. Nessuna notifica.</div>
+        </div>
+      </div>
+      <a mat-button routerLink="/dashboard" class="profile-button desktop-profile-button" aria-label="Vai alla Home"><span>{{ managerName.charAt(0).toUpperCase() }}</span></a>
+    </header>
+
+    <main><router-outlet></router-outlet></main>
+
+  </div>
+</ng-container>
+
+<ng-template #publicPage><router-outlet></router-outlet></ng-template>

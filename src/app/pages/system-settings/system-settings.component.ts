@@ -97,7 +97,7 @@ export class SystemSettingsComponent {
   }
 
   pageTitle(): string {
-    return this.mode === 'cliente' ? 'Wallet nuovi clienti' : 'Wallet nuovi gestori';
+    return this.mode === 'cliente' ? 'Wallet clienti' : 'Wallet gestori';
   }
 
   currentCredit(): number {

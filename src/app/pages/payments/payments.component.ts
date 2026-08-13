@@ -107,6 +107,28 @@ export class PaymentsComponent {
     return payment.externalAmount || payment.amount || 0;
   }
 
+  get totalCollected(): number {
+    return this.payments
+      .filter((payment) => payment.status === 'PAID')
+      .reduce((total, payment) => total + this.getTotalAmount(payment), 0);
+  }
+
+  get totalWallet(): number {
+    return this.payments.reduce((total, payment) => total + this.getWalletAmount(payment), 0);
+  }
+
+  get totalExternal(): number {
+    return this.payments
+      .filter((payment) => payment.status === 'PAID')
+      .reduce((total, payment) => total + this.getExternalAmount(payment), 0);
+  }
+
+  get pendingAmount(): number {
+    return this.payments
+      .filter((payment) => payment.status === 'PENDING')
+      .reduce((total, payment) => total + this.getTotalAmount(payment), 0);
+  }
+
   getPaymentMethodLabel(payment?: Payment): string {
     const method = String(payment?.provider || payment?.method || '').toLowerCase();
     const labels: Record<string, string> = {

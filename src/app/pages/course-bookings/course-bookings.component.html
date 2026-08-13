@@ -19,11 +19,15 @@
 
 <mat-card *ngIf="isPaymentsMode" class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
     <mat-card-content>
+        <div class="filters-head">
+            <span class="filters-head-icon"><i class="ri-secure-payment-line"></i></span>
+            <div><small>FILTRI</small><h2>Filtra incassi corsi</h2><p>Seleziona periodo, corso e stato del pagamento da analizzare.</p></div>
+        </div>
         <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4">
-                        <mat-form-field class="date-range-field">
+                        <mat-form-field appearance="outline" class="date-range-field">
                             <i-feather name="calendar"></i-feather>
                             <mat-label>Intervallo date</mat-label>
                             <mat-date-range-input [rangePicker]="coursePaymentRangePicker">
@@ -36,7 +40,7 @@
                         </mat-form-field>
                     </div>
                     <div class="col-lg-3">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <i-feather name="book-open"></i-feather>
                             <mat-label>Corso</mat-label>
                             <mat-select formControlName="courseId">
@@ -48,7 +52,7 @@
                         </mat-form-field>
                     </div>
                     <div class="col-lg-2">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <i-feather name="filter"></i-feather>
                             <mat-label>Pagamento</mat-label>
                             <mat-select formControlName="paymentStatus">
@@ -59,11 +63,11 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-1">
                         <button mat-button type="submit" class="action-filter">Filtra</button>
                     </div>
-                    <div class="col-lg-1">
-                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Oggi</button>
+                    <div class="col-lg-2">
+                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Rimuovi filtri</button>
                     </div>
                 </div>
             </div>
@@ -71,7 +75,26 @@
     </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="courseDetails" class="course-summary-card trinta-card mb-25 bg-white border-none d-block">
+<section *ngIf="isPaymentsMode" class="payment-overview">
+    <article>
+        <span class="overview-icon"><i class="ri-money-euro-circle-line"></i></span>
+        <div><small>Incassato</small><strong>{{formatAmount(totalCollected)}}</strong><span>Totale pagamenti completati</span></div>
+    </article>
+    <article>
+        <span class="overview-icon"><i class="ri-wallet-3-line"></i></span>
+        <div><small>Credito wallet</small><strong>{{formatAmount(totalWallet)}}</strong><span>Credito utilizzato nelle iscrizioni</span></div>
+    </article>
+    <article>
+        <span class="overview-icon"><i class="ri-bank-card-line"></i></span>
+        <div><small>Incasso esterno</small><strong>{{formatAmount(totalExternal)}}</strong><span>Carte, contanti e altri metodi</span></div>
+    </article>
+    <article class="pending">
+        <span class="overview-icon"><i class="ri-time-line"></i></span>
+        <div><small>Da incassare</small><strong>{{formatAmount(pendingAmount)}}</strong><span>Pagamenti ancora in attesa</span></div>
+    </article>
+</section>
+
+<mat-card *ngIf="courseDetails && !isPaymentsMode" class="course-summary-card trinta-card mb-25 bg-white border-none d-block">
     <mat-card-content>
         <div class="summary-head">
             <div>
@@ -127,11 +150,22 @@
         <div class="to-do-list-table">
             <div class="table-responsive">
                 <table mat-table [dataSource]="dataSource">
+                    <ng-container matColumnDef="course">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Corso</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative payment-course-cell">
+                                <h6 class="mt-0 mb-0">{{getCourseTitle(element)}}</h6>
+                                <small>{{getBooking(element)?.space?.name || '-'}}</small>
+                            </div>
+                        </td>
+                    </ng-container>
+
                     <ng-container matColumnDef="user">
                         <th mat-header-cell *matHeaderCellDef class="pl-0">Iscritto</th>
                         <td mat-cell *matCellDef="let element" class="pl-0">
                             <div class="position-relative">
                                 <h6 class="mt-0 mb-0">{{getUser(element)?.name || '-'}}</h6>
+                                <small *ngIf="isPaymentsMode">{{getUser(element)?.email || '-'}}</small>
                             </div>
                         </td>
                     </ng-container>
@@ -177,10 +211,32 @@
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
                                 <h6 class="mt-0 mb-0">{{formatAmount(totalAmount(element))}}</h6>
-                                <small *ngIf="walletAmount(element) > 0">
-                                    Wallet {{formatAmount(walletAmount(element))}} / {{paymentMethodLabel(element)}} {{formatAmount(externalAmount(element))}}
+                                <small *ngIf="walletAmount(element) > 0" class="payment-breakdown">
+                                    <span>Wallet {{formatAmount(walletAmount(element))}}</span>
+                                    <span>{{paymentMethodLabel(element)}} {{formatAmount(externalAmount(element))}}</span>
                                 </small>
                             </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="walletAmount">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Wallet</th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <h6 class="mt-0 mb-0">{{formatAmount(walletAmount(element))}}</h6>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="externalAmount">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Esterno</th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <h6 class="mt-0 mb-0">{{formatAmount(externalAmount(element))}}</h6>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="paymentMethod">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Metodo</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <h6 class="mt-0 mb-0">{{paymentMethodLabel(element)}}</h6>
                         </td>
                     </ng-container>
 

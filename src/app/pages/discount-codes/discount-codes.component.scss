@@ -1,4 +1,5 @@
 @use "../spaces/spaces.component.scss";
+@use "../course-tags/course-tags.component.scss";
 
 .discount-head {
   display: flex;
@@ -24,27 +25,50 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px 14px;
   align-items: flex-start;
-}
 
-.active-box {
-  display: grid;
-  gap: 6px;
-  min-height: 72px;
-  align-content: center;
+  ::ng-deep .mat-mdc-form-field-hint-wrapper {
+    padding-top: var(--page-size-5) !important;
+    position: static;
+  }
 
-  small {
+  ::ng-deep .mat-mdc-form-field-hint {
     color: var(--ui-text-muted);
     font-family: var(--fontFamily) !important;
-    font-size: 11px !important;
-    font-weight: 400;
+    font-size: var(--page-size-11) !important;
+    line-height: 1.45;
   }
+}
+
+.description-field {
+  grid-column: span 3;
+}
+
+.promo-toggle-control {
+  grid-column: span 2;
+  min-height: var(--page-size-64);
+  padding: var(--page-size-10) var(--page-size-12);
+  border-top: var(--page-size-1) solid var(--manager-border);
+  background: color-mix(in srgb, var(--manager-bg) 58%, transparent);
 }
 
 .discount-actions {
   display: flex;
-  gap: 10px;
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  gap: var(--page-size-10);
   align-items: center;
-  min-height: 72px;
+  min-height: var(--page-size-64);
+  padding: var(--page-size-10) var(--page-size-12);
+  border-top: var(--page-size-1) solid var(--manager-border);
+  background: color-mix(in srgb, var(--manager-bg) 58%, transparent);
+}
+
+.discount-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--page-size-8);
+  min-height: var(--page-size-44);
+  padding-inline: var(--page-size-16) !important;
 }
 
 .page-message,
@@ -105,10 +129,31 @@
   .discount-form {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .description-field {
+    grid-column: span 2;
+  }
+
+  .promo-toggle-control {
+    grid-column: span 1;
+  }
 }
 
 @media (max-width: 767px) {
   .discount-form {
     grid-template-columns: 1fr;
+  }
+
+  .promo-toggle-control {
+    grid-column: 1;
+  }
+
+  .description-field {
+    grid-column: 1;
+  }
+
+  .discount-actions button {
+    flex: 1;
+    justify-content: center;
   }
 }

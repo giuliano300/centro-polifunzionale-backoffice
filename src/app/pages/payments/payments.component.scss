@@ -1,1 +1,13 @@
 @use "../spaces/spaces.component.scss";
+@use "../course-bookings/course-bookings.component.scss";
+
+.payment-breakdown {
+  display: grid;
+  gap: var(--page-size-2);
+  margin-top: var(--page-size-4);
+
+  span {
+    display: block;
+    white-space: nowrap;
+  }
+}

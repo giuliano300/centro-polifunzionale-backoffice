@@ -13,11 +13,19 @@
 
 <mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
     <mat-card-content>
-        <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+        <div class="filters-head">
+            <span class="filters-head-icon"><i [class]="viewMode === 'calendar' ? 'ri-calendar-check-line' : 'ri-filter-3-line'"></i></span>
+            <div>
+                <small>FILTRI</small>
+                <h2>{{viewMode === 'calendar' ? 'Periodo calendario' : 'Filtra lista prenotazioni'}}</h2>
+                <p>{{viewMode === 'calendar' ? 'Seleziona l’intervallo di date da visualizzare nel calendario.' : 'Cerca per dati, stato, stanza e area configurata.'}}</p>
+            </div>
+        </div>
+        <form *ngIf="viewMode === 'calendar'" [formGroup]="calendarFilterForm" (ngSubmit)="applyFilters()">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-4">
-                        <mat-form-field class="date-range-field">
+                    <div class="col-lg-7">
+                        <mat-form-field appearance="outline" class="date-range-field">
                             <i-feather name="calendar"></i-feather>
                             <mat-label>Intervallo date</mat-label>
                             <mat-date-range-input [rangePicker]="bookingRangePicker">
@@ -30,15 +38,39 @@
                             <mat-date-range-picker #bookingRangePicker></mat-date-range-picker>
                         </mat-form-field>
                     </div>
+                    <div class="col-lg-2">
+                        <button mat-button type="submit" class="action-filter">Filtra</button>
+                    </div>
                     <div class="col-lg-3">
-                        <mat-form-field>
-                            <i-feather name="search"></i-feather>
+                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Rimuovi filtri</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form *ngIf="viewMode === 'list'" [formGroup]="listFilterForm" (ngSubmit)="applyFilters()">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <mat-form-field appearance="outline" class="date-range-field">
+                            <i-feather name="calendar"></i-feather>
+                            <mat-label>Intervallo date</mat-label>
+                            <mat-date-range-input [rangePicker]="bookingListRangePicker">
+                                <input matStartDate formControlName="startDate" placeholder="Dal">
+                                <input matEndDate formControlName="endDate" placeholder="Al">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="bookingListRangePicker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #bookingListRangePicker></mat-date-range-picker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-3">
+                        <mat-form-field appearance="outline">
                             <mat-label>Cerca</mat-label>
                             <input matInput formControlName="search" placeholder="Prenotazione, utente, stanza">
                         </mat-form-field>
                     </div>
                     <div class="col-lg-2">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <i-feather name="filter"></i-feather>
                             <mat-label>Stato</mat-label>
                             <mat-select formControlName="status">
@@ -50,11 +82,29 @@
                         </mat-form-field>
                     </div>
                     <div class="col-lg-2">
-                        <button mat-button type="submit" class="action-filter">Filtra</button>
+                        <mat-form-field appearance="outline">
+                            <i-feather name="home"></i-feather>
+                            <mat-label>Stanza</mat-label>
+                            <mat-select formControlName="spaceId">
+                                <mat-option value="">Tutte</mat-option>
+                                <mat-option *ngFor="let space of spaces" [value]="space._id">{{space.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
-                    <div class="col-lg-1">
-                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Oggi</button>
+                    <div class="col-lg-2">
+                        <mat-form-field appearance="outline">
+                            <i-feather name="grid"></i-feather>
+                            <mat-label>Area</mat-label>
+                            <mat-select formControlName="areaFilter" [disabled]="!listAreaOptions.length">
+                                <mat-option value="">Tutte</mat-option>
+                                <mat-option *ngFor="let area of listAreaOptions" [value]="area.value">{{area.label}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
+                </div>
+                <div class="booking-list-filter-actions">
+                    <button mat-button type="submit" class="action-filter">Filtra</button>
+                    <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Rimuovi filtri</button>
                 </div>
             </div>
         </form>
@@ -62,35 +112,83 @@
 </mat-card>
 
 <div class="view-toolbar">
-    <div class="view-switch">
-        <button mat-button type="button" [class.action-filter]="viewMode !== 'list'" [class.action-new]="viewMode === 'list'" (click)="setViewMode('list')">
-            <i class="ri-list-check"></i>
-            <span>Lista</span>
-        </button>
-        <button mat-button type="button" [class.action-filter]="viewMode !== 'calendar'" [class.action-new]="viewMode === 'calendar'" (click)="setViewMode('calendar')">
-            <i class="ri-calendar-line"></i>
-            <span>Calendario</span>
-        </button>
+    <div class="view-toolbar-group">
+        <small>VISUALIZZAZIONE</small>
+        <div class="view-switch">
+            <button mat-button type="button" [class.action-filter]="viewMode !== 'list'" [class.action-new]="viewMode === 'list'" (click)="setViewMode('list')">
+                <i class="ri-list-check"></i>
+                <span>Lista</span>
+            </button>
+            <button mat-button type="button" [class.action-filter]="viewMode !== 'calendar'" [class.action-new]="viewMode === 'calendar'" (click)="setViewMode('calendar')">
+                <i class="ri-calendar-line"></i>
+                <span>Calendario</span>
+            </button>
+        </div>
     </div>
 
-    <div class="calendar-controls" *ngIf="viewMode === 'calendar'">
-        <button mat-button type="button" class="action-filter" (click)="previousMonth()">
-            <i class="ri-arrow-left-s-line"></i>
-        </button>
-        <strong>{{calendarMonthLabel()}}</strong>
-        <button mat-button type="button" class="action-filter" (click)="nextMonth()">
-            <i class="ri-arrow-right-s-line"></i>
-        </button>
+    <div class="view-toolbar-group calendar-navigation" *ngIf="viewMode === 'calendar'">
+        <small>PERIODO</small>
+        <div class="calendar-controls">
+            <button mat-button type="button" class="action-filter" (click)="previousMonth()" aria-label="Mese precedente">
+                <i class="ri-arrow-left-s-line"></i>
+            </button>
+            <input class="calendar-period-input" [matDatepicker]="calendarPeriodPicker" tabindex="-1" aria-hidden="true">
+            <mat-datepicker
+                #calendarPeriodPicker
+                startView="multi-year"
+                panelClass="calendar-period-picker"
+                (monthSelected)="selectCalendarMonth($event, calendarPeriodPicker)">
+            </mat-datepicker>
+            <button mat-button type="button" class="calendar-period-label" (click)="calendarPeriodPicker.open()" aria-label="Scegli mese e anno">
+                <span>{{calendarMonthLabel()}}</span>
+                <i class="ri-calendar-2-line"></i>
+            </button>
+            <button mat-button type="button" class="action-filter" (click)="nextMonth()" aria-label="Mese successivo">
+                <i class="ri-arrow-right-s-line"></i>
+            </button>
+        </div>
     </div>
 </div>
 
 <mat-card *ngIf="viewMode === 'calendar'" class="trinta-card calendar-card mb-25 bg-white border-none d-block">
     <mat-card-content>
-        <div class="calendar-legend" *ngIf="getCalendarLegend().length">
-            <span *ngFor="let item of getCalendarLegend()">
-                <i [style.background]="item.color"></i>
-                {{item.name}}
-            </span>
+        <div class="calendar-legend" *ngIf="getCalendarFilterGroups().length">
+            <button type="button" class="calendar-legend-item all-spaces" [class.active]="!selectedCalendarFilterId" (click)="showAllCalendarSpaces()" [attr.aria-pressed]="!selectedCalendarFilterId">
+                <i class="ri-layout-grid-line"></i>
+                <span>Tutte</span>
+            </button>
+            <div class="calendar-filter-group" *ngFor="let group of getCalendarFilterGroups()" [style.--legend-color]="group.color">
+                <button
+                    type="button"
+                    class="calendar-legend-item calendar-filter-trigger"
+                    [class.has-submenu]="group.areas.length"
+                    [class.active]="isCalendarFilterGroupActive(group.spaceId)"
+                    [class.muted]="selectedCalendarFilterId && !isCalendarFilterGroupActive(group.spaceId)"
+                    (click)="group.areas.length ? toggleCalendarFilterGroup(group.spaceId) : selectCalendarFilter(group.roomFilterId)"
+                    [attr.aria-expanded]="group.areas.length ? expandedCalendarSpaceId === group.spaceId : null"
+                    [attr.aria-pressed]="!group.areas.length ? selectedCalendarFilterId === group.roomFilterId : null">
+                    <i class="room-color-dot"></i>
+                    <span>{{group.name}}</span>
+                    <i *ngIf="group.areas.length" class="ri-arrow-down-s-line submenu-arrow" [class.open]="expandedCalendarSpaceId === group.spaceId"></i>
+                </button>
+
+                <div class="calendar-area-submenu" *ngIf="group.areas.length && expandedCalendarSpaceId === group.spaceId">
+                    <button type="button" class="calendar-area-option room-option" [class.active]="selectedCalendarFilterId === group.roomFilterId" (click)="selectCalendarFilter(group.roomFilterId)">
+                        <i class="room-color-dot"></i>
+                        <span>Stanza intera</span>
+                    </button>
+                    <button
+                        *ngFor="let area of group.areas"
+                        type="button"
+                        class="calendar-area-option"
+                        [class.active]="selectedCalendarFilterId === area.id"
+                        [style.--area-color]="area.color"
+                        (click)="selectCalendarFilter(area.id)">
+                        <i class="area-color-dot"></i>
+                        <span>{{area.name}}</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="global-calendar">
@@ -99,7 +197,7 @@
                 <ng-container *ngIf="day.inMonth">
                 <div class="day-head">
                     <strong>{{day.dayNumber}}</strong>
-                    <small *ngIf="day.bookings.length">{{day.bookings.length}} pren.</small>
+                    <small *ngIf="day.bookings.length">{{day.bookings.length}} {{day.bookings.length === 1 ? 'prenotazione' : 'prenotazioni'}}</small>
                 </div>
 
                 <div class="calendar-events" *ngIf="day.bookings.length; else noDayBookings">
@@ -107,10 +205,12 @@
                         *ngFor="let item of day.bookings"
                         type="button"
                         class="calendar-event"
-                        [style.background]="getBookingColor(item)"
-                        [style.color]="getBookingTextColor(item)"
+                        [style.--event-color]="getBookingColor(item)"
                         (click)="openBookingDetail(item)">
-                        <span>{{item.booking.startTime}} - {{item.booking.endTime}}</span>
+                        <div class="calendar-event-head">
+                            <span class="calendar-event-time">{{item.booking.startTime}} – {{item.booking.endTime}}</span>
+                            <span class="calendar-payment-badge" [class.unpaid]="!IsPaid(item)">{{IsPaid(item) ? 'Pagato' : 'Non pagato'}}</span>
+                        </div>
                         <strong>{{item.booking.space.name}}</strong>
                         <small>{{item.booking.user.name}}</small>
                         <em *ngIf="getSectorLabel(item)">{{getSectorLabel(item)}}</em>
@@ -126,89 +226,7 @@
     </mat-card-content>
 </mat-card>
 
-<div class="booking-detail-backdrop" *ngIf="selectedDetailTitle" (click)="closeDetail()">
-    <section class="booking-detail-modal" (click)="$event.stopPropagation()">
-        <div class="detail-hero" [style.background]="selectedDetailColor" [style.color]="selectedDetailTextColor">
-            <div class="detail-hero-content">
-                <span class="detail-modal-icon"><i class="ri-calendar-check-line"></i></span>
-                <div>
-                    <span>Dettaglio prenotazione</span>
-                    <h2>{{selectedDetailTitle}}</h2>
-                    <p>{{selectedDetailSubtitle}}</p>
-                </div>
-            </div>
-            <span class="detail-status" [class]="selectedDetailStatusClass">{{selectedDetailStatus}}</span>
-            <button mat-button class="action-cancel" type="button" (click)="closeDetail()">
-                <i class="ri-close-line"></i>
-            </button>
-        </div>
-
-        <div class="detail-body">
-            <section class="detail-section primary">
-                <div class="detail-section-title">
-                    <i class="ri-time-line"></i>
-                    <span>Riepilogo</span>
-                </div>
-                <div class="detail-modal-grid compact">
-                    <div *ngFor="let row of selectedDetailRows" class="detail-modal-item">
-                        <span>{{row.label}}</span>
-                        <strong>{{row.value}}</strong>
-                    </div>
-                </div>
-            </section>
-
-            <section class="detail-section">
-                <div class="detail-section-title">
-                    <i class="ri-user-line"></i>
-                    <span>Cliente</span>
-                </div>
-                <div class="detail-modal-grid">
-                    <div *ngFor="let row of selectedDetailClientRows" class="detail-modal-item">
-                        <span>{{row.label}}</span>
-                        <strong>{{row.value}}</strong>
-                    </div>
-                </div>
-            </section>
-
-            <section class="detail-section">
-                <div class="detail-section-title">
-                    <i class="ri-building-4-line"></i>
-                    <span>Stanza</span>
-                </div>
-                <div class="detail-modal-grid">
-                    <div *ngFor="let row of selectedDetailSpaceRows" class="detail-modal-item">
-                        <span>{{row.label}}</span>
-                        <strong>{{row.value}}</strong>
-                    </div>
-                </div>
-            </section>
-
-            <section class="detail-section">
-                <div class="detail-section-title">
-                    <i class="ri-wallet-3-line"></i>
-                    <span>Pagamento</span>
-                </div>
-                <div class="detail-modal-grid payment">
-                    <div *ngFor="let row of selectedDetailPaymentRows" class="detail-modal-item">
-                        <span>{{row.label}}</span>
-                        <strong>{{row.value}}</strong>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="detail-modal-actions">
-            <button mat-button class="action-cancel" type="button" (click)="closeDetail()">
-                <i class="ri-close-line"></i>
-                <span>Chiudi</span>
-            </button>
-            <a *ngIf="selectedDetailLink" mat-button class="action-filter" [routerLink]="selectedDetailLink" [queryParams]="selectedDetailQueryParams" (click)="closeDetail()">
-                <i class="ri-arrow-right-line"></i>
-                <span>Vai al dettaglio</span>
-            </a>
-        </div>
-    </section>
-</div>
+<app-booking-detail-modal [booking]="selectedBookingDetail" (closed)="closeDetail()"></app-booking-detail-modal>
 
 <mat-card *ngIf="viewMode === 'list'" class="trinta-card to-do-list-card mb-25 bg-white border-none d-block">
     <mat-card-content>
@@ -238,6 +256,15 @@
                         <td mat-cell *matCellDef="let element" class="pl-0">
                             <div class="position-relative">
                                 <h6 class="mt-0 mb-0">{{element.booking.space.name}}</h6>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="area">
+                        <th mat-header-cell *matHeaderCellDef class="pl-0">Area</th>
+                        <td mat-cell *matCellDef="let element" class="pl-0">
+                            <div class="position-relative">
+                                <h6 class="mt-0 mb-0">{{getTableAreaLabel(element)}}</h6>
                             </div>
                         </td>
                     </ng-container>
@@ -283,8 +310,9 @@
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
                                 <h6 class="mt-0 mb-0">{{formatCurrency(GetTotalAmount(element))}}</h6>
-                                <small *ngIf="GetWalletAmount(element) > 0">
-                                    Wallet {{formatCurrency(GetWalletAmount(element))}} / {{GetPaymentMethodLabel(element)}} {{formatCurrency(GetExternalAmount(element))}}
+                                <small *ngIf="GetWalletAmount(element) > 0" class="payment-breakdown">
+                                    <span>Wallet {{formatCurrency(GetWalletAmount(element))}}</span>
+                                    <span>{{GetPaymentMethodLabel(element)}} {{formatCurrency(GetExternalAmount(element))}}</span>
                                 </small>
                             </div>
                         </td>

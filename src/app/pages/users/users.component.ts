@@ -27,7 +27,7 @@ type UserRow = AuthUser & { action: { delete: string; toggle: string } };
 })
 export class UsersComponent {
   readonly UserRole = UserRole;
-  displayedColumns: string[] = ['name', 'email', 'phone', 'taxCode', 'role', 'status', 'wallet', 'edit', 'toggle', 'delete'];
+  displayedColumns: string[] = ['name', 'email', 'phone', 'taxCode', 'role', 'status', 'wallet', 'walletCredit', 'edit', 'toggle', 'delete'];
   dataSource = new MatTableDataSource<UserRow>([]);
   users: UserRow[] = [];
   filterForm: FormGroup;
@@ -126,9 +126,9 @@ export class UsersComponent {
 
   DeleteItem(item: UserRow): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '860px',
-      minWidth: 'min(800px, 94vw)',
-      maxWidth: '94vw'
+      width: '480px',
+      maxWidth: '92vw',
+      data: { title: 'Eliminare questo utente?', message: 'L’utente e i suoi dati non saranno più disponibili.', detail: item.name || item.email }
     });
 
     dialogRef.afterClosed().subscribe((result: boolean) => {
@@ -214,12 +214,17 @@ export class UsersComponent {
         this.walletCreditMessageType = 'success';
         this.walletCreditMessage = 'Credito accreditato nel wallet.';
         this.walletCreditForm.reset({ amount: null, description: '' });
+        this.getUsers();
       },
       error: (error) => {
         this.walletCreditMessageType = 'error';
         this.walletCreditMessage = error?.error?.message || 'Credito non accreditato.';
       }
     });
+  }
+
+  formatWalletBalance(value?: number): string {
+    return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(Number(value || 0));
   }
 
   SaveUser(): void {

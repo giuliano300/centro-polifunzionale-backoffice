@@ -5,7 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialog } from '@angular/material/dialog';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,15 +16,18 @@ import { DiscountCode } from '../../interfaces/discount-codes';
 import { DiscountCodeService } from '../../services/DiscountCode.service';
 import { Spaces } from '../../interfaces/spaces';
 import { SpacesService } from '../../services/Space.service';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-discount-codes',
   imports: [NgIf, NgFor, ReactiveFormsModule, MatButtonModule, MatCardModule, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MatPaginatorModule, MatSelectModule, MatSlideToggleModule, MatTableModule],
+  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   templateUrl: './discount-codes.component.html',
   styleUrl: './discount-codes.component.scss'
 })
 export class DiscountCodesComponent {
   private fb = inject(FormBuilder);
+  private dialog = inject(MatDialog);
   readonly allOption = '__all__';
   readonly roleOptions = ['cliente', 'gestore'];
   private allSpacesMode = true;
@@ -98,6 +102,7 @@ export class DiscountCodesComponent {
   edit(discount: DiscountCode): void {
     this.selected = discount;
     this.isFormOpen = true;
+    this.message = '';
     this.allSpacesMode = !this.spaceIds(discount).length;
     this.allRolesMode = !discount.userRoles?.length;
     this.form.patchValue({
@@ -118,6 +123,7 @@ export class DiscountCodesComponent {
       validTo: this.inputDate(discount.validTo),
       maxUses: discount.maxUses ?? null,
     });
+    setTimeout(() => document.querySelector('.discount-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   reset(): void {
@@ -129,6 +135,7 @@ export class DiscountCodesComponent {
 
   openForm(): void {
     this.reset();
+    this.message = '';
     this.isFormOpen = true;
   }
 
@@ -180,7 +187,7 @@ export class DiscountCodesComponent {
         this.messageType = 'success';
         this.message = 'Promo salvata.';
         this.isSaving = false;
-        this.reset();
+        this.closeForm();
         this.load();
       },
       error: (error) => {
@@ -192,19 +199,24 @@ export class DiscountCodesComponent {
   }
 
   delete(discount: DiscountCode): void {
-    if (!confirm(`Eliminare la promo ${discount.title || discount.code}?`)) {
-      return;
-    }
-    this.discountService.delete(discount._id).subscribe({
-      next: () => {
-        this.messageType = 'delete';
-        this.message = 'Promo eliminata.';
-        this.load();
-      },
-      error: (error) => {
-        this.messageType = 'warning';
-        this.message = error?.error?.message || 'Promo non eliminata.';
-      }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '480px',
+      maxWidth: '92vw',
+      data: { title: 'Eliminare questa promozione?', message: 'Il codice non potrà più essere utilizzato.', detail: discount.title || discount.code }
+    });
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+      this.discountService.delete(discount._id).subscribe({
+        next: () => {
+          this.messageType = 'delete';
+          this.message = 'Promo eliminata.';
+          this.load();
+        },
+        error: (error) => {
+          this.messageType = 'warning';
+          this.message = error?.error?.message || 'Promo non eliminata.';
+        }
+      });
     });
   }
 

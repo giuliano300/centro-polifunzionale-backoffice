@@ -34,6 +34,8 @@ export class DashboardComponent {
   errorMessage = '';
   selectedDetailTitle = '';
   selectedDetailSubtitle = '';
+  selectedDetailEyebrow = 'Dettaglio';
+  selectedDetailKind: 'user' | 'booking' | 'course' | 'course-booking' = 'user';
   selectedDetailIcon = 'ri-information-line';
   selectedDetailRows: Array<{ label: string; value: string }> = [];
   selectedDetailLink = '';
@@ -226,6 +228,8 @@ export class DashboardComponent {
   }
 
   openUserDetail(user: DashboardUser): void {
+    this.selectedDetailEyebrow = 'Profilo utente';
+    this.selectedDetailKind = 'user';
     this.selectedDetailTitle = user.name || 'Utente';
     this.selectedDetailSubtitle = user.email || '-';
     this.selectedDetailIcon = 'ri-user-line';
@@ -246,6 +250,8 @@ export class DashboardComponent {
   }
 
   openBookingDetail(booking: DashboardBooking): void {
+    this.selectedDetailEyebrow = 'Dettaglio prenotazione';
+    this.selectedDetailKind = 'booking';
     const date = this.formatDate(booking.date);
     const spaceId = this.getObjectId(booking.space);
     const dateValue = booking.date ? new Date(booking.date) : null;
@@ -272,6 +278,8 @@ export class DashboardComponent {
   }
 
   openCourseDetail(course: DashboardCourse): void {
+    this.selectedDetailEyebrow = 'Dettaglio corso';
+    this.selectedDetailKind = 'course';
     this.selectedDetailTitle = course.title || 'Corso';
     this.selectedDetailSubtitle = `${this.getCourseSpace(course)} - ${this.formatDate(course.date)}`;
     this.selectedDetailIcon = 'ri-graduation-cap-line';
@@ -297,6 +305,8 @@ export class DashboardComponent {
   }
 
   openCourseBookingDetail(item: DashboardCourseBooking): void {
+    this.selectedDetailEyebrow = 'Dettaglio iscrizione';
+    this.selectedDetailKind = 'course-booking';
     const course = typeof item.course === 'string' ? null : item.course;
     this.selectedDetailTitle = this.getCourseBookingTitle(item);
     this.selectedDetailSubtitle = this.getCourseBookingUser(item);
@@ -329,6 +339,8 @@ export class DashboardComponent {
     this.selectedDetailTitle = '';
     this.selectedDetailSubtitle = '';
     this.selectedDetailRows = [];
+    this.selectedDetailEyebrow = 'Dettaglio';
+    this.selectedDetailKind = 'user';
     this.selectedDetailLink = '';
     this.selectedDetailQueryParams = null;
   }

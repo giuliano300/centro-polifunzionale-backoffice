@@ -6,6 +6,7 @@ import { BookingWithPayments } from '../interfaces/BookingWithPayments';
 import { Bookings } from '../interfaces/bookings';
 
 export interface BookingFilters {
+  spaceId?: string;
   start?: string;
   end?: string;
   status?: string;

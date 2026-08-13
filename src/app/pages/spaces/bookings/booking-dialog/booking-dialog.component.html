@@ -1,22 +1,28 @@
 <div class="booking-dialog">
   <div class="dialog-header">
-    <div>
-      <span class="eyebrow">Nuova prenotazione</span>
-      <h1 mat-dialog-title>Crea prenotazione</h1>
+    <div class="dialog-title-group">
+      <span class="dialog-icon"><i class="ri-calendar-check-line"></i></span>
+      <div>
+        <span class="eyebrow">Nuova prenotazione</span>
+        <h1 mat-dialog-title>Crea prenotazione</h1>
+      </div>
     </div>
+    <button mat-button type="button" class="action-cancel dialog-close" aria-label="Chiudi" (click)="cancel()">
+      <i class="ri-close-line"></i>
+    </button>
   </div>
 
   <div class="booking-summary">
     <div>
-      <span>Stanza</span>
+      <span><i class="ri-door-open-line"></i> Stanza</span>
       <strong>{{data.space.name}}</strong>
     </div>
     <div>
-      <span>Tipologia</span>
+      <span><i class="ri-layout-grid-line"></i> Tipologia</span>
       <strong>{{data.space.rentalUnit === 'workstation' ? 'Postazioni' : (isSectorSpace ? 'Stanza ad aree' : 'Stanza intera')}}</strong>
     </div>
     <div>
-      <span>Modalita</span>
+      <span><i class="ri-time-line"></i> Modalità</span>
       <strong>{{rentalModesLabel}}</strong>
     </div>
   </div>
@@ -24,18 +30,32 @@
   <div mat-dialog-content class="dialog-content">
     <div [formGroup]="form" class="booking-form">
       <section class="client-panel">
+        <div class="section-heading">
+          <span class="section-icon"><i class="ri-user-line"></i></span>
+          <div>
+            <strong>Cliente</strong>
+            <span>Seleziona un cliente esistente oppure creane uno nuovo.</span>
+          </div>
+        </div>
         <mat-tab-group>
           <mat-tab label="Cliente esistente">
             <form [formGroup]="searchForm" class="search-row" (ngSubmit)="searchClients()">
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Cerca cliente</mat-label>
-                <input matInput formControlName="search" placeholder="Email, telefono o codice fiscale">
-              </mat-form-field>
-              <button mat-flat-button color="primary" class="action-filter search-field" type="submit">Cerca</button>
+              <div class="search-input-group">
+                <mat-form-field appearance="outline" class="search-field">
+                  <mat-label>Cerca cliente</mat-label>
+                  <input matInput formControlName="search" placeholder="Email, telefono o codice fiscale">
+                </mat-form-field>
+                <p class="search-help" *ngIf="!clients.length && !isClientsEmpty">
+                  Cerca un cliente per email, telefono o codice fiscale.
+                </p>
+              </div>
+              <button mat-flat-button color="primary" class="action-filter search-field" type="submit">
+                <i class="ri-search-line"></i><span>Cerca</span>
+              </button>
             </form>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Cliente</mat-label>
+            <mat-form-field appearance="outline" class="client-result-field" *ngIf="clients.length">
+              <mat-label>Cliente trovato</mat-label>
               <mat-select formControlName="userId">
                 <mat-option *ngFor="let client of clients" [value]="client._id">
                   {{client.name}} - {{client.email}}
@@ -43,9 +63,6 @@
               </mat-select>
             </mat-form-field>
 
-            <p class="empty-states" *ngIf="!clients.length && !isClientsEmpty">
-              Cerca un cliente per email, telefono o codice fiscale.
-            </p>
             <p class="empty-states red" *ngIf="isClientsEmpty">
               Nessun cliente trovato. Puoi creare un nuovo cliente nella scheda "Nuovo cliente".
             </p>
@@ -109,57 +126,68 @@
         </mat-tab-group>
       </section>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Titolo prenotazione</mat-label>
-        <input matInput formControlName="name">
-      </mat-form-field>
+      <section class="booking-data-panel">
+        <div class="section-heading">
+          <span class="section-icon"><i class="ri-calendar-event-line"></i></span>
+          <div>
+            <strong>Dati della prenotazione</strong>
+            <span>Imposta data, modalità e spazio da riservare.</span>
+          </div>
+        </div>
 
-      <div class="form-grid">
-        <mat-form-field appearance="outline">
-          <mat-label>Data</mat-label>
-          <input matInput [matDatepicker]="bookingDatePicker" formControlName="date" placeholder="Seleziona data">
-          <mat-datepicker-toggle matSuffix [for]="bookingDatePicker">
-            <i matDatepickerToggleIcon class="ri-calendar-line"></i>
-          </mat-datepicker-toggle>
-          <mat-datepicker #bookingDatePicker></mat-datepicker>
+        <mat-form-field appearance="outline" class="booking-title-field">
+          <mat-label>Titolo prenotazione</mat-label>
+          <input matInput formControlName="name">
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Modalita</mat-label>
-          <mat-select formControlName="rentalMode">
-            <mat-option *ngFor="let mode of data.space.rentalModes" [value]="mode">
-              {{mode === 'full_day' ? 'Tutta la giornata' : 'A tempo'}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Data</mat-label>
+            <input matInput [matDatepicker]="bookingDatePicker" formControlName="date" placeholder="Seleziona data">
+            <mat-datepicker-toggle matSuffix [for]="bookingDatePicker">
+              <i matDatepickerToggleIcon class="ri-calendar-line"></i>
+            </mat-datepicker-toggle>
+            <mat-datepicker #bookingDatePicker></mat-datepicker>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline" *ngIf="isWorkstation">
-          <mat-label>Postazioni</mat-label>
-          <input matInput type="number" formControlName="workstationQuantity" min="1" [max]="data.space.workstationCount">
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Modalità</mat-label>
+            <mat-select formControlName="rentalMode">
+              <mat-option *ngFor="let mode of data.space.rentalModes" [value]="mode">
+                {{mode === 'full_day' ? 'Tutta la giornata' : 'A tempo'}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline" *ngIf="isSectorSpace">
-          <mat-label>Aree stanza</mat-label>
-          <mat-select formControlName="sectorIndexes" multiple (selectionChange)="onSectorSelectionChange($event.value)">
-            <mat-select-trigger>{{sectorLabel(form.value.sectorIndexes || [])}}</mat-select-trigger>
-            <mat-option [value]="-1">Stanza intera</mat-option>
-            <mat-option *ngFor="let sector of sectorOptions()" [value]="sector.index">
-              {{sector.label}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+          <mat-form-field appearance="outline" *ngIf="isWorkstation">
+            <mat-label>Postazioni</mat-label>
+            <input matInput type="number" formControlName="workstationQuantity" min="1" [max]="data.space.workstationCount">
+          </mat-form-field>
 
-      <div class="availability-actions">
-        <button mat-button type="button" class="action-filter" (click)="loadAvailability()" [disabled]="isLoadingSlots">
-          {{isLoadingSlots ? 'Calcolo...' : 'Mostra disponibilita'}}
-        </button>
-      </div>
+          <mat-form-field appearance="outline" *ngIf="isSectorSpace">
+            <mat-label>Aree stanza</mat-label>
+            <mat-select formControlName="sectorIndexes" multiple (selectionChange)="onSectorSelectionChange($event.value)">
+              <mat-select-trigger>{{sectorLabel(form.value.sectorIndexes || [])}}</mat-select-trigger>
+              <mat-option [value]="-1">Stanza intera</mat-option>
+              <mat-option *ngFor="let sector of sectorOptionList" [value]="sector.index">
+                {{sector.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="availability-actions">
+          <button mat-button type="button" class="action-filter" (click)="loadAvailability()" [disabled]="isLoadingSlots">
+            <i [class]="isLoadingSlots ? 'ri-loader-4-line' : 'ri-time-line'"></i>
+            <span>{{isLoadingSlots ? 'Calcolo...' : 'Mostra disponibilità'}}</span>
+          </button>
+        </div>
+      </section>
 
       <section class="slots-panel" *ngIf="slots.length">
         <div class="slots-head">
           <div>
-            <strong>Disponibilita</strong>
+            <strong><i class="ri-time-line"></i> Disponibilità</strong>
             <span *ngIf="maxSelectableSlots > 1">Per il giorno selezionato puoi acquistare fino a {{maxSelectableSlots}} fasce orarie consecutive.</span>
             <span *ngIf="maxSelectableSlots === 1">Per il giorno selezionato puoi acquistare una fascia.</span>
           </div>
@@ -208,8 +236,8 @@
       </div>
 
       <section class="payment-panel" *ngIf="selectedSlots.length">
-        <div>
-          <strong>Pagamento</strong>
+        <div class="payment-copy">
+          <strong><i class="ri-bank-card-line"></i> Pagamento</strong>
           <span>Scegli cosa fare dopo la creazione della prenotazione.</span>
         </div>
         <mat-form-field appearance="outline">
@@ -230,7 +258,8 @@
   <mat-dialog-actions align="end" class="dialog-actions">
     <button mat-button type="button" class="action-cancel" (click)="cancel()">Annulla</button>
     <button mat-flat-button color="primary" class="action-save" type="button" [disabled]="form.invalid || !selectedSlots.length || isSaving" (click)="submit()">
-      {{isSaving ? 'Salvataggio...' : 'Crea prenotazione'}}
+      <i [class]="isSaving ? 'ri-loader-4-line' : 'ri-check-line'"></i>
+      <span>{{isSaving ? 'Salvataggio...' : 'Crea prenotazione'}}</span>
     </button>
   </mat-dialog-actions>
 </div>

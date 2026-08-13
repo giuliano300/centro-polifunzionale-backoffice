@@ -48,8 +48,8 @@
               <i class="ri-user-add-line"></i>
               <span>Inserisci utente</span>
             </a>
-            <a routerLink="/users" mat-button class="action-filter">
-              <i class="ri-users-line"></i>
+            <a routerLink="/users" mat-button class="action-view">
+              <i class="ri-group-line"></i>
               <span>Vedi utenti</span>
             </a>
           </div>
@@ -61,7 +61,7 @@
           <div class="card-title-row">
             <div>
               <span>Economia</span>
-              <h2>Pagamenti stanze</h2>
+              <h2>Incassi stanze</h2>
             </div>
             <i-feather name="trending-up"></i-feather>
           </div>
@@ -86,9 +86,9 @@
           </div>
 
           <div class="quick-actions economy-actions">
-            <a routerLink="/payments" mat-button class="action-filter">
+            <a routerLink="/payments" mat-button class="action-view">
               <i class="ri-bank-card-line"></i>
-              <span>Vedi pagamenti stanze</span>
+              <span>Vedi incassi stanze</span>
             </a>
           </div>
         </mat-card-content>
@@ -99,12 +99,12 @@
           <div class="card-title-row">
             <div>
               <span>Economia</span>
-              <h2>Pagamenti corsi</h2>
+              <h2>Incassi corsi</h2>
             </div>
             <i-feather name="book-open"></i-feather>
           </div>
           <div class="revenue-total">{{ formatCurrency(stats.period.monthCoursePaidRevenue) }}</div>
-          <p>Pagamenti corsi incassati nel mese corrente, escluso wallet. Totale storico: <strong>{{ formatCurrency(stats.period.coursePaidRevenue) }}</strong>.</p>
+          <p>Incassi delle iscrizioni ai corsi nel mese corrente, escluso wallet. Totale storico: <strong>{{ formatCurrency(stats.period.coursePaidRevenue) }}</strong>.</p>
 
           <div class="status-list">
             <div class="status-item course-date-item">
@@ -131,9 +131,9 @@
           </div>
 
           <div class="quick-actions economy-actions">
-            <a routerLink="/course-payments" mat-button class="action-filter">
+            <a routerLink="/course-payments" mat-button class="action-view">
               <i class="ri-graduation-cap-line"></i>
-              <span>Vedi pagamenti corsi</span>
+              <span>Vedi incassi corsi</span>
             </a>
           </div>
         </mat-card-content>
@@ -169,14 +169,14 @@
     </section>
 
     <section class="dashboard-grid triple-grid">
-      <mat-card class="dashboard-card border-none">
+      <mat-card class="dashboard-card dashboard-feed-card border-none">
         <mat-card-content>
           <div class="card-title-row compact">
             <div>
               <span>Nuovi</span>
               <h2>Iscritti</h2>
             </div>
-            <a routerLink="/users" mat-button class="action-filter">Vedi</a>
+            <a routerLink="/users" mat-button class="action-view"><i class="ri-group-line"></i><span>Vedi</span></a>
           </div>
           <div class="activity-list">
             <button *ngFor="let user of stats.recent.users" type="button" class="activity-row detail-trigger" (click)="openUserDetail(user)">
@@ -185,19 +185,21 @@
                 <strong>{{ user.name || '-' }}</strong>
                 <small>{{ user.email || '-' }}</small>
               </div>
+              <i class="ri-arrow-right-s-line feed-row-arrow"></i>
             </button>
+            <div class="empty-panel feed-empty" *ngIf="!stats.recent.users.length">Nessun nuovo iscritto.</div>
           </div>
         </mat-card-content>
       </mat-card>
 
-      <mat-card class="dashboard-card border-none">
+      <mat-card class="dashboard-card dashboard-feed-card border-none">
         <mat-card-content>
           <div class="card-title-row compact">
             <div>
               <span>Nuove</span>
               <h2>Prenotazioni</h2>
             </div>
-            <a routerLink="/bookings" mat-button class="action-filter">Vedi</a>
+            <a routerLink="/bookings" mat-button class="action-view"><i class="ri-calendar-check-line"></i><span>Vedi</span></a>
           </div>
           <div class="activity-list">
             <button *ngFor="let booking of stats.recent.bookings" type="button" class="activity-row detail-trigger" (click)="openBookingDetail(booking)">
@@ -206,19 +208,21 @@
                 <strong>{{ booking.name || getBookingUser(booking) }}</strong>
                 <small>{{ getBookingSpace(booking) }} - {{ formatDate(booking.date) }}</small>
               </div>
+              <i class="ri-arrow-right-s-line feed-row-arrow"></i>
             </button>
+            <div class="empty-panel feed-empty" *ngIf="!stats.recent.bookings.length">Nessuna nuova prenotazione.</div>
           </div>
         </mat-card-content>
       </mat-card>
 
-      <mat-card class="dashboard-card border-none">
+      <mat-card class="dashboard-card dashboard-feed-card border-none">
         <mat-card-content>
           <div class="card-title-row compact">
             <div>
               <span>Nuovi</span>
               <h2>Corsi</h2>
             </div>
-            <a routerLink="/courses" mat-button class="action-filter">Vedi</a>
+            <a routerLink="/courses" mat-button class="action-view"><i class="ri-presentation-line"></i><span>Vedi</span></a>
           </div>
           <div class="activity-list">
             <button *ngFor="let course of stats.recent.courses" type="button" class="activity-row detail-trigger" (click)="openCourseDetail(course)">
@@ -227,21 +231,23 @@
                 <strong>{{ course.title }}</strong>
                 <small>{{ getCourseSpace(course) }} - {{ formatDate(course.date) }}</small>
               </div>
+              <i class="ri-arrow-right-s-line feed-row-arrow"></i>
             </button>
+            <div class="empty-panel feed-empty" *ngIf="!stats.recent.courses.length">Nessun nuovo corso.</div>
           </div>
         </mat-card-content>
       </mat-card>
     </section>
 
     <section class="dashboard-grid bottom-grid">
-      <mat-card class="dashboard-card border-none">
+      <mat-card class="dashboard-card dashboard-feed-card border-none">
         <mat-card-content>
           <div class="card-title-row">
             <div>
               <span>Agenda</span>
               <h2>Prossime prenotazioni</h2>
             </div>
-            <i-feather name="clock"></i-feather>
+            <a routerLink="/bookings" mat-button class="action-view"><i class="ri-calendar-check-line"></i><span>Vedi</span></a>
           </div>
           <div class="timeline-list">
             <button *ngFor="let booking of stats.upcoming.bookings" type="button" class="timeline-row detail-trigger" (click)="openBookingDetail(booking)">
@@ -250,19 +256,21 @@
                 <strong>{{ formatDate(booking.date) }} - {{ booking.startTime }}</strong>
                 <small>{{ getBookingUser(booking) }} / {{ getBookingSpace(booking) }}</small>
               </div>
+              <i class="ri-arrow-right-s-line feed-row-arrow"></i>
             </button>
+            <div class="empty-panel feed-empty" *ngIf="!stats.upcoming.bookings.length">Nessuna prenotazione in arrivo.</div>
           </div>
         </mat-card-content>
       </mat-card>
 
-      <mat-card class="dashboard-card border-none">
+      <mat-card class="dashboard-card dashboard-feed-card border-none">
         <mat-card-content>
           <div class="card-title-row">
             <div>
               <span>Corsi</span>
               <h2>Prossimi corsi aperti</h2>
             </div>
-            <i-feather name="star"></i-feather>
+            <a routerLink="/courses" mat-button class="action-view"><i class="ri-presentation-line"></i><span>Vedi</span></a>
           </div>
           <div class="timeline-list">
             <button *ngFor="let course of stats.upcoming.courses" type="button" class="timeline-row course detail-trigger" (click)="openCourseDetail(course)">
@@ -271,19 +279,21 @@
                 <strong>{{ formatDate(course.date) }} - {{ course.startTime }}</strong>
                 <small>{{ course.title }} / {{ getCourseManager(course) }}</small>
               </div>
+              <i class="ri-arrow-right-s-line feed-row-arrow"></i>
             </button>
+            <div class="empty-panel feed-empty" *ngIf="!stats.upcoming.courses.length">Nessun corso in arrivo.</div>
           </div>
         </mat-card-content>
       </mat-card>
 
-      <mat-card class="dashboard-card border-none">
+      <mat-card class="dashboard-card dashboard-feed-card dashboard-status-feed-card border-none">
         <mat-card-content>
           <div class="card-title-row">
             <div>
               <span>Stati</span>
               <h2>Prenotazioni</h2>
             </div>
-            <i-feather name="pie-chart"></i-feather>
+            <a routerLink="/bookings" mat-button class="action-view"><i class="ri-pie-chart-line"></i><span>Vedi</span></a>
           </div>
           <div class="status-list">
             <div *ngFor="let item of bookingStatusItems" class="status-item">
@@ -302,6 +312,7 @@
               <span>Ultime</span>
               <h2>Iscrizioni corsi</h2>
             </div>
+            <a routerLink="/course-bookings" mat-button class="action-view"><i class="ri-user-follow-line"></i><span>Vedi</span></a>
           </div>
           <div class="activity-list dense">
             <button *ngFor="let item of stats.recent.courseBookings" type="button" class="activity-row detail-trigger" (click)="openCourseBookingDetail(item)">
@@ -310,7 +321,9 @@
                 <strong>{{ getCourseBookingUser(item) }}</strong>
                 <small>{{ getCourseBookingTitle(item) }} - {{ getStatusLabel(item.status) }}</small>
               </div>
+              <i class="ri-arrow-right-s-line feed-row-arrow"></i>
             </button>
+            <div class="empty-panel feed-empty" *ngIf="!stats.recent.courseBookings.length">Nessuna iscrizione recente.</div>
           </div>
         </mat-card-content>
       </mat-card>
@@ -319,29 +332,31 @@
 </div>
 
 <div class="dashboard-detail-backdrop" *ngIf="selectedDetailTitle" (click)="closeDetail()">
-  <section class="dashboard-detail-modal" (click)="$event.stopPropagation()">
+  <section class="dashboard-detail-modal" [ngClass]="'detail-kind-' + selectedDetailKind" (click)="$event.stopPropagation()">
     <div class="detail-modal-head">
       <span class="detail-modal-icon"><i [class]="selectedDetailIcon"></i></span>
-      <div>
-        <span>Dettaglio</span>
+      <div class="detail-modal-heading">
+        <span>{{ selectedDetailEyebrow }}</span>
         <h2>{{ selectedDetailTitle }}</h2>
         <p>{{ selectedDetailSubtitle }}</p>
       </div>
-      <button mat-button class="action-cancel" type="button" (click)="closeDetail()">
+      <button mat-button class="action-cancel detail-modal-close" type="button" (click)="closeDetail()" aria-label="Chiudi popup" title="Chiudi">
         <i class="ri-close-line"></i>
       </button>
     </div>
 
-    <div class="detail-modal-grid">
-      <div *ngFor="let row of selectedDetailRows" class="detail-modal-item">
-        <span>{{ row.label }}</span>
-        <strong>{{ row.value }}</strong>
+    <div class="detail-modal-body">
+      <div class="detail-modal-grid">
+        <div *ngFor="let row of selectedDetailRows" class="detail-modal-item">
+          <span>{{ row.label }}</span>
+          <strong>{{ row.value }}</strong>
+        </div>
       </div>
     </div>
 
     <div class="detail-modal-actions">
-      <button mat-button class="action-cancel" type="button" (click)="closeDetail()">Chiudi</button>
-      <a *ngIf="selectedDetailLink" mat-button class="action-filter" [routerLink]="selectedDetailLink" [queryParams]="selectedDetailQueryParams" (click)="closeDetail()">
+      <button mat-button class="action-cancel" type="button" (click)="closeDetail()"><i class="ri-close-line"></i><span>Chiudi</span></button>
+      <a *ngIf="selectedDetailLink" mat-button class="action-view" [routerLink]="selectedDetailLink" [queryParams]="selectedDetailQueryParams" (click)="closeDetail()">
         <i class="ri-arrow-right-line"></i>
         <span>Vai al dettaglio</span>
       </a>

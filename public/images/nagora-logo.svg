@@ -1,0 +1,10 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>NAgorà</title>
+  <g fill="#1F2933">
+    <path d="M19 16h21v8H24v16h-8V19a3 3 0 0 1 3-3Z"/>
+    <path d="M60 16h21a3 3 0 0 1 3 3v21h-8V24H60v-8Z"/>
+    <path d="M16 60h8v16h16v8H19a3 3 0 0 1-3-3V60Z"/>
+    <path d="M76 60h8v21a3 3 0 0 1-3 3H60v-8h16V60Z"/>
+  </g>
+  <circle cx="50" cy="50" r="11" fill="#E8623A"/>
+</svg>

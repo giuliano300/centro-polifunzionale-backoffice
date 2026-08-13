@@ -32,18 +32,21 @@
 
 <mat-card class="trinta-card to-do-list-card mb-10 bg-white border-none d-block filters">
     <mat-card-content>
+        <div class="filters-head">
+            <span class="filters-head-icon"><i class="ri-user-search-line"></i></span>
+            <div><small>FILTRI</small><h2>Filtra utenti</h2><p>Cerca per dati anagrafici e limita i risultati in base alla tipologia.</p></div>
+        </div>
         <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4">
-                        <mat-form-field>
-                            <i-feather name="search"></i-feather>
+                        <mat-form-field appearance="outline">
                             <mat-label>Nome, cognome o codice fiscale</mat-label>
                             <input matInput formControlName="search" placeholder="Cerca utente">
                         </mat-form-field>
                     </div>
                     <div class="col-lg-3">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <i-feather name="filter"></i-feather>
                             <mat-label>Tipologia</mat-label>
                             <mat-select formControlName="role">
@@ -57,7 +60,7 @@
                         <button mat-button type="submit" class="action-filter">Filtra</button>
                     </div>
                     <div class="col-lg-3">
-                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Mostra tutti</button>
+                        <button mat-button type="button" class="action-cancel" (click)="resetFilters()">Rimuovi filtri</button>
                     </div>
                 </div>
             </div>
@@ -125,7 +128,16 @@
                     </ng-container>
 
                     <ng-container matColumnDef="wallet">
-                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Wallet</th>
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Credito wallet</th>
+                        <td mat-cell *matCellDef="let element" class="text-center pr-0">
+                            <div class="wallet-table-cell">
+                                <strong>{{formatWalletBalance(element.walletBalance)}}</strong>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="walletCredit">
+                        <th mat-header-cell *matHeaderCellDef class="text-center pr-0">Aggiungi credito</th>
                         <td mat-cell *matCellDef="let element" class="text-center pr-0">
                             <div class="action">
                                 <button *ngIf="canManageUser(element)" type="button" mat-button class="table-action-button action-save" (click)="OpenWalletCredit(element)">

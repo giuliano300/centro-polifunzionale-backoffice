@@ -168,9 +168,9 @@ export class CourseDialogComponent {
 
   deleteSubscriber(item: CourseBooking): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '860px',
-      minWidth: 'min(800px, 94vw)',
-      maxWidth: '94vw'
+      width: '480px',
+      maxWidth: '92vw',
+      data: { title: 'Rimuovere questo iscritto?', message: 'L’iscrizione al corso verrà eliminata.' }
     });
 
     dialogRef.afterClosed().subscribe((result: boolean) => {

@@ -1,0 +1,52 @@
+<div class="booking-detail-backdrop" *ngIf="item" (click)="close()">
+  <section class="booking-detail-modal" [style.--detail-color]="color" (click)="$event.stopPropagation()">
+    <div class="detail-hero">
+      <div class="detail-hero-content">
+        <span class="detail-modal-icon"><i class="ri-calendar-check-line"></i></span>
+        <div>
+          <span>Dettaglio prenotazione</span>
+          <h2>{{title}}</h2>
+          <p>{{subtitle}}</p>
+        </div>
+      </div>
+      <span class="detail-status" [class]="statusClass">{{status}}</span>
+      <button mat-button class="action-cancel" type="button" (click)="close()" aria-label="Chiudi dettaglio prenotazione">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+
+    <div class="detail-body">
+      <section class="detail-section primary">
+        <div class="detail-section-title"><i class="ri-time-line"></i><span>Riepilogo</span></div>
+        <div class="detail-modal-grid compact">
+          <div *ngFor="let row of summaryRows" class="detail-modal-item"><span>{{row.label}}</span><strong>{{row.value}}</strong></div>
+        </div>
+      </section>
+      <section class="detail-section">
+        <div class="detail-section-title"><i class="ri-user-line"></i><span>Cliente</span></div>
+        <div class="detail-modal-grid">
+          <div *ngFor="let row of clientRows" class="detail-modal-item"><span>{{row.label}}</span><strong>{{row.value}}</strong></div>
+        </div>
+      </section>
+      <section class="detail-section">
+        <div class="detail-section-title"><i class="ri-building-4-line"></i><span>Stanza</span></div>
+        <div class="detail-modal-grid">
+          <div *ngFor="let row of spaceRows" class="detail-modal-item"><span>{{row.label}}</span><strong>{{row.value}}</strong></div>
+        </div>
+      </section>
+      <section class="detail-section payment-section">
+        <div class="detail-section-title"><i class="ri-wallet-3-line"></i><span>Pagamento</span></div>
+        <div class="detail-modal-grid payment">
+          <div *ngFor="let row of paymentRows" class="detail-modal-item"><span>{{row.label}}</span><strong>{{row.value}}</strong></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="detail-modal-actions">
+      <button mat-button class="action-cancel" type="button" (click)="close()"><i class="ri-close-line"></i><span>Chiudi</span></button>
+      <a mat-button class="action-view" [routerLink]="detailLink" [queryParams]="detailQueryParams" (click)="close()">
+        <i class="ri-arrow-right-line"></i><span>Vai al dettaglio</span>
+      </a>
+    </div>
+  </section>
+</div>

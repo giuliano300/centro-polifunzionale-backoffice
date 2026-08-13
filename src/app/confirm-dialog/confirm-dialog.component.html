@@ -1,6 +1,21 @@
-<h1 mat-dialog-title>CONFERMA ELIMINAZIONE</h1>
-<h2 mat-dialog-title>Sei sicuro di voler eliminare questo elemento?</h2>
-<mat-dialog-actions>
-  <button mat-button (click)="onCancel()" class="btn back action-cancel">Chiudi</button>
-  <button mat-button (click)="onConfirm()" class="btn confirm-button action-delete">Cancella</button>
+<div class="confirm-dialog-head">
+  <span class="confirm-dialog-icon" aria-hidden="true"><i class="ri-delete-bin-line"></i></span>
+  <div>
+    <small>CONFERMA ELIMINAZIONE</small>
+    <h2 mat-dialog-title>{{ data?.title || 'Eliminare questo elemento?' }}</h2>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <p>{{ data?.message || 'Questa operazione non può essere annullata.' }}</p>
+  <span *ngIf="data?.detail" class="confirm-dialog-detail">{{ data?.detail }}</span>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()" class="action-cancel">
+    <i class="ri-close-line"></i><span>{{ data?.cancelLabel || 'Annulla' }}</span>
+  </button>
+  <button mat-button type="button" (click)="onConfirm()" class="action-delete">
+    <i class="ri-delete-bin-line"></i><span>{{ data?.confirmLabel || 'Elimina' }}</span>
+  </button>
 </mat-dialog-actions>

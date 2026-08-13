@@ -1,12 +1,13 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { isDevMode } from '@angular/core';
+import { provideServiceWorker } from '@angular/service-worker';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
-import { provideAuth, getAuth } from '@angular/fire/auth';
-import { provideHttpClient } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { environment } from './environments/environment';
 
 export const API_URL = environment.apiUrl;
@@ -18,9 +19,9 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     provideAnimations(),
-    provideToastr(), 
     provideHttpClient(),
-    provideAuth(() => getAuth()),
-    { provide: MAT_DATE_LOCALE, useValue: 'it-IT' }
-  ]
-}).catch(err => console.error(err));
+    provideToastr(),
+    { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },
+    provideServiceWorker('ngsw-worker.js', { enabled: !isDevMode(), registrationStrategy: 'registerWhenStable:30000' }),
+  ],
+}).catch((error) => console.error(error));

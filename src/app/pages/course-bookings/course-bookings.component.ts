@@ -28,7 +28,7 @@ import { FeathericonsModule } from '../../icons/feathericons/feathericons.module
   styleUrl: './course-bookings.component.scss'
 })
 export class CourseBookingsComponent {
-  displayedColumns: string[] = ['user', 'email', 'space', 'date', 'status', 'amount', 'paymentStatus', 'createdAt', 'delete'];
+  displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<CourseBooking>([]);
   courseId = '';
   selectedCourseName = '';
@@ -57,6 +57,9 @@ export class CourseBookingsComponent {
 
   ngOnInit(): void {
     this.isPaymentsMode = this.route.snapshot.data['mode'] === 'payments';
+    this.displayedColumns = this.isPaymentsMode
+      ? ['course', 'user', 'date', 'amount', 'paymentStatus', 'createdAt']
+      : ['user', 'email', 'space', 'date', 'status', 'amount', 'paymentStatus', 'createdAt', 'delete'];
     if (this.isPaymentsMode) {
       this.loadCourses();
     }
@@ -109,7 +112,7 @@ export class CourseBookingsComponent {
     }).subscribe((data: CourseBooking[]) => {
       this.dataSource = new MatTableDataSource<CourseBooking>(data);
       this.dataSource.paginator = this.paginator;
-      if (data.length) {
+      if (data.length && !this.isPaymentsMode) {
         this.courseDetails = this.getCourse(data[0]) || this.courseDetails;
         this.selectedCourseName = this.courseDetails?.title || this.selectedCourseName;
       }
@@ -131,7 +134,7 @@ export class CourseBookingsComponent {
 
   pageTitle(): string {
     if (this.isPaymentsMode) {
-      return 'Pagamenti corsi';
+      return 'Incassi corsi';
     }
 
     return this.selectedCourseName ? 'Iscritti - ' + this.selectedCourseName : 'Iscritti corsi';
@@ -139,7 +142,7 @@ export class CourseBookingsComponent {
 
   pageDescription(): string {
     return this.isPaymentsMode
-      ? 'Verifica i pagamenti delle iscrizioni ai corsi, con importi, wallet usato e metodo di pagamento.'
+      ? 'Controlla gli incassi delle iscrizioni, distinguendo credito wallet, importi esterni e somme ancora da riscuotere.'
       : "Consulta gli iscritti ai corsi, i dati del partecipante, lo stato dell'iscrizione e gli eventuali pagamenti.";
   }
 
@@ -149,6 +152,32 @@ export class CourseBookingsComponent {
 
   getCourse(item: CourseBooking): Course | null {
     return typeof item.course === 'string' ? null : item.course;
+  }
+
+  getCourseTitle(item: CourseBooking): string {
+    return this.getCourse(item)?.title || '-';
+  }
+
+  get totalCollected(): number {
+    return this.dataSource.data
+      .filter((item) => item.paymentStatus === 'PAID')
+      .reduce((total, item) => total + this.totalAmount(item), 0);
+  }
+
+  get totalWallet(): number {
+    return this.dataSource.data.reduce((total, item) => total + this.walletAmount(item), 0);
+  }
+
+  get totalExternal(): number {
+    return this.dataSource.data
+      .filter((item) => item.paymentStatus === 'PAID')
+      .reduce((total, item) => total + this.externalAmount(item), 0);
+  }
+
+  get pendingAmount(): number {
+    return this.dataSource.data
+      .filter((item) => item.paymentStatus === 'PENDING')
+      .reduce((total, item) => total + this.totalAmount(item), 0);
   }
 
   getBooking(item: CourseBooking): Bookings | null {
@@ -300,9 +329,9 @@ export class CourseBookingsComponent {
 
   deleteSubscriber(item: CourseBooking): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '860px',
-      minWidth: 'min(800px, 94vw)',
-      maxWidth: '94vw'
+      width: '480px',
+      maxWidth: '92vw',
+      data: { title: 'Rimuovere questo iscritto?', message: 'L’iscrizione al corso verrà eliminata.' }
     });
 
     dialogRef.afterClosed().subscribe((result: boolean) => {

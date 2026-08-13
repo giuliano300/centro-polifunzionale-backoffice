@@ -1,3 +1,14 @@
+.payment-breakdown {
+    display: grid;
+    gap: var(--page-size-2);
+    margin-top: var(--page-size-4);
+
+    span {
+        display: block;
+        white-space: nowrap;
+    }
+}
+
 .trinta-card {
     &.to-do-list-card {
         .search-box {
@@ -310,7 +321,7 @@
 @media only screen and (min-width: 1600px) {}
 
 .filters{
-    padding: 30px 25px 10px;
+    padding: 0 var(--page-size-25) !important;
     
     .mat-mdc-button {
         width: 100%;

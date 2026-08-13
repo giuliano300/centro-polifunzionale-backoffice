@@ -11,4 +11,5 @@ export interface AuthUser {
   isActive?: boolean;
   registrationStatus?: 'complete' | 'invited';
   interestedTags?: string[];
+  walletBalance?: number;
 }
