@@ -67,6 +67,9 @@
       <a routerLink="/" class="mobile-header-logo" aria-label="NAgorà Backoffice">
         <app-nagora-logo ariaLabel="NAgorà"></app-nagora-logo>
       </a>
+      <button mat-button class="header-icon menu-toggle" type="button" (click)="toggleSidebar()" aria-label="Apri o chiudi il menu">
+        <i [class]="isSidebarCollapsed ? 'ri-menu-unfold-line' : 'ri-menu-fold-line'"></i>
+      </button>
       <div class="header-welcome"><small>Area Amministrazione</small><strong>Ciao, {{ managerName }}</strong></div>
       <div class="operation-box">
         <button mat-button class="header-cta operation-toggle" type="button" (click)="toggleOperationsMenu()" [attr.aria-expanded]="isOperationsMenuOpen">

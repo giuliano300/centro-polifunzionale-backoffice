@@ -201,7 +201,7 @@
 .mobile-menu-toggle,
 .mobile-menu-backdrop,
 .mobile-drawer-close{
-  display:none;
+  display:none!important;
 }
 
 @media(max-width:900px){
